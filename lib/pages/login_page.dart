@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/auth/auth_service.dart';
 import 'package:mapsee/components/my_button.dart';
 import 'package:mapsee/components/my_textfield.dart';
 
 class LoginPage extends StatelessWidget {
   // id, pw text controller
-  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
 
   // tap to go register page
@@ -13,12 +14,28 @@ class LoginPage extends StatelessWidget {
   LoginPage({super.key, required this.onTap});
 
   // login method
-  void login() {}
+  void login(BuildContext context) async {
+    // auth service
+    final authService = AuthService();
+
+    // try login
+    try {
+      await authService.signInWithEmailAndPassword(
+          _emailController.text, _pwController.text);
+    } catch (e) {
+      showDialog(context: context, builder: (context) => AlertDialog(
+        title: Text(e.toString()),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme
+          .of(context)
+          .colorScheme
+          .background,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 80.0),
         child: Column(
@@ -35,7 +52,7 @@ class LoginPage extends StatelessWidget {
             MyTextfield(
               hintText: "ID를 입력하세요",
               obscureText: false,
-              controller: _idController,
+              controller: _emailController,
             ),
             const SizedBox(height: 7),
             // PW field
@@ -107,7 +124,7 @@ class LoginPage extends StatelessWidget {
             // 로그인 버튼
             MyButton(
               text: "로그인",
-              onTap: login,
+              onTap: () => login(context),
             ),
             const SizedBox(height: 7),
             // 더욱 간편한 로그인
@@ -176,17 +193,17 @@ class LoginPage extends StatelessWidget {
             // 구글, 카카오, 네이버
             MyButton(
               text: "구글",
-              onTap: login,
+              onTap: ()=>{},
             ),
             const SizedBox(height: 7),
             MyButton(
               text: "카카오",
-              onTap: login,
+              onTap: ()=>{},
             ),
             const SizedBox(height: 7),
             MyButton(
               text: "네이버",
-              onTap: login,
+              onTap: ()=>{},
             ),
             const SizedBox(height: 7),
             // 회원가입 이동
@@ -196,7 +213,10 @@ class LoginPage extends StatelessWidget {
                 Text(
                   "아직 계정이 없으신가요?",
                   style:
-                      TextStyle(color: Theme.of(context).colorScheme.outline),
+                  TextStyle(color: Theme
+                      .of(context)
+                      .colorScheme
+                      .outline),
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
@@ -205,7 +225,10 @@ class LoginPage extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
-                          color: Theme.of(context).colorScheme.outline)),
+                          color: Theme
+                              .of(context)
+                              .colorScheme
+                              .outline)),
                 ),
               ],
             )

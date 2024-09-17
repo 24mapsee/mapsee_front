@@ -15,7 +15,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   // ID, PW, 전화번호 등의 TextEditingController
-  final TextEditingController _idController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwController = TextEditingController();
   final TextEditingController _confirmPwController = TextEditingController();
   final TextEditingController _telNumController = TextEditingController();
@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 MyTextfield(
                   hintText: "ID를 입력하세요",
                   obscureText: false,
-                  controller: _idController,
+                  controller: _emailController,
                 ),
               ],
             ),
