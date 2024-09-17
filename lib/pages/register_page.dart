@@ -20,16 +20,14 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _confirmPwController = TextEditingController();
   final TextEditingController _telNumController = TextEditingController();
   final TextEditingController _confirmTelNumController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _monthController = TextEditingController();
   final TextEditingController _dayController = TextEditingController();
 
   String? _selectedGender;
 
-  void register() {
-
-  }
+  void register() {}
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +154,40 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 14),
+            //약관
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_box_outlined,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text("약관 모두 동의")
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_box_outlined,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text("개인 정보 및 정보 수집 동의")
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(height: 7),
+
             // 회원가입 버튼
             MyButton(
               text: "회원가입",
@@ -169,7 +200,8 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 Text(
                   "이미 계정이 있으신가요?",
-                  style: TextStyle(color: Theme.of(context).colorScheme.outline),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.outline),
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
