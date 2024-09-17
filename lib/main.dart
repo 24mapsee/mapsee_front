@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/auth/login_or_register.dart';
 import 'package:mapsee/pages/login_page.dart';
+import 'package:mapsee/pages/register_page.dart';
 import 'package:mapsee/theme/light_mode.dart';
 
 void main() {
@@ -14,7 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: LoginOrRegister(),
       theme: lightMode,
     );
   }
