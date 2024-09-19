@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/auth/auth_service.dart';
 import 'package:mapsee/components/date_input_form.dart';
 import 'package:mapsee/components/gender_selection_form.dart';
 import 'package:mapsee/components/my_button.dart';
@@ -27,7 +28,31 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? _selectedGender;
 
-  void register() {}
+  void register(BuildContext context) {
+    final _auth = AuthService();
+    // pasword match -> create user
+    if (_pwController.text == _confirmPwController.text) {
+      try {
+        _auth.signUpWithEmailPassword(
+            _emailController.text, _pwController.text);
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(e.toString()),
+                ));
+      }
+    }
+
+    // pasword don't match -> show error
+    else {
+      showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
+                title: Text("비밀번호가 일치하지 않습니다."),
+              ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
             // 회원가입 버튼
             MyButton(
               text: "회원가입",
-              onTap: register,
+              onTap: () => register(context),
             ),
             const SizedBox(height: 7),
             // 로그인 이동
