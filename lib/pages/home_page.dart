@@ -21,6 +21,7 @@ class HomePage extends StatelessWidget {
           IconButton(onPressed: logout, icon: Icon(Icons.logout))
         ],
       ),
+      drawer: Drawer(),
     );
   }
 }
