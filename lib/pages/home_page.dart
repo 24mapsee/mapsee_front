@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/auth/auth_service.dart';
+import 'package:mapsee/services/naver_map_widget.dart';
 // import 'package:mapsee/services/naver_map_widget.dart';
 
 class HomePage extends StatelessWidget {
@@ -22,7 +23,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: Drawer(),
-      // body: const NaverMapWidget(),
+      body: const NaverMapWidget(),
     );
   }
 }

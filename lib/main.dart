@@ -25,14 +25,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(  // MaterialApp 추가
+    return MaterialApp(
+      theme: lightMode,
       home: Scaffold(
-        body: NaverMap(
-          options: const NaverMapViewOptions(),
-          onMapReady: (controller) {
-            print("네이버 맵 로딩됨!");
-          },
-        ),
+        body: const AuthGate(),
       ),
     );
   }
