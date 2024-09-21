@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/auth/auth_service.dart';
+// import 'package:mapsee/services/naver_map_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  void logout(){
-  //get auth service
-  final _auth = AuthService();
-  _auth.signOut();
-
+  void logout() {
+    //get auth service
+    final _auth = AuthService();
+    _auth.signOut();
   }
 
   @override
@@ -22,6 +22,7 @@ class HomePage extends StatelessWidget {
         ],
       ),
       drawer: Drawer(),
+      // body: const NaverMapWidget(),
     );
   }
 }
