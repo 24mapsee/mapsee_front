@@ -51,16 +51,20 @@ class HomePage extends StatelessWidget {
                     right: 20,
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          backgroundColor:
-                          Theme.of(context).colorScheme.secondary,
-                          child: IconButton(
-                            icon: Icon(Icons.menu),
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            color: Theme.of(context).colorScheme.background,
-                          ),
+                        Builder(
+                          builder: (BuildContext context) {
+                            return CircleAvatar(
+                              backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                              child: IconButton(
+                                icon: Icon(Icons.menu),
+                                onPressed: () {
+                                  Scaffold.of(context).openDrawer();
+                                },
+                                color: Theme.of(context).colorScheme.background,
+                              ),
+                            );
+                          }
                         ),
                         SizedBox(width: 5),
                         Container(

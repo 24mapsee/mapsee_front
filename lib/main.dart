@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:mapsee/auth/auth_gate.dart';
 import 'package:mapsee/firebase_options.dart';
-import 'package:mapsee/pages/home_page.dart';
 import 'package:mapsee/theme/light_mode.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
