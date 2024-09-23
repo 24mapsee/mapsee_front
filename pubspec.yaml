@@ -38,6 +38,7 @@ dependencies:
   firebase_core: ^3.5.0
   firebase_auth: ^5.3.0
   flutter_dotenv: ^5.1.0
+  flutter_naver_map: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/mapsee_logo.png
+    - assets/.env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
