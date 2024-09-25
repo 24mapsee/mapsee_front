@@ -19,7 +19,7 @@ class _NaverMapWidgetState extends State<NaverMapWidget> {
     return NaverMap(
       options: const NaverMapViewOptions(
         indoorEnable: true,
-        locationButtonEnable: false,
+        locationButtonEnable: true,
         consumeSymbolTapEvents: false,
       ),
       onMapReady: (controller) async {
