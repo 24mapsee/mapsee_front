@@ -70,6 +70,17 @@ flutter:
     - assets/images/png/home.png
     - assets/images/png/star.png
     - assets/images/png/user.png
+#    장소
+    - assets/images/png/coffee.png
+    - assets/images/png/bank.png
+    - assets/images/png/mart.png
+    - assets/images/png/parking.png
+    - assets/images/png/school.png
+    - assets/images/png/medical.png
+    - assets/images/png/company.png
+    - assets/images/png/cutlery.png
+    - assets/images/png/gas.png
+    - assets/images/png/convenience.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
