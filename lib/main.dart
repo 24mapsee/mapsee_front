@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:mapsee/auth/auth_gate.dart';
+import 'package:mapsee/components/my_botton_navigation_bar.dart';
 import 'package:mapsee/firebase_options.dart';
-import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/theme/light_mode.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
       theme: lightMode,
       home: Scaffold(
         body: const AuthGate(),
+        bottomNavigationBar: MyBottomNavigationBar(),
       ),
     );
   }

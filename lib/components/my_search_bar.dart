@@ -24,7 +24,11 @@ class MySearchBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
             ),
             suffixIcon: IconButton(
-              icon: const Icon(Icons.keyboard_voice),
+              icon: Image.asset(
+                'assets/images/png/mic.png',
+                width: 20,
+                color: Theme.of(context).colorScheme.outline,
+              ),
               onPressed: () {
                 print('Use voice command');
               },

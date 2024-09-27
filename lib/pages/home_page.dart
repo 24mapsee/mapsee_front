@@ -94,11 +94,11 @@ class HomePage extends StatelessWidget {
                             borderSide: BorderSide(color: Colors.transparent)),
                         suffixIcon: Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.keyboard_voice),
-                            SizedBox(width: 5),
-                            Icon(Icons.search),
-                            SizedBox(width: 10),
+                          children: [
+                            Image.asset('assets/images/png/mic.png',width: 20,color: Theme.of(context).colorScheme.outline,),
+                            const SizedBox(width: 5),
+                            const Icon(Icons.search),
+                            const SizedBox(width: 10),
                           ],
                         ),
                       ),

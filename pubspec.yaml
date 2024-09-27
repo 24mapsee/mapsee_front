@@ -66,6 +66,10 @@ flutter:
   assets:
     - assets/images/mapsee_logo.png
     - assets/.env
+    - assets/images/png/mic.png
+    - assets/images/png/home.png
+    - assets/images/png/star.png
+    - assets/images/png/user.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
