@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/auth/auth_service.dart';
+import 'package:mapsee/components/my_bottom_modal_sheet.dart';
 import 'package:mapsee/components/my_botton_navigation_bar.dart';
 import 'package:mapsee/components/my_category_tag.dart';
 import 'package:mapsee/pages/search_page.dart';
@@ -125,6 +126,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: MyBottomModalSheet(),
+            )
           ],
         ),
       ),
