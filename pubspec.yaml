@@ -66,10 +66,13 @@ flutter:
   assets:
     - assets/images/mapsee_logo.png
     - assets/.env
+    # 아이콘
     - assets/images/png/mic.png
     - assets/images/png/home.png
     - assets/images/png/star.png
     - assets/images/png/user.png
+    - assets/images/png/flag.png
+    - assets/images/png/add.png
 #    장소
     - assets/images/png/coffee.png
     - assets/images/png/bank.png
@@ -81,6 +84,7 @@ flutter:
     - assets/images/png/cutlery.png
     - assets/images/png/gas.png
     - assets/images/png/convenience.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

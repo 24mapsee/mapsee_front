@@ -10,6 +10,7 @@ class MySearchBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: TextField(
+        enabled: true,
         decoration: InputDecoration(
             fillColor: Theme.of(context).colorScheme.background,
             filled: true,
