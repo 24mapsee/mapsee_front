@@ -4,9 +4,14 @@ import 'package:mapsee/components/my_category_tag.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/services/naver_map_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   void logout() {
     //get auth service
     final _auth = AuthService();
@@ -16,6 +21,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth= MediaQuery.of(context).size.width;
 
     return Scaffold(
       drawer: Drawer(
@@ -44,77 +50,81 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: Stack(
-        children: [
-          const NaverMapWidget(),
-          Positioned(
-            top: screenHeight * 0.05,
-            left: 20,
-            right: 20,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Builder(builder: (BuildContext context) {
-                      return CircleAvatar(
-                        backgroundColor: Theme.of(context).colorScheme.secondary,
-                        child: IconButton(
-                          icon: Icon(Icons.menu),
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          color: Theme.of(context).colorScheme.background,
-                        ),
-                      );
-                    }),
-                    SizedBox(width: 5),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>  SearchPage(),
+      body: Container(
+        width: screenWidth,
+        height: screenHeight,
+        child: Stack(
+          children: [
+            const NaverMapWidget(),
+            Positioned(
+              top: screenHeight * 0.05,
+              left: 20,
+              right: 20,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Builder(builder: (BuildContext context) {
+                        return CircleAvatar(
+                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          child: IconButton(
+                            icon: Icon(Icons.menu),
+                            onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                            color: Theme.of(context).colorScheme.background,
                           ),
                         );
-                      },
-                      child: Container(
-                        width: 320,
-                        child: TextField(
-                          enabled: false,
-                          decoration: InputDecoration(
-                            fillColor: Theme.of(context).colorScheme.background,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide(color: Colors.transparent),
+                      }),
+                      SizedBox(width: 5),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>  SearchPage(),
                             ),
-                            hintText: '검색',
-                            hintStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                            border: OutlineInputBorder(
+                          );
+                        },
+                        child: Container(
+                          width: 320,
+                          child: TextField(
+                            enabled: false,
+                            decoration: InputDecoration(
+                              fillColor: Theme.of(context).colorScheme.background,
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(color: Colors.transparent)),
-                            suffixIcon: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset('assets/images/png/mic.png',width: 20,color: Theme.of(context).colorScheme.outline,),
-                                const SizedBox(width: 5),
-                                const Icon(Icons.search),
-                                const SizedBox(width: 10),
-                              ],
+                                borderSide: BorderSide(color: Colors.transparent),
+                              ),
+                              hintText: '검색',
+                              hintStyle: TextStyle(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide(color: Colors.transparent)),
+                              suffixIcon: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset('assets/images/png/mic.png',width: 20,color: Theme.of(context).colorScheme.outline,),
+                                  const SizedBox(width: 5),
+                                  const Icon(Icons.search),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                MyCategoryTag()
-              ],
+                    ],
+                  ),
+                  MyCategoryTag()
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
