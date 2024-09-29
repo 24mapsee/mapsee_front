@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/auth/auth_service.dart';
+import 'package:mapsee/components/my_botton_navigation_bar.dart';
 import 'package:mapsee/components/my_category_tag.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/services/naver_map_widget.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
     double screenWidth= MediaQuery.of(context).size.width;
 
     return Scaffold(
+      bottomNavigationBar: MyBottomNavigationBar(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -87,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                           );
                         },
                         child: Container(
-                          width: 320,
+                          width: screenWidth * 0.75,
                           child: TextField(
                             enabled: false,
                             decoration: InputDecoration(

@@ -159,27 +159,28 @@ class _SearchPageState extends State<SearchPage> {
               ],
             ),
           ),
-          Container(
-            height: screenHeight * 0.5,
-            alignment: Alignment.center,
+          Expanded(
             child: _searchResults.isEmpty
-                ? Text(
-              "최근 검색 결과가 없습니다.",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.outline,
+                ? Center(
+              child: Text(
+                "최근 검색 결과가 없습니다.",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               ),
             )
-                : Column(
-              children: _searchResults
-                  .map(
-                    (result) => MySearchResultContainer(
+                : ListView.builder(
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final result = _searchResults[index];
+                return MySearchResultContainer(
                   text: result,
                   onDelete: () => _deleteResult(result),
-                ),
-              )
-                  .toList(),
+                );
+              },
             ),
-          ),
+          )
+          ,
         ],
       ),
     );
