@@ -73,6 +73,9 @@ flutter:
     - assets/images/png/user.png
     - assets/images/png/flag.png
     - assets/images/png/add.png
+    - assets/images/png/minus.png
+    - assets/images/png/marker.png
+
 #    장소
     - assets/images/png/coffee.png
     - assets/images/png/bank.png
