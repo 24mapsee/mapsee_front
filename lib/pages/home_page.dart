@@ -22,8 +22,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth= MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Scaffold(
       bottomNavigationBar: MyBottomNavigationBar(),
@@ -33,7 +39,10 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme
+                    .of(context)
+                    .colorScheme
+                    .primary,
               ),
               child: const Text(
                 'Menu',
@@ -69,13 +78,19 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Builder(builder: (BuildContext context) {
                         return CircleAvatar(
-                          backgroundColor: Theme.of(context).colorScheme.secondary,
+                          backgroundColor: Theme
+                              .of(context)
+                              .colorScheme
+                              .secondary,
                           child: IconButton(
                             icon: Icon(Icons.menu),
                             onPressed: () {
                               Scaffold.of(context).openDrawer();
                             },
-                            color: Theme.of(context).colorScheme.background,
+                            color: Theme
+                                .of(context)
+                                .colorScheme
+                                .background,
                           ),
                         );
                       }),
@@ -85,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>  SearchPage(),
+                              builder: (context) => SearchPage(),
                             ),
                           );
                         },
@@ -94,23 +109,36 @@ class _HomePageState extends State<HomePage> {
                           child: TextField(
                             enabled: false,
                             decoration: InputDecoration(
-                              fillColor: Theme.of(context).colorScheme.background,
+                              fillColor: Theme
+                                  .of(context)
+                                  .colorScheme
+                                  .background,
                               filled: true,
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(color: Colors.transparent),
+                                borderSide: BorderSide(
+                                    color: Colors.transparent),
                               ),
                               hintText: '검색',
                               hintStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.outline,
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .outline,
                               ),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: BorderSide(color: Colors.transparent)),
+                                  borderSide: BorderSide(
+                                      color: Colors.transparent)),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Image.asset('assets/images/png/mic.png',width: 20,color: Theme.of(context).colorScheme.outline,),
+                                  Image.asset(
+                                    'assets/images/png/mic.png', width: 20,
+                                    color: Theme
+                                        .of(context)
+                                        .colorScheme
+                                        .outline,),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.search),
                                   const SizedBox(width: 10),
@@ -122,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  MyCategoryTag()
+                  MyCategoryTag(),
                 ],
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/home_page.dart';
 import 'package:mapsee/pages/search_page.dart';
+import 'package:mapsee/pages/search_result_page.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
   const MyBottomNavigationBar({super.key});
@@ -24,7 +25,6 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           _currentIndex = idx;
         });
 
-
         switch (idx) {
           case 0:
             Navigator.push(
@@ -35,7 +35,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 1:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const SearchResultPage()),
             );
             break;
           case 2:
