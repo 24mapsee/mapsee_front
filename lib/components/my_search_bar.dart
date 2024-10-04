@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+
 class MySearchBar extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
@@ -11,6 +12,10 @@ class MySearchBar extends StatelessWidget {
     required this.controller,
     required this.onSubmitted,
   });
+
+  void search(){
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +48,9 @@ class MySearchBar extends StatelessWidget {
             },
           ),
         ),
-        onSubmitted: onSubmitted, // Pass the callback to TextField's onSubmitted
+        onSubmitted: (value){
+
+        },
       ),
     );
   }

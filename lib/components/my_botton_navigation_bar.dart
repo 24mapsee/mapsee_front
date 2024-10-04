@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/pages/search_filter_page.dart';
 import 'package:mapsee/pages/home_page.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/pages/search_result_page.dart';
@@ -47,7 +48,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 3:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const SearchFilterPage()),
             );
             break;
           case 4:
