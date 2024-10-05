@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mapsee/pages/search_filter_page.dart';
 import 'package:mapsee/pages/home_page.dart';
 import 'package:mapsee/pages/search_page.dart';
+import 'package:mapsee/pages/search_page2.dart';
 import 'package:mapsee/pages/search_result_page.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
@@ -84,8 +85,14 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           ),
           label: 'Favorites',
         ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.circle),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            'assets/images/png/world.png',
+            color: _currentIndex == 2
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
+            width: 20,
+          ),
           label: 'Circle',
         ),
         BottomNavigationBarItem(

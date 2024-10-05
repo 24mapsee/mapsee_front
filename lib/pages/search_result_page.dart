@@ -84,9 +84,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
                                   ),
                                 ),
                               ),
-                              Icon(
-                                Icons.close,
-                                color: Theme.of(context).colorScheme.background,
+                              Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Image.asset('assets/images/png/cancel.png', width: 15, color: Theme.of(context).colorScheme.background,),
                               )
                             ],
                           ),

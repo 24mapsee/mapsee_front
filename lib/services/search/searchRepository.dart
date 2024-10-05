@@ -12,7 +12,7 @@ class SearchRepository {
 
     try {
       final http.Response _response = await http.get(
-        Uri.parse("https://openapi.naver.com/v1/search/local.json?query=${query}"),
+        Uri.parse("https://openapi.naver.com/v1/search/local.json?query=${query}&display=20"),
         headers: {
           "X-Naver-Client-Id": clientId,
           "X-Naver-Client-Secret": clientSecret,

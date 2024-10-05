@@ -55,6 +55,8 @@ class MyBottomModalSheet extends StatelessWidget {
             controller: scrollController,
             children: <Widget>[
               Center(
+                // 위에
+                // Image.asset('assets/images/png/griber.png'),
                 child: Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
