@@ -12,7 +12,7 @@ class SearchRepository {
 
     try {
       final http.Response _response = await http.get(
-        Uri.parse("https://openapi.naver.com/v1/search/local.json?query=${query}&display=20"),
+        Uri.parse("https://openapi.naver.com/v1/search/local.json?query=${query}&sort=random&display=20"),
         headers: {
           "X-Naver-Client-Id": clientId,
           "X-Naver-Client-Secret": clientSecret,
@@ -21,7 +21,9 @@ class SearchRepository {
       if (_response.statusCode == 200) {
         final data = jsonDecode(_response.body);
         List<dynamic> items = data['items'];
+        print(items);
         List<String> result = items.map((item) => item['title'] as String).toList();
+        print(result);
         return result;
       } else {
         print('Error: ${_response.statusCode}');

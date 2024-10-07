@@ -55,7 +55,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 4:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => SearchPage2()),
             );
             break;
         }
