@@ -38,7 +38,7 @@ dependencies:
   firebase_core: ^3.5.0
   firebase_auth: ^5.3.0
   flutter_dotenv: ^5.1.0
-  flutter_naver_map: ^1.1.1
+  flutter_naver_map: ^1.2.1
   permission_handler: ^11.3.1
   geolocator: ^13.0.1
   http: ^1.2.2

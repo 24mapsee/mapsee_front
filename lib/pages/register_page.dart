@@ -4,7 +4,8 @@ import 'package:mapsee/components/date_input_form.dart';
 import 'package:mapsee/components/gender_selection_form.dart';
 import 'package:mapsee/components/my_button.dart';
 import 'package:mapsee/components/my_textfield.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
 
@@ -28,29 +29,59 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? _selectedGender;
 
-  void register(BuildContext context) {
+  void register(BuildContext context) async {
     final _auth = AuthService();
-    // pasword match -> create user
+
+    // 비밀번호 일치 확인 후 회원가입 처리
     if (_pwController.text == _confirmPwController.text) {
       try {
-        _auth.signUpWithEmailPassword(
-            _emailController.text, _pwController.text);
-      } catch (e) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text(e.toString()),
-                ));
-      }
-    }
+        // 서버로 회원가입 요청 전송
+        var response = await http.post(
+          Uri.parse('http://10.0.2.2:3000/user/register'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'email': _emailController.text,
+            'password': _pwController.text,
+            'tel': _telNumController.text,
+            'gender': _selectedGender ?? '',
+            'birthdate': '${_yearController.text}-${_monthController.text}-${_dayController.text}',
+          }),
+        );
 
-    // pasword don't match -> show error
-    else {
-      showDialog(
+        if (response.statusCode == 200) {
+          // 성공적으로 가입 완료
+          try {
+            await _auth.signInWithEmailAndPassword(
+                _emailController.text, _pwController.text);
+            //uid 저장해야함 Lumi
+          } catch (e) {
+            showDialog(context: context, builder: (xcontext) => AlertDialog(
+              title: Text(e.toString()),
+            ));
+          }
+        } else {
+          // 서버에서 에러 발생
+          throw Exception('Failed to register.');
+        }
+      } catch (e) {
+        // 에러 발생 시 다이얼로그 출력
+        showDialog(
           context: context,
-          builder: (context) => const AlertDialog(
-                title: Text("비밀번호가 일치하지 않습니다."),
-              ));
+          builder: (context) => AlertDialog(
+            title: Text(e.toString()),
+          ),
+        );
+      }
+    } else {
+      // 비밀번호 불일치 시 다이얼로그 출력
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+          title: Text("비밀번호가 일치하지 않습니다."),
+        ),
+      );
     }
   }
 
