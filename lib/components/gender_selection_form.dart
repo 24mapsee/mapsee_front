@@ -43,7 +43,7 @@ class GenderSelection extends StatelessWidget {
     final genderOptions = [
       {'label': '남성', 'value': '남성'},
       {'label': '여성', 'value': '여성'},
-      {'label': '선택하지 않음', 'value': '선택하지 않음'},
+      {'label': '선택안함', 'value': '선택안함'},
     ];
 
     return Row(
