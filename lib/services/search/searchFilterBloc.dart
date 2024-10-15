@@ -4,6 +4,7 @@ import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
 import 'package:mapsee/services/search/searchRepository.dart';
 
+
 class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
   final bool isFilter;
   SearchFilterBloc(this.isFilter) : super(SearchFilterInitState()) {
@@ -27,64 +28,53 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
 
   Future<void> _searching(
       SearchFilterSearchingEvent event, Emitter<SearchFilterState> emit) async {
-    List<String> _result =
+    List<Map<String, dynamic>> _result =
     await SearchRepository.instance.getNaverBlogSearch(query: event.query);
+
     if (isFilter) {
-      List<List<Map<String, int>>> _strings =
-      _filtering(strings: _result, query: event.query);
-      emit(SearchFilterSearchedState(query: event.query, filterings: _strings));
+      List<List<Map<String, dynamic>>> _filteredResults =
+      _filtering(data: _result, query: event.query);
+      emit(SearchFilterSearchedState(query: event.query, filterings: _filteredResults));
     } else {
+
+      List<String> _titles = _result.map((item) => item['title'] as String).toList();
       List<List<String>> _strings =
-      _allMatching(strings: _result, query: event.query);
+      _allMatching(strings: _titles, query: event.query);
       emit(SearchFilterSearchedState(strings: _strings, query: event.query));
     }
   }
 
-  List<List<Map<String, int>>> _filtering({
+  List<List<Map<String, dynamic>>> _filtering({
     required String query,
-    required List<String> strings,
+    required List<Map<String, dynamic>> data,
   }) {
-    List<List<Map<String, int>>> _result = [];
-    if (strings.isNotEmpty) {
-      for (int i = 0; i < strings.length; i++) {
-        List<Map<String, int>> _toMap = [];
-        if (strings[i].toLowerCase().contains(query.toLowerCase())) {
-          int _splitIndex =
-          strings[i].toLowerCase().indexOf(query.toLowerCase());
-          String _first = strings[i].substring(0, _splitIndex);
-          String _last = strings[i]
-              .substring(_splitIndex + query.length, strings[i].length);
-          if (_splitIndex == 0 && strings[i].length - 1 == _splitIndex) {
-            _toMap.addAll([
-              {strings[i]: 1}
-            ]);
-          } else if (_splitIndex == 0 && strings[i].length - 1 != _splitIndex) {
-            _toMap.addAll([
-              {strings[i].replaceFirst(_last, ""): 1},
-              {_last: 0}
-            ]);
-          } else if (_splitIndex != 0 && strings[i].length - 1 == _splitIndex) {
-            _toMap.addAll([
-              {_first: 0},
-              {strings[i].replaceFirst(_first, ""): 1}
-            ]);
-          } else {
-            String _query = strings[i].replaceFirst(_first, "");
-            _query = _query.replaceFirst(_last, "");
-            _toMap.addAll([
-              {_first: 0},
-              {_query: 1},
-              {_last: 0}
-            ]);
-          }
-        } else {
-          _toMap.add({strings[i]: 0});
-        }
-        _result.add(_toMap);
+    List<List<Map<String, dynamic>>> _result = [];
+
+    for (var item in data) {
+      String title = item['title'] as String;
+
+      List<Map<String, dynamic>> _toMap = [];
+
+      if (title.toLowerCase().contains(query.toLowerCase())) {
+        _toMap.add({
+          'title': title,
+          'highlight': 1,
+          'data': item
+        });
+      } else {
+        _toMap.add({
+          'title': title,
+          'highlight': 0,
+          'data': item
+        });
       }
+
+      _result.add(_toMap);
     }
+
     return _result;
   }
+
 
   List<List<String>> _allMatching({
     required List<String> strings,
