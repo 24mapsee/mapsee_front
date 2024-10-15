@@ -86,6 +86,14 @@ flutter:
     - assets/images/png/cancel.png
     - assets/images/png/world.png
     - assets/images/png/griber.png
+    - assets/images/png/call.png
+    - assets/images/png/clock.png
+    - assets/images/png/filled_heart.png
+    - assets/images/png/unfilled_heart.png
+    - assets/images/png/share.png
+    - assets/images/png/startpoint.png
+
+
 
 #    장소
     - assets/images/png/coffee.png
@@ -103,6 +111,7 @@ flutter:
     - assets/images/png/bus.png
     - assets/images/png/car.png
     - assets/images/png/walk.png
+    - assets/images/png/bike.png
 
     #임시 사진
     - assets/images/place_example.jpeg

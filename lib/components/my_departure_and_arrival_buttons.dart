@@ -27,7 +27,7 @@ class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButt
                 child: Row(
                   children: [
                     Image.asset(
-                      'assets/images/png/flag.png', // 아이콘 바꿔야 함
+                      'assets/images/png/startpoint.png',
                       width: 15,
                       color: Theme.of(context).colorScheme.secondary,
                     ),

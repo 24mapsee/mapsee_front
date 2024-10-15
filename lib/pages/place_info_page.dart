@@ -10,6 +10,7 @@ class PlaceInfoPage extends StatefulWidget {
 }
 
 class _PlaceInfoPageState extends State<PlaceInfoPage> {
+  bool isSaved = false;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -62,10 +63,19 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                     children: [
                       Column(
                         children: [
-                          Image.asset(
-                            'assets/images/png/star.png',
-                            color: Theme.of(context).colorScheme.secondary,
-                            width: 30,
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isSaved = !isSaved;
+                              });
+                            },
+                            child: Image.asset(
+                              isSaved
+                                  ? 'assets/images/png/filled_heart.png'
+                                  : 'assets/images/png/unfilled_heart.png',
+                              color: Theme.of(context).colorScheme.secondary,
+                              width: 30,
+                            ),
                           ),
                           Text('저장하기')
                         ],
@@ -74,7 +84,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       Column(
                         children: [
                           Image.asset(
-                            'assets/images/png/star.png',
+                            'assets/images/png/share.png',
                             color: Theme.of(context).colorScheme.secondary,
                             width: 30,
                           ),
@@ -111,7 +121,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/png/marker.png',
+                      'assets/images/png/clock.png',
                       width: 15,
                     ),
                     SizedBox(
@@ -125,7 +135,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/png/marker.png',
+                      'assets/images/png/call.png',
                       width: 15,
                     ),
                     SizedBox(width: 5,),
