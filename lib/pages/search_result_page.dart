@@ -141,11 +141,11 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 Row(
                   children: [
                     _buildTransportOption("전체", screenHeight),
-                    MyVerticalDivider(),
+                    MyVerticalDivider(height: 0.02,),
                     _buildTransportOption("버스", screenHeight),
-                    MyVerticalDivider(),
+                    MyVerticalDivider(height: 0.02,),
                     _buildTransportOption("지하철", screenHeight),
-                    MyVerticalDivider(),
+                    MyVerticalDivider(height: 0.02,),
                     _buildTransportOption("버스 + 지하철", screenHeight),
                   ],
                 ),

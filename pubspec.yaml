@@ -104,6 +104,9 @@ flutter:
     - assets/images/png/car.png
     - assets/images/png/walk.png
 
+    #임시 사진
+    - assets/images/place_example.jpeg
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
