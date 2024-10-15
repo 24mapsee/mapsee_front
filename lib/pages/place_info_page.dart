@@ -83,10 +83,82 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       )
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
+          Container(
+            padding: EdgeInsets.all(20),
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/png/marker.png',
+                      width: 15,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text('정릉로 24길 77 ▽')
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/png/marker.png',
+                      width: 15,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text('09:00 - 20:00 ▽')
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/png/marker.png',
+                      width: 15,
+                    ),
+                    SizedBox(width: 5,),
+                    Text('02-123-4567')
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/png/world.png',
+                      width: 15,
+                    ),
+                    SizedBox(width: 5,),
+                    Text('인스타/블로그 주소')
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/png/parking.png',
+                      width: 15,
+                    ),
+                    SizedBox(width: 5,),
+                    Text('주차 가능'),
+                  ],
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
