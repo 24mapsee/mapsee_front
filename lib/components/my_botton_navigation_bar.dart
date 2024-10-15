@@ -4,6 +4,7 @@ import 'package:mapsee/pages/home_page.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/pages/search_page2.dart';
 import 'package:mapsee/pages/search_result_page.dart';
+import 'package:mapsee/pages/feed_page.dart'; // 추가: FeedPage import
 
 class MyBottomNavigationBar extends StatefulWidget {
   const MyBottomNavigationBar({super.key});
@@ -49,7 +50,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 3:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SearchFilterPage()),
+              MaterialPageRoute(builder: (context) => FeedPage()), // FeedPage로 변경
             );
             break;
           case 4:
@@ -88,12 +89,12 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
         BottomNavigationBarItem(
           icon: Image.asset(
             'assets/images/png/world.png',
-            color: _currentIndex == 2
+            color: _currentIndex == 3
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.secondary,
             width: 20,
           ),
-          label: 'Circle',
+          label: 'Feed',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(

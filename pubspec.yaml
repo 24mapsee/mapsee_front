@@ -104,6 +104,10 @@ flutter:
     - assets/images/png/car.png
     - assets/images/png/walk.png
 
+    #더미데이터
+    - assets/images/dummy/dummy1.jpg
+    - assets/images/dummy/dummy2.jpg
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
