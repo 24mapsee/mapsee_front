@@ -82,10 +82,7 @@ class SearchFilterPage extends StatelessWidget {
                             child: InkWell(
                               onTap: () {
                                 final selectedItem = state.filterings![index];
-                                print("끼얏휴${selectedItem}");
                                 final data = selectedItem[0]['data'];
-
-                                print("끼얏${data}");
 
                                 final title =
                                     removeHtmlTags(data['title'] ?? '');

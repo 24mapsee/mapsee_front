@@ -10,6 +10,7 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
   SearchFilterBloc(this.isFilter) : super(SearchFilterInitState()) {
     on<SearchFilterSearchingEvent>(_searching);
     on<SearchFilterTimerEvent>(_timer);
+    on<SearchFilterClearEvent>(_clearSearch);
   }
 
   Future<void> _timer(
@@ -34,10 +35,11 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
     if (isFilter) {
       List<List<Map<String, dynamic>>> _filteredResults =
       _filtering(data: _result, query: event.query);
-      emit(SearchFilterSearchedState(query: event.query, filterings: _filteredResults));
+      emit(SearchFilterSearchedState(
+          query: event.query, filterings: _filteredResults));
     } else {
-
-      List<String> _titles = _result.map((item) => item['title'] as String).toList();
+      List<String> _titles =
+      _result.map((item) => item['title'] as String).toList();
       List<List<String>> _strings =
       _allMatching(strings: _titles, query: event.query);
       emit(SearchFilterSearchedState(strings: _strings, query: event.query));
@@ -56,17 +58,9 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
       List<Map<String, dynamic>> _toMap = [];
 
       if (title.toLowerCase().contains(query.toLowerCase())) {
-        _toMap.add({
-          'title': title,
-          'highlight': 1,
-          'data': item
-        });
+        _toMap.add({'title': title, 'highlight': 1, 'data': item});
       } else {
-        _toMap.add({
-          'title': title,
-          'highlight': 0,
-          'data': item
-        });
+        _toMap.add({'title': title, 'highlight': 0, 'data': item});
       }
 
       _result.add(_toMap);
@@ -74,7 +68,6 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
 
     return _result;
   }
-
 
   List<List<String>> _allMatching({
     required List<String> strings,
@@ -87,6 +80,11 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
       }
     }
     return _result;
+  }
+
+  Future<void> _clearSearch(
+      SearchFilterClearEvent event, Emitter<SearchFilterState> emit) async {
+    emit(SearchFilterInitState());
   }
 
   @override

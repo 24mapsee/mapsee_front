@@ -6,12 +6,14 @@ import 'package:permission_handler/permission_handler.dart';
 class MySearchBar extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
+  final ValueChanged<String> onChanged;
   final ValueChanged<String> onSubmitted;
 
   const MySearchBar({
     super.key,
     required this.hintText,
     required this.controller,
+    required this.onChanged,
     required this.onSubmitted,
   });
 
@@ -66,6 +68,7 @@ class _MySearchBarState extends State<MySearchBar> {
     setState(() {
       _ttsText = result.recognizedWords;
       widget.controller.text = _ttsText;
+      widget.onChanged(_ttsText);
     });
   }
 
@@ -76,6 +79,8 @@ class _MySearchBarState extends State<MySearchBar> {
       child: TextField(
         controller: widget.controller,
         enabled: true,
+        onChanged: widget.onChanged,
+        onSubmitted: widget.onSubmitted,
         decoration: InputDecoration(
           fillColor: Theme.of(context).colorScheme.background,
           filled: true,
@@ -103,7 +108,6 @@ class _MySearchBarState extends State<MySearchBar> {
             },
           ),
         ),
-        onSubmitted: widget.onSubmitted,
       ),
     );
   }
