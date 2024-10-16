@@ -82,15 +82,22 @@ class SearchFilterPage extends StatelessWidget {
                             child: InkWell(
                               onTap: () {
                                 final selectedItem = state.filterings![index];
-
+                                print("끼얏휴${selectedItem}");
                                 final data = selectedItem[0]['data'];
 
-                                final title = removeHtmlTags(data['title'] ?? '');
+                                print("끼얏${data}");
+
+                                final title =
+                                    removeHtmlTags(data['title'] ?? '');
                                 final link = data['link']?.toString() ?? '';
-                                final category = data['category']?.toString() ?? '';
-                                final address = data['address']?.toString() ?? '';
-                                final roadAddress = data['roadAddress']?.toString() ?? '';
-                                final telephone = data['telephone']?.toString() ?? '';
+                                final category =
+                                    data['category']?.toString() ?? '';
+                                final roadAddress =
+                                    data['roadAddress']?.toString() ?? '';
+                                final address =
+                                    data['address']?.toString() ?? '';
+                                final telephone =
+                                    data['telephone']?.toString() ?? '';
 
                                 Navigator.push(
                                   context,
@@ -98,15 +105,14 @@ class SearchFilterPage extends StatelessWidget {
                                     builder: (context) => PlaceInfoPage(
                                       title: title,
                                       category: category,
-                                      address: address,
                                       roadAddress: roadAddress,
+                                      address: address,
                                       link: link,
                                       telephone: telephone,
                                     ),
                                   ),
                                 );
                               },
-
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -120,8 +126,7 @@ class SearchFilterPage extends StatelessWidget {
                                   Flexible(
                                     child: Text(
                                       removeHtmlTags(state.filterings![index]
-                                          .map((item) =>
-                                      item['title'])
+                                          .map((item) => item['title'])
                                           .join(' ')),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.normal,

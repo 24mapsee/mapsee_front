@@ -127,7 +127,12 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       width: 15,
                     ),
                     SizedBox(width: 5),
-                    Text(widget.address.isNotEmpty ? widget.address : '제공하지 않음'),
+                    Column(
+                      children: [
+                        Text(widget.address.isNotEmpty ? widget.address : '제공하지 않음'),
+                        Text(widget.roadAddress.isNotEmpty ? widget.roadAddress : '제공하지 않음'),
+                      ],
+                    ),
                   ],
                 ),
                 Row(
@@ -139,7 +144,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       width: 15,
                     ),
                     SizedBox(width: 5),
-                    Text('09:00 - 20:00 ▽'),
+                    Text('09:00 - 20:00 ▽'), // 수정해야 함
                   ],
                 ),
                 Row(
@@ -175,7 +180,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       width: 15,
                     ),
                     SizedBox(width: 5),
-                    Text('주차 가능'),
+                    Text('주차 가능'), // 수정해야 함
                   ],
                 ),
               ],
