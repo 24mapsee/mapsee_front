@@ -86,8 +86,14 @@ flutter:
     - assets/images/png/cancel.png
     - assets/images/png/world.png
     - assets/images/png/griber.png
+    - assets/images/png/call.png
+    - assets/images/png/clock.png
+    - assets/images/png/filled_heart.png
+    - assets/images/png/unfilled_heart.png
+    - assets/images/png/share.png
+    - assets/images/png/startpoint.png
 
-#    장소
+    #    장소
     - assets/images/png/coffee.png
     - assets/images/png/bank.png
     - assets/images/png/mart.png
@@ -103,11 +109,14 @@ flutter:
     - assets/images/png/bus.png
     - assets/images/png/car.png
     - assets/images/png/walk.png
+    - assets/images/png/bike.png
 
     #더미데이터
     - assets/images/dummy/
     - assets/images/png/
 
+    #임시 사진
+    - assets/images/place_example.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
