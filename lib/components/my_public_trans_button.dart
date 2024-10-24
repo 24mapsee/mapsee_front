@@ -25,7 +25,7 @@ class _MyPublicTransButtonState extends State<MyPublicTransButton> {
             _buildTransportButton(
                 context, 'assets/images/png/walk.png', 'walk'),
             _buildTransportButton(
-                context, 'assets/images/png/bicycle.png', 'bicycle'),
+                context, 'assets/images/png/bike.png', 'bike'),
           ],
         ),
       ),

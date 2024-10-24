@@ -17,9 +17,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
   final TextEditingController _destinationSearchController =
       TextEditingController();
 
-  DateTime _selectedDepartureDateTime = DateTime.now(); // 선택한 출발 날짜 및 시간
-  DateTime _selectedArrivalDateTime = DateTime.now(); // 선택한 도착 날짜 및 시간
-  String _departureOrArrivalLabel = '';
+  // DateTime _selectedDepartureDateTime = DateTime.now(); // 선택한 출발 날짜 및 시간
+  // DateTime _selectedArrivalDateTime = DateTime.now(); // 선택한 도착 날짜 및 시간
+  // String _departureOrArrivalLabel = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +35,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
         _destinationSearchController.text = temp;
       });
     }
-    String _formatDateTime(DateTime dateTime, String label) {
-      return "${_selectedDepartureDateTime.year}-${_selectedDepartureDateTime.month.toString().padLeft(2, '0')}-${_selectedDepartureDateTime.day.toString().padLeft(2, '0')} ${_selectedDepartureDateTime.hour.toString().padLeft(2, '0')}:${_selectedDepartureDateTime.minute.toString().padLeft(2, '0')} $label";
-    }
+    // String _formatDateTime(DateTime dateTime, String label) {
+    //   return "${_selectedDepartureDateTime.year}-${_selectedDepartureDateTime.month.toString().padLeft(2, '0')}-${_selectedDepartureDateTime.day.toString().padLeft(2, '0')} ${_selectedDepartureDateTime.hour.toString().padLeft(2, '0')}:${_selectedDepartureDateTime.minute.toString().padLeft(2, '0')} $label";
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -141,40 +141,40 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 Row(
                   children: [
                     _buildTransportOption("전체", screenHeight),
-                    MyVerticalDivider(),
+                    MyVerticalDivider(height: 0.02,),
                     _buildTransportOption("버스", screenHeight),
-                    MyVerticalDivider(),
+                    MyVerticalDivider(height: 0.02,),
                     _buildTransportOption("지하철", screenHeight),
-                    MyVerticalDivider(),
+                    MyVerticalDivider(height: 0.02,),
                     _buildTransportOption("버스 + 지하철", screenHeight),
                   ],
                 ),
-                InkWell(
-                  onTap: () async {
-                    Map<String, DateTime>? selectedDateTime = await _dialogBuilder(context);
-                    if (selectedDateTime != null) {
-                      setState(() {
-                        _selectedDepartureDateTime = selectedDateTime['departure']!;
-                        _selectedArrivalDateTime = selectedDateTime['arrival']!;
-                        _departureOrArrivalLabel = selectedDateTime['arrival'] == _selectedArrivalDateTime
-                            ? _formatDateTime(_selectedArrivalDateTime, "도착 ▼")
-                            : _formatDateTime(_selectedDepartureDateTime, "출발 ▼");
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    height: screenHeight * 0.03,
-                    child: Center(
-                      child: Text(
-                        _departureOrArrivalLabel.isNotEmpty
-                            ? _departureOrArrivalLabel
-                            : "${_selectedDepartureDateTime.year}-${_selectedDepartureDateTime.month.toString().padLeft(2, '0')}-${_selectedDepartureDateTime.day.toString().padLeft(2, '0')} ${_selectedDepartureDateTime.hour.toString().padLeft(2, '0')}:${_selectedDepartureDateTime.minute.toString().padLeft(2, '0')} 출발 ▼",
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ),
-                ),
+                // InkWell(
+                //   onTap: () async {
+                //     Map<String, DateTime>? selectedDateTime = await _dialogBuilder(context);
+                //     if (selectedDateTime != null) {
+                //       setState(() {
+                //         _selectedDepartureDateTime = selectedDateTime['departure']!;
+                //         _selectedArrivalDateTime = selectedDateTime['arrival']!;
+                //         _departureOrArrivalLabel = selectedDateTime['arrival'] == _selectedArrivalDateTime
+                //             ? _formatDateTime(_selectedArrivalDateTime, "도착 ▼")
+                //             : _formatDateTime(_selectedDepartureDateTime, "출발 ▼");
+                //       });
+                //     }
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                //     height: screenHeight * 0.03,
+                //     child: Center(
+                //       child: Text(
+                //         _departureOrArrivalLabel.isNotEmpty
+                //             ? _departureOrArrivalLabel
+                //             : "${_selectedDepartureDateTime.year}-${_selectedDepartureDateTime.month.toString().padLeft(2, '0')}-${_selectedDepartureDateTime.day.toString().padLeft(2, '0')} ${_selectedDepartureDateTime.hour.toString().padLeft(2, '0')}:${_selectedDepartureDateTime.minute.toString().padLeft(2, '0')} 출발 ▼",
+                //         style: const TextStyle(fontSize: 12),
+                //       ),
+                //     ),
+                //   ),
+                // ),
 
               ],
             ),
