@@ -6,7 +6,7 @@ class SearchRepository {
   factory SearchRepository() => instance;
   SearchRepository._internal();
 
-  Future<List<String>> getNaverBlogSearch({required String query}) async {
+  Future<List<Map<String, dynamic>>> getNaverBlogSearch({required String query}) async {
     const String clientId = "3EeHFkVmzBB3hDOxYBcw";
     const String clientSecret = "tqvJ7JF_90";
 
@@ -22,7 +22,20 @@ class SearchRepository {
         final data = jsonDecode(_response.body);
         List<dynamic> items = data['items'];
         print(items);
-        List<String> result = items.map((item) => item['title'] as String).toList();
+
+        // Create a list of maps containing all fields for each item
+        List<Map<String, dynamic>> result = items.map((item) => {
+          'title': item['title'],
+          'link': item['link'],
+          'category': item['category'],
+          'description': item['description'],
+          'telephone': item['telephone'],
+          'address': item['address'],
+          'roadAddress': item['roadAddress'],
+          'mapx': item['mapx'],
+          'mapy': item['mapy'],
+        }).toList();
+
         print(result);
         return result;
       } else {

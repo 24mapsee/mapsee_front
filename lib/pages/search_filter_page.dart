@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapsee/pages/place_info_page.dart';
 import 'package:mapsee/services/search/searchFilterBloc.dart';
 import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
@@ -9,7 +10,6 @@ class SearchFilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final TextEditingController searchTextController = TextEditingController();
 
     String removeHtmlTags(String input) {
@@ -39,77 +39,104 @@ class SearchFilterPage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 0),
                       child: TextFormField(
                         controller: searchTextController,
-                          onChanged: (value) => context
-                              .read<SearchFilterBloc>()
-                              .add(SearchFilterTimerEvent(query: value)),
-                          decoration: InputDecoration(
-                            fillColor: Theme.of(context).colorScheme.background,
-                            filled: true,
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
+                        onChanged: (value) => context
+                            .read<SearchFilterBloc>()
+                            .add(SearchFilterTimerEvent(query: value)),
+                        decoration: InputDecoration(
+                          fillColor: Theme.of(context).colorScheme.background,
+                          filled: true,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                          hintText: "장소, 버스, 지하철, 주소 등을 입력하세요.",
+                          hintStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Image.asset(
+                              'assets/images/png/cancel.png',
+                              width: 20,
+                              color: Theme.of(context).colorScheme.outline,
                             ),
-                            hintText: "장소, 버스, 지하철, 주소 등을 입력하세요.",
-                            hintStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.outline),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Image.asset(
-                                'assets/images/png/cancel.png',
-                                width: 20,
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                              onPressed: () {
-                                searchTextController.clear();
-                              },
-                            ),
-                          )),
+                            onPressed: () {
+                              searchTextController.clear();
+                            },
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   if (state is SearchFilterSearchingState ||
                       state is SearchFilterSearchedState) ...[
                     Expanded(
                       child: ListView.builder(
-                          itemCount: state.filterings!.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 20, bottom: 4, left: 12, right: 12),
-                              child: InkWell(
-                                onTap: () {
-                                  print(state.filterings![index]);
-                                },
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "${index + 1}",
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13),
+                        itemCount: state.filterings!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20, bottom: 4, left: 12, right: 12),
+                            child: InkWell(
+                              onTap: () {
+                                final selectedItem = state.filterings![index];
+                                final data = selectedItem[0]['data'];
+
+                                final title =
+                                    removeHtmlTags(data['title'] ?? '');
+                                final link = data['link']?.toString() ?? '';
+                                final category =
+                                    data['category']?.toString() ?? '';
+                                final roadAddress =
+                                    data['roadAddress']?.toString() ?? '';
+                                final address =
+                                    data['address']?.toString() ?? '';
+                                final telephone =
+                                    data['telephone']?.toString() ?? '';
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlaceInfoPage(
+                                      title: title,
+                                      category: category,
+                                      roadAddress: roadAddress,
+                                      address: address,
+                                      link: link,
+                                      telephone: telephone,
                                     ),
-                                    const SizedBox(width: 12),
-                                    Flexible(
-                                      child: Text(
-                                        removeHtmlTags(state.filterings![index]
-                                            .map((item) =>
-                                                item.entries.first.key)
-                                            .join(' ')),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.black,
-                                        ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${index + 1}",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Text(
+                                      removeHtmlTags(state.filterings![index]
+                                          .map((item) => item['title'])
+                                          .join(' ')),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        color: Colors.black,
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            );
-                          }),
+                            ),
+                          );
+                        },
+                      ),
                     )
                   ],
                 ],
@@ -119,9 +146,5 @@ class SearchFilterPage extends StatelessWidget {
         },
       ),
     );
-  }
-
-  bool _isSame(Map<String, int> strings) {
-    return strings.entries.first.value == 1;
   }
 }

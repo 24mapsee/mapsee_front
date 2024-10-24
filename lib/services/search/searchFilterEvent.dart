@@ -16,3 +16,8 @@ class SearchFilterTimerEvent extends SearchFilterEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class SearchFilterClearEvent extends SearchFilterEvent {
+  @override
+  List<Object?> get props => [];
+}
