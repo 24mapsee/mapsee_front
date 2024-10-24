@@ -4,6 +4,8 @@ import 'package:mapsee/components/my_textfield.dart';
 import 'package:mapsee/components/my_time_modal.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
 
+import 'route_detail_test_page.dart';
+
 class SearchResultPage extends StatefulWidget {
   const SearchResultPage({super.key});
 
@@ -86,7 +88,12 @@ class _SearchResultPageState extends State<SearchResultPage> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(3.0),
-                                child: Image.asset('assets/images/png/cancel.png', width: 15, color: Theme.of(context).colorScheme.background,),
+                                child: Image.asset(
+                                  'assets/images/png/cancel.png',
+                                  width: 15,
+                                  color:
+                                      Theme.of(context).colorScheme.background,
+                                ),
                               )
                             ],
                           ),
@@ -141,11 +148,17 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 Row(
                   children: [
                     _buildTransportOption("전체", screenHeight),
-                    MyVerticalDivider(height: 0.02,),
+                    MyVerticalDivider(
+                      height: 0.02,
+                    ),
                     _buildTransportOption("버스", screenHeight),
-                    MyVerticalDivider(height: 0.02,),
+                    MyVerticalDivider(
+                      height: 0.02,
+                    ),
                     _buildTransportOption("지하철", screenHeight),
-                    MyVerticalDivider(height: 0.02,),
+                    MyVerticalDivider(
+                      height: 0.02,
+                    ),
                     _buildTransportOption("버스 + 지하철", screenHeight),
                   ],
                 ),
@@ -175,7 +188,40 @@ class _SearchResultPageState extends State<SearchResultPage> {
                 //     ),
                 //   ),
                 // ),
-
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: screenHeight * 0.01,
+            ),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                  width: 2,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const RouteDetailTestPage()),
+                        );
+                      },
+                      child: Text("테스트 경로"),
+                    )
+                  ],
+                ),
               ],
             ),
           ),
