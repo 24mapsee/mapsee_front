@@ -19,6 +19,7 @@ class MyTextfield extends StatelessWidget {
         obscureText: obscureText,
         controller: controller,
         decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(8),
             enabledBorder: OutlineInputBorder(
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.outline),
