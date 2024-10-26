@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/components/my_public_trans_button.dart';
-import 'package:mapsee/components/my_textfield.dart';
+import 'package:mapsee/components/my_search_bar_route_place.dart';
 import 'package:mapsee/components/my_time_modal.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
 
@@ -18,6 +18,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
       TextEditingController();
   final TextEditingController _destinationSearchController =
       TextEditingController();
+
+  String _selectedDeparture = '';
+  String _selectedDestination = '';
 
   // DateTime _selectedDepartureDateTime = DateTime.now(); // 선택한 출발 날짜 및 시간
   // DateTime _selectedArrivalDateTime = DateTime.now(); // 선택한 도착 날짜 및 시간
@@ -62,9 +65,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   children: [
                     IconButton(
                       onPressed: exchangeText,
-                      icon: Icon(
-                        Icons.change_circle_outlined,
-                        color: Theme.of(context).colorScheme.background,
+                      icon: const Icon(
+                        Icons.import_export,
+                        color: Colors.white,
                         size: 30,
                       ),
                     ),
@@ -74,46 +77,62 @@ class _SearchResultPageState extends State<SearchResultPage> {
                         children: [
                           Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: screenWidth * 0.65,
-                                  height: screenHeight * 0.05,
-                                  child: MyTextfield(
-                                    hintText: '',
-                                    obscureText: false,
-                                    controller: _departureSearchController,
-                                  ),
+                              Expanded(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: SizedBox(
+                                        height: screenHeight * 0.05,
+                                        child: MySearchBarRoutePlace(
+                                          controller:
+                                              _departureSearchController,
+                                          hintText: "출발지",
+                                          onItemSelected:
+                                              (String selectedItem) {
+                                            setState(() {
+                                              _selectedDeparture = selectedItem;
+                                            });
+                                          },
+                                        ),
+                                      ))),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: Image.asset(
-                                  'assets/images/png/cancel.png',
-                                  width: 15,
-                                  color:
-                                      Theme.of(context).colorScheme.background,
-                                ),
+                                iconSize: 24,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                               )
                             ],
                           ),
                           Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: screenWidth * 0.65,
-                                  height: screenHeight * 0.05,
-                                  child: MyTextfield(
-                                    hintText: '',
-                                    obscureText: false,
-                                    controller: _destinationSearchController,
-                                  ),
+                              Expanded(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: SizedBox(
+                                        height: screenHeight * 0.05,
+                                        child: MySearchBarRoutePlace(
+                                          controller:
+                                              _destinationSearchController,
+                                          hintText: "도착지",
+                                          onItemSelected:
+                                              (String selectedItem) {
+                                            setState(() {
+                                              _selectedDestination =
+                                                  selectedItem;
+                                            });
+                                          },
+                                        ),
+                                      ))),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.more_vert_rounded,
+                                  color: Colors.white,
                                 ),
-                              ),
-                              Icon(
-                                Icons.more_vert_rounded,
-                                color: Theme.of(context).colorScheme.background,
+                                iconSize: 24,
+                                onPressed: () {},
                               )
                             ],
                           ),
