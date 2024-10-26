@@ -4,10 +4,12 @@ class MyDepartureAndArrivalButtons extends StatefulWidget {
   const MyDepartureAndArrivalButtons({super.key});
 
   @override
-  State<MyDepartureAndArrivalButtons> createState() => _MyDepartureAndArrivalButtonsState();
+  State<MyDepartureAndArrivalButtons> createState() =>
+      _MyDepartureAndArrivalButtonsState();
 }
 
-class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButtons> {
+class _MyDepartureAndArrivalButtonsState
+    extends State<MyDepartureAndArrivalButtons> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -34,11 +36,11 @@ class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButt
                     SizedBox(
                       width: 10,
                     ),
-                    Text(
-                      '출발',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
+                    Text('출발',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.secondary,
+                            decoration: TextDecoration.none)),
                   ],
                 ),
               )),
@@ -66,11 +68,11 @@ class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButt
                     SizedBox(
                       width: 10,
                     ),
-                    Text(
-                      '도착',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.background),
-                    ),
+                    Text('도착',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.background,
+                            decoration: TextDecoration.none)),
                   ],
                 ),
               )),
