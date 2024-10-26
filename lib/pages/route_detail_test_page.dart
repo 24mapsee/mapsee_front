@@ -1,18 +1,23 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:http/http.dart' as http;
 
 class RouteDetailTestPage extends StatefulWidget {
-  const RouteDetailTestPage({Key? key}) : super(key: key);
+  final dynamic itinerary; // Pass the itinerary data
+
+  const RouteDetailTestPage({super.key, required this.itinerary});
 
   @override
   State<RouteDetailTestPage> createState() => _RouteDetailTestPageState();
 }
 
 class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
+  NaverMapController? _mapController; // ignore: unused_field
+  // 경로 오버레이용 리스트
   List<NMultipartPathOverlay> pathOverlays = [];
+  // 카메라 바운드 설정을 위한 전체 좌표리스트
+  List<NLatLng> allCoordinates = [];
+  // 로딩 상태 저장
   bool isLoading = true;
 
   @override
@@ -21,6 +26,7 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
     fetchRouteData();
   }
 
+  // 위경도 파싱
   List<NLatLng> parseLineString(String lineString) {
     final List<String> coordinates = lineString.split(" ");
     List<NLatLng> latLngList = [];
@@ -37,69 +43,72 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
     return latLngList;
   }
 
+  // 경로 데이터 가져오기
   Future<void> fetchRouteData() async {
-    const String url =
-        'http://default-test-deployment-21d4e-100106193-2d0c9fdd6415.kr.lb.naverncp.com/map/test-route';
     try {
-      final response = await http.get(Uri.parse(url));
+      List<NMultipartPath> paths = [];
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
+      // 상세 경로 데이터 추출
+      for (var leg in widget.itinerary['legs']) {
+        if (leg.containsKey('passShape')) {
+          String lineString = leg['passShape']['linestring'];
+          List<NLatLng> coordinates = parseLineString(lineString);
 
-        final List<dynamic> itineraries =
-            data['metaData']['plan']['itineraries'];
-        List<NMultipartPathOverlay> overlays = [];
+          allCoordinates.addAll(coordinates);
 
-        // 임시로 3번쨰로 고정
-        if (itineraries.length > 2) {
-          var itinerary = itineraries[2];
-          List<NMultipartPath> paths = [];
-
-          for (var leg in itinerary['legs']) {
-            if (leg.containsKey('passShape')) {
-              String lineString = leg['passShape']['linestring'];
-              List<NLatLng> coordinates = parseLineString(lineString);
-
-              paths.add(
-                NMultipartPath(
-                  coords: coordinates,
-                  color: getLegColor(leg['mode']),
-                ),
-              );
-            }
-          }
-
-          NMultipartPathOverlay multipartPathOverlay = NMultipartPathOverlay(
-            id: 'route',
-            paths: paths,
-            width: 6,
+          paths.add(
+            NMultipartPath(
+              coords: coordinates,
+              color: getLegColor(leg),
+            ),
           );
-
-          overlays.add(multipartPathOverlay);
         }
-
-        setState(() {
-          pathOverlays = overlays;
-          isLoading = false;
-        });
-
-        log('[성공] 경로 데이터 파싱 완료');
-      } else {
-        log('[오류] 상태 코드: ${response.statusCode}');
       }
+
+      NMultipartPathOverlay multipartPathOverlay = NMultipartPathOverlay(
+        id: 'route',
+        paths: paths,
+        width: 6,
+      );
+
+      setState(() {
+        pathOverlays = [multipartPathOverlay];
+        isLoading = false;
+      });
+
+      log('[성공] 경로 데이터 파싱 완료');
     } catch (e) {
       log('[오류] 내용: $e');
     }
   }
 
-  Color getLegColor(String mode) {
+  // 카메라 바운딩 설정
+  NCameraUpdate getCameraBounds(List<NLatLng> coordinates) {
+    final bounds = NLatLngBounds.from(coordinates);
+    return NCameraUpdate.fitBounds(bounds, padding: const EdgeInsets.all(100));
+  }
+
+  // 플러터 사용 컬러로 변환
+  Color hexToColor(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+
+    if (hexColor.length == 6) {
+      hexColor = "FF$hexColor";
+    }
+
+    return Color(int.parse(hexColor, radix: 16));
+  }
+
+  // 경로 모드에 따른 색상 반환
+  Color getLegColor(dynamic leg) {
+    String mode = leg['mode'];
     switch (mode) {
       case 'WALK':
-        return Colors.green;
+        return Colors.grey;
       case 'SUBWAY':
-        return Colors.blue;
+        return hexToColor(leg['routeColor'] ?? '00A5DE');
       case 'BUS':
-        return Colors.orange;
+        return hexToColor(leg['routeColor'] ?? '0068B7');
       default:
         return Colors.grey;
     }
@@ -122,20 +131,18 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
                     consumeSymbolTapEvents: false,
                     logoClickEnable: false,
                   ),
-                  onMapReady: (controller) async {
+                  onMapReady: (controller) {
+                    _mapController = controller;
+
                     for (var overlay in pathOverlays) {
                       controller.addOverlay(overlay);
                     }
+
+                    controller.updateCamera(getCameraBounds(allCoordinates));
                   },
                 ),
               ],
             ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: RouteDetailTestPage(),
-  ));
 }
