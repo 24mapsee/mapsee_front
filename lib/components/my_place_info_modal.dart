@@ -93,7 +93,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                                       fontSize: 30,
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .secondary,
+                                          .onSurface,
                                       decoration: TextDecoration.none),
                                   maxLines: 1,
                                   softWrap: true,
