@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -117,7 +118,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // 내 정보 수정 버튼 동작
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditProfilePage()), // 수정된 부분
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[200], // 연한 회색 배경색
@@ -146,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               ),
             ],
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 10),
           // 탭바
           TabBar(
             controller: _tabController,
@@ -223,12 +227,4 @@ List<Map<String, dynamic>> dummyProfileData2 = [
   {"title": "경주 가볼 곳", "subtitle": "18개의 장소", "locked": true},
 ];
 
-List<Map<String, dynamic>> dummyProfileData3 = [
-
-];
-
-void main() {
-  runApp(MaterialApp(
-    home: ProfilePage(),
-  ));
-}
+List<Map<String, dynamic>> dummyProfileData3 = [];
