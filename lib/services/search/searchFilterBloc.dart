@@ -4,7 +4,6 @@ import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
 import 'package:mapsee/services/search/searchRepository.dart';
 
-
 class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
   final bool isFilter;
   SearchFilterBloc(this.isFilter) : super(SearchFilterInitState()) {
@@ -30,18 +29,18 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
   Future<void> _searching(
       SearchFilterSearchingEvent event, Emitter<SearchFilterState> emit) async {
     List<Map<String, dynamic>> _result =
-    await SearchRepository.instance.getNaverBlogSearch(query: event.query);
+        await SearchRepository.instance.getNaverPlaceSearch(query: event.query);
 
     if (isFilter) {
       List<List<Map<String, dynamic>>> _filteredResults =
-      _filtering(data: _result, query: event.query);
+          _filtering(data: _result, query: event.query);
       emit(SearchFilterSearchedState(
           query: event.query, filterings: _filteredResults));
     } else {
       List<String> _titles =
-      _result.map((item) => item['title'] as String).toList();
+          _result.map((item) => item['title'] as String).toList();
       List<List<String>> _strings =
-      _allMatching(strings: _titles, query: event.query);
+          _allMatching(strings: _titles, query: event.query);
       emit(SearchFilterSearchedState(strings: _strings, query: event.query));
     }
   }
