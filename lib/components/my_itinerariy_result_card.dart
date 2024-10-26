@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/route_detail_test_page.dart';
+import 'package:mapsee/utils/common.dart';
 
 class MyItineraryResultCard extends StatelessWidget {
   final int index;
@@ -14,18 +15,6 @@ class MyItineraryResultCard extends StatelessWidget {
     required this.itinerary,
     required this.onAddItinerary,
   });
-
-  // 초를 시간 분으로 변환
-  String formatTimeSToHM(int totalTimeInSeconds) {
-    int hours = totalTimeInSeconds ~/ 3600;
-    int minutes = (totalTimeInSeconds % 3600) ~/ 60;
-
-    if (hours > 0) {
-      return "$hours시간 $minutes분";
-    } else {
-      return "$minutes분";
-    }
-  }
 
   // Text Span으로 반환
   List<TextSpan> genTimeSToHMTextSpan(int totalTimeInSeconds) {
@@ -86,8 +75,20 @@ class MyItineraryResultCard extends StatelessWidget {
     }
   }
 
+  // 도보가 아닌 마지막 구간을 찾아 endName을 반환하는 함수
+  String findLastNonWalkEndName(List<dynamic> legs) {
+    for (int i = legs.length - 1; i >= 0; i--) {
+      if (legs[i]['mode'] != 'WALK') {
+        return legs[i]['end']['name'] ?? '';
+      }
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
+    String lastNonWalkEndName = findLastNonWalkEndName(itinerary['legs']);
+
     // 카드 전체 터치 감지
     return GestureDetector(
       onTap: () {
@@ -99,7 +100,7 @@ class MyItineraryResultCard extends StatelessWidget {
         );
       },
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        elevation: 0,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -125,21 +126,66 @@ class MyItineraryResultCard extends StatelessWidget {
                   ),
                 ],
               )),
-              // Text(
-              //   '경로 ${index + 1} | ${formatTimeSToHM(itinerary['totalTime'])}',
-              //   style: const TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              // ),
-              const SizedBox(height: 10),
+
+              // 공백 추가
+              const SizedBox(height: 5),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  children: [
+                    Row(
+                      children: itinerary['legs'].map<Widget>((leg) {
+                        double ratio =
+                            leg['sectionTime'] / itinerary['totalTime'];
+                        return Expanded(
+                          flex: (ratio * 100).toInt(),
+                          child: Container(
+                            height: 16,
+                            color: getLegColor(leg),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    Row(
+                      children: itinerary['legs'].map<Widget>((leg) {
+                        double ratio =
+                            leg['sectionTime'] / itinerary['totalTime'];
+
+                        // 비율이 0.1 이하이면 텍스트를 렌더링하지 않음 (겹침)
+                        return Expanded(
+                          flex: (ratio * 100).toInt(),
+                          child: ratio > 0.1
+                              ? Center(
+                                  child: Text(
+                                    '${(leg['sectionTime'] ~/ 60)}분',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 디바이더 추가
+              Divider(
+                height: 20,
+                thickness: 1,
+                indent: 0,
+                endIndent: 0,
+                color: Colors.grey[200],
+              ),
 
               // 경로 요약 생성, walk 모드는 유일할 경우 포함, 그렇지 않으면 제외
               ...itinerary['legs']
                   .where((leg) =>
                       leg['mode'] != 'WALK' || itinerary['legs'].length == 1)
                   .map<Widget>((leg) {
-                String mode = leg['mode'];
                 int sectionTime = leg['sectionTime'];
                 String formattedTime = formatTimeSToHM(sectionTime);
                 String routeName = leg['route'] ?? '';
@@ -151,9 +197,28 @@ class MyItineraryResultCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            '$mode | $routeName | $startName',
-                            style: const TextStyle(fontSize: 14),
+                          Row(
+                            children: [
+                              getIcon(leg),
+                              const SizedBox(width: 10),
+                              RichText(
+                                  text: TextSpan(children: [
+                                TextSpan(
+                                  text: routeName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: getLegColor(leg),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' | $startName',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                )
+                              ])),
+                            ],
                           ),
                           Text(
                             formattedTime,
@@ -166,7 +231,42 @@ class MyItineraryResultCard extends StatelessWidget {
                 );
               }).toList(),
 
-              // Expanded를 사용하여 버튼을 카드 너비에 맞춤
+              if (lastNonWalkEndName.isNotEmpty)
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.flag, color: Colors.grey),
+                          const SizedBox(width: 10),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: '도착지 | ',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: lastNonWalkEndName,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+              // 경로 담기 버튼
               Row(
                 children: [
                   Expanded(

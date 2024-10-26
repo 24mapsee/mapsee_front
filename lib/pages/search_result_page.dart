@@ -248,7 +248,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                         child: CircularProgressIndicator(),
                       )
                     : _itineraries != null && _itineraries!.isNotEmpty
-                        ? ListView.builder(
+                        ? ListView.separated(
                             itemCount: _itineraries!.length,
                             itemBuilder: (context, index) {
                               final itinerary = _itineraries![index];
@@ -257,7 +257,13 @@ class _SearchResultPageState extends State<SearchResultPage> {
                                 itinerary: itinerary,
                                 onAddItinerary: _addItinerary,
                               );
-                            })
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) => Divider(
+                              color: Colors.grey[100],
+                              thickness: 8,
+                            ),
+                          )
                         : const Center(
                             child: Text("검색 결과가 없습니다."),
                           ),

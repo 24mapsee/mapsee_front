@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:mapsee/utils/common.dart';
 
 class RouteDetailTestPage extends StatefulWidget {
   final dynamic itinerary; // Pass the itinerary data
@@ -86,32 +87,6 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
   NCameraUpdate getCameraBounds(List<NLatLng> coordinates) {
     final bounds = NLatLngBounds.from(coordinates);
     return NCameraUpdate.fitBounds(bounds, padding: const EdgeInsets.all(100));
-  }
-
-  // 플러터 사용 컬러로 변환
-  Color hexToColor(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-
-    if (hexColor.length == 6) {
-      hexColor = "FF$hexColor";
-    }
-
-    return Color(int.parse(hexColor, radix: 16));
-  }
-
-  // 경로 모드에 따른 색상 반환
-  Color getLegColor(dynamic leg) {
-    String mode = leg['mode'];
-    switch (mode) {
-      case 'WALK':
-        return Colors.grey;
-      case 'SUBWAY':
-        return hexToColor(leg['routeColor'] ?? '00A5DE');
-      case 'BUS':
-        return hexToColor(leg['routeColor'] ?? '0068B7');
-      default:
-        return Colors.grey;
-    }
   }
 
   @override
