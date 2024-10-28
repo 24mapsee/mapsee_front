@@ -1,7 +1,12 @@
+import 'dart:developer';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:mapsee/components/my_itinerariy_result_card.dart';
 import 'package:mapsee/components/my_public_trans_button.dart';
-import 'package:mapsee/components/my_textfield.dart';
-import 'package:mapsee/components/my_time_modal.dart';
+import 'package:mapsee/components/my_search_bar_route_place.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
 
 class SearchResultPage extends StatefulWidget {
@@ -17,17 +22,68 @@ class _SearchResultPageState extends State<SearchResultPage> {
   final TextEditingController _destinationSearchController =
       TextEditingController();
 
-  // DateTime _selectedDepartureDateTime = DateTime.now(); // 선택한 출발 날짜 및 시간
-  // DateTime _selectedArrivalDateTime = DateTime.now(); // 선택한 도착 날짜 및 시간
-  // String _departureOrArrivalLabel = '';
+  String _selectedDeparture = '';
+  String _selectedDestination = '';
+  List<dynamic>? _itineraries;
+  final List<dynamic> _addedItineraries = [];
+  bool _isLoading = false;
+
+  // 경로 데이터 가져오기
+  Future<void> fetchRouteData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String url = '${dotenv.env["API_BASE_URL"]}/map/test-route';
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      // 데이터 성공
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        log("[성공] 데이터 패치");
+
+        setState(() {
+          _itineraries = data['metaData']['plan']['itineraries'];
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _itineraries = [];
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _itineraries = [];
+        _isLoading = false;
+        log("[오류] 데이터 패치 ${e.toString()}");
+      });
+    }
+  }
+
+  // 장바구니 아이템 삭제
+  void _removeItinerary(int index) {
+    setState(() {
+      _addedItineraries.removeAt(index); // Remove the selected itinerary
+    });
+  }
+
+  // 장바구니에 아이템 추가
+  void _addItinerary(int index, dynamic itinerary) {
+    setState(() {
+      log("경로 추가: ${itinerary['totalTime']}");
+      if (itinerary != null) {
+        _addedItineraries.add(itinerary);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
 
-    void selectTransport() {}
-
+    // 출도착지 Swap
     void exchangeText() {
       setState(() {
         String temp = _departureSearchController.text;
@@ -35,179 +91,294 @@ class _SearchResultPageState extends State<SearchResultPage> {
         _destinationSearchController.text = temp;
       });
     }
-    // String _formatDateTime(DateTime dateTime, String label) {
-    //   return "${_selectedDepartureDateTime.year}-${_selectedDepartureDateTime.month.toString().padLeft(2, '0')}-${_selectedDepartureDateTime.day.toString().padLeft(2, '0')} ${_selectedDepartureDateTime.hour.toString().padLeft(2, '0')}:${_selectedDepartureDateTime.minute.toString().padLeft(2, '0')} $label";
-    // }
+
+    // 출도착지 검증함수
+    void checkAndFetchRouteData() {
+      // 출도착지 모두 있어야 유효성 검사 통과
+      if (_selectedDeparture.isNotEmpty && _selectedDestination.isNotEmpty) {
+        fetchRouteData();
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
         toolbarHeight: 0,
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            height: screenHeight * 0.22,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: exchangeText,
-                      icon: Icon(
-                        Icons.change_circle_outlined,
-                        color: Theme.of(context).colorScheme.background,
-                        size: 30,
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: screenWidth * 0.65,
-                                  height: screenHeight * 0.05,
-                                  child: MyTextfield(
-                                    hintText: '',
-                                    obscureText: false,
-                                    controller: _departureSearchController,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: Image.asset('assets/images/png/cancel.png', width: 15, color: Theme.of(context).colorScheme.background,),
-                              )
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  width: screenWidth * 0.65,
-                                  height: screenHeight * 0.05,
-                                  child: MyTextfield(
-                                    hintText: '',
-                                    obscureText: false,
-                                    controller: _destinationSearchController,
-                                  ),
-                                ),
-                              ),
-                              Icon(
-                                Icons.more_vert_rounded,
-                                color: Theme.of(context).colorScheme.background,
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                height: screenHeight * 0.22,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
-                const SizedBox(height: 10),
-                MyPublicTransButton(
-                  onTap: selectTransport,
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: screenHeight * 0.01,
-            ),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                  width: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: exchangeText,
+                          icon: const Icon(
+                            Icons.import_export,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: SizedBox(
+                                        height: screenHeight * 0.05,
+                                        child: MySearchBarRoutePlace(
+                                          controller:
+                                              _departureSearchController,
+                                          hintText: "출발지",
+                                          onItemSelected:
+                                              (String selectedItem) {
+                                            setState(() {
+                                              _selectedDeparture = selectedItem;
+                                              checkAndFetchRouteData();
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                    ),
+                                    iconSize: 24,
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: SizedBox(
+                                        height: screenHeight * 0.05,
+                                        child: MySearchBarRoutePlace(
+                                          controller:
+                                              _destinationSearchController,
+                                          hintText: "도착지",
+                                          onItemSelected:
+                                              (String selectedItem) {
+                                            setState(() {
+                                              _selectedDestination =
+                                                  selectedItem;
+                                              checkAndFetchRouteData();
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.more_vert_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    iconSize: 24,
+                                    onPressed: () {},
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    MyPublicTransButton(
+                      onTap: () {},
+                    )
+                  ],
                 ),
               ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: screenHeight * 0.01,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildTransportOption("전체", screenHeight),
-                    MyVerticalDivider(height: 0.02,),
-                    _buildTransportOption("버스", screenHeight),
-                    MyVerticalDivider(height: 0.02,),
-                    _buildTransportOption("지하철", screenHeight),
-                    MyVerticalDivider(height: 0.02,),
-                    _buildTransportOption("버스 + 지하철", screenHeight),
+                    Row(
+                      children: [
+                        _buildTransportOption("전체", screenHeight),
+                        const MyVerticalDivider(height: 0.02),
+                        _buildTransportOption("버스", screenHeight),
+                        const MyVerticalDivider(height: 0.02),
+                        _buildTransportOption("지하철", screenHeight),
+                        const MyVerticalDivider(height: 0.02),
+                        _buildTransportOption("버스 + 지하철", screenHeight),
+                      ],
+                    ),
                   ],
                 ),
-                // InkWell(
-                //   onTap: () async {
-                //     Map<String, DateTime>? selectedDateTime = await _dialogBuilder(context);
-                //     if (selectedDateTime != null) {
-                //       setState(() {
-                //         _selectedDepartureDateTime = selectedDateTime['departure']!;
-                //         _selectedArrivalDateTime = selectedDateTime['arrival']!;
-                //         _departureOrArrivalLabel = selectedDateTime['arrival'] == _selectedArrivalDateTime
-                //             ? _formatDateTime(_selectedArrivalDateTime, "도착 ▼")
-                //             : _formatDateTime(_selectedDepartureDateTime, "출발 ▼");
-                //       });
-                //     }
-                //   },
-                //   child: Container(
-                //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                //     height: screenHeight * 0.03,
-                //     child: Center(
-                //       child: Text(
-                //         _departureOrArrivalLabel.isNotEmpty
-                //             ? _departureOrArrivalLabel
-                //             : "${_selectedDepartureDateTime.year}-${_selectedDepartureDateTime.month.toString().padLeft(2, '0')}-${_selectedDepartureDateTime.day.toString().padLeft(2, '0')} ${_selectedDepartureDateTime.hour.toString().padLeft(2, '0')}:${_selectedDepartureDateTime.minute.toString().padLeft(2, '0')} 출발 ▼",
-                //         style: const TextStyle(fontSize: 12),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
-              ],
-            ),
+              ),
+              Expanded(
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _itineraries != null && _itineraries!.isNotEmpty
+                        ? ListView.separated(
+                            itemCount: _itineraries!.length,
+                            itemBuilder: (context, index) {
+                              final itinerary = _itineraries![index];
+                              return MyItineraryResultCard(
+                                index: index,
+                                itinerary: itinerary,
+                                onAddItinerary: _addItinerary,
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) => Divider(
+                              color: Colors.grey[100],
+                              thickness: 8,
+                            ),
+                          )
+                        : const Center(
+                            child: Text("검색 결과가 없습니다."),
+                          ),
+              ),
+            ],
           ),
+          if (_addedItineraries.isNotEmpty)
+            DraggableScrollableSheet(
+              initialChildSize: 0.4,
+              minChildSize: 0.3,
+              maxChildSize: 0.8,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 8,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // 핸들
+                      Container(
+                        width: 40,
+                        height: 5,
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      // 제목
+                      const Text(
+                        "내 장바구니",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      // 하단 여백
+                      const SizedBox(height: 10),
+                      // 장바구니 리스트
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: _addedItineraries.length,
+                          itemBuilder: (context, index) {
+                            final itinerary = _addedItineraries[index];
+                            return Card(
+                              child: ListTile(
+                                title: Text('추가된 경로 ${index + 1}'),
+                                subtitle:
+                                    Text('경로 정보: ${itinerary['totalTime']}'),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    _removeItinerary(index);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              log("경로 저장하기 버튼 클릭");
+                            },
+                            child: const Text(
+                              "경로 저장하기",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );
   }
-}
 
-Widget _buildTransportOption(String label, double screenHeight) {
-  return InkWell(
-    onTap: () {
-      print("$label 클릭");
-    },
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      height: screenHeight * 0.03,
-      child: Center(
-        child: Text(
-          label,
-          style: const TextStyle(fontSize: 12),
+  Widget _buildTransportOption(String label, double screenHeight) {
+    return InkWell(
+      onTap: () {
+        log("$label 클릭");
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        height: screenHeight * 0.03,
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 12),
+          ),
         ),
       ),
-    ),
-  );
-}
-
-Future<Map<String, DateTime>?> _dialogBuilder(BuildContext context) {
-  return showDialog<Map<String, DateTime>>(
-    context: context,
-    builder: (BuildContext context) {
-      return const MyTimeModal();
-    },
-  );
+    );
+  }
 }

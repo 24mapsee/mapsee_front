@@ -19,7 +19,7 @@ class _MyDepartureAndArrivalButtonsState
           onTap: () => {},
           child: Container(
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(
                       color: Theme.of(context).colorScheme.secondary)),
@@ -63,16 +63,18 @@ class _MyDepartureAndArrivalButtonsState
                     Image.asset(
                       'assets/images/png/marker.png',
                       width: 15,
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                     SizedBox(
                       width: 10,
                     ),
-                    Text('도착',
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Theme.of(context).colorScheme.background,
-                            decoration: TextDecoration.none)),
+                    Text(
+                      '도착',
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Theme.of(context).colorScheme.surface,
+                          decoration: TextDecoration.none),
+                    ),
                   ],
                 ),
               )),

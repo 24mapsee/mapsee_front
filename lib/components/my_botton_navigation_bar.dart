@@ -49,13 +49,15 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 3:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => FeedPage()), // FeedPage로 이동
+              MaterialPageRoute(
+                  builder: (context) => FeedPage()), // FeedPage로 이동
             );
             break;
           case 4:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage()), // ProfilePage로 이동
+              MaterialPageRoute(
+                  builder: (context) => ProfilePage()), // ProfilePage로 이동
             );
             break;
         }
