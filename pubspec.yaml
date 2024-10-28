@@ -117,6 +117,23 @@ flutter:
 
     #임시 사진
     - assets/images/place_example.jpeg
+
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: fonts/Pretendard-Regular.otf
+        - asset: fonts/Pretendard-Light.otf
+        - asset: fonts/Pretendard-Medium.otf
+        - asset: fonts/Pretendard-SemiBold.otf
+        - asset: fonts/Pretendard-Bold.otf
+        - asset: fonts/Pretendard-ExtraBold.otf
+        - asset: fonts/Pretendard-Black.otf
+        - asset: fonts/Pretendard-Thin.otf
+        - asset: fonts/Pretendard-ExtraLight.otf
+
+    - family: HSSantokki
+      fonts:
+        - asset: fonts/HSSantokki-Regular.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
