@@ -16,33 +16,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   void logout() {
     //get auth service
-    final _auth = AuthService();
-    _auth.signOut();
+    final auth = AuthService();
+    auth.signOut();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    double screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      bottomNavigationBar: MyBottomNavigationBar(),
+      bottomNavigationBar: const MyBottomNavigationBar(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               child: const Text(
                 'Menu',
@@ -62,14 +53,14 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: Container(
+      body: SizedBox(
         width: screenWidth,
         height: screenHeight,
         child: Stack(
           children: [
             const NaverMapWidget(),
             Positioned(
-              top: screenHeight * 0.05,
+              top: screenHeight * 0.07,
               left: 20,
               right: 20,
               child: Column(
@@ -78,67 +69,56 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Builder(builder: (BuildContext context) {
                         return CircleAvatar(
-                          backgroundColor: Theme
-                              .of(context)
-                              .colorScheme
-                              .secondary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
                           child: IconButton(
-                            icon: Icon(Icons.menu),
+                            icon: const Icon(Icons.menu),
                             onPressed: () {
                               Scaffold.of(context).openDrawer();
                             },
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .background,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                         );
                       }),
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SearchPage(),
+                              builder: (context) => const SearchPage(),
                             ),
                           );
                         },
-                        child: Container(
+                        child: SizedBox(
                           width: screenWidth * 0.75,
                           child: TextField(
                             enabled: false,
                             decoration: InputDecoration(
-                              fillColor: Theme
-                                  .of(context)
-                                  .colorScheme
-                                  .background,
+                              fillColor: Theme.of(context).colorScheme.surface,
                               filled: true,
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(
-                                    color: Colors.transparent),
+                                borderSide:
+                                    const BorderSide(color: Colors.transparent),
                               ),
                               hintText: '검색',
                               hintStyle: TextStyle(
-                                color: Theme
-                                    .of(context)
-                                    .colorScheme
-                                    .outline,
+                                color: Theme.of(context).colorScheme.outline,
                               ),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                       color: Colors.transparent)),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Image.asset(
-                                    'assets/images/png/mic.png', width: 20,
-                                    color: Theme
-                                        .of(context)
-                                        .colorScheme
-                                        .outline,),
+                                    'assets/images/png/mic.png',
+                                    width: 20,
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                  ),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.search),
                                   const SizedBox(width: 10),
@@ -150,11 +130,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  MyCategoryTag(),
+                  const MyCategoryTag(),
                 ],
               ),
             ),
-            Align(
+            const Align(
               alignment: Alignment.bottomCenter,
               child: MyBottomModalSheet(),
             )
