@@ -72,10 +72,9 @@ class _MyDepartureAndArrivalButtonsState
                       '도착',
                       style: TextStyle(
                           fontSize: 15,
-                          color: Theme.of(context).colorScheme.surface),
-                          decoration: TextDecoration.none
+                          color: Theme.of(context).colorScheme.surface,
+                          decoration: TextDecoration.none),
                     ),
-                   )
                   ],
                 ),
               )),
