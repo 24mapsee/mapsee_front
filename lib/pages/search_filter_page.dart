@@ -43,7 +43,7 @@ class SearchFilterPage extends StatelessWidget {
                             .read<SearchFilterBloc>()
                             .add(SearchFilterTimerEvent(query: value)),
                         decoration: InputDecoration(
-                          fillColor: Theme.of(context).colorScheme.background,
+                          fillColor: Theme.of(context).colorScheme.surface,
                           filled: true,
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),

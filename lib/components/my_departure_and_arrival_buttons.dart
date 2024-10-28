@@ -4,10 +4,12 @@ class MyDepartureAndArrivalButtons extends StatefulWidget {
   const MyDepartureAndArrivalButtons({super.key});
 
   @override
-  State<MyDepartureAndArrivalButtons> createState() => _MyDepartureAndArrivalButtonsState();
+  State<MyDepartureAndArrivalButtons> createState() =>
+      _MyDepartureAndArrivalButtonsState();
 }
 
-class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButtons> {
+class _MyDepartureAndArrivalButtonsState
+    extends State<MyDepartureAndArrivalButtons> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -17,7 +19,7 @@ class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButt
           onTap: () => {},
           child: Container(
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(
                       color: Theme.of(context).colorScheme.secondary)),
@@ -61,7 +63,7 @@ class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButt
                     Image.asset(
                       'assets/images/png/marker.png',
                       width: 15,
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                     SizedBox(
                       width: 10,
@@ -69,7 +71,7 @@ class _MyDepartureAndArrivalButtonsState extends State<MyDepartureAndArrivalButt
                     Text(
                       '도착',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.background),
+                          color: Theme.of(context).colorScheme.surface),
                     ),
                   ],
                 ),

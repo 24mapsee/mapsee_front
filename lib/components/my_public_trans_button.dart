@@ -52,7 +52,7 @@ class _MyPublicTransButtonState extends State<MyPublicTransButton> {
         decoration: BoxDecoration(
           color: _selectedTransport == transportType
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.background,
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(30),
         ),
         padding: const EdgeInsets.all(5),
