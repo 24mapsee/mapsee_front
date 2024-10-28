@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapsee/components/my_place_info_modal.dart';
 import 'package:mapsee/components/my_search_bar.dart';
 import 'package:mapsee/components/my_search_result_container.dart';
-import 'package:mapsee/pages/place_info_page.dart';
 import 'package:mapsee/services/search/searchFilterBloc.dart';
 import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
@@ -244,7 +244,7 @@ class _SearchPageState extends State<SearchPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PlaceInfoPage(
+                                builder: (context) => MyPlaceInfoModal(
                                   title: title,
                                   category: category,
                                   roadAddress: roadAddress,

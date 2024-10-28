@@ -36,11 +36,11 @@ class _MyDepartureAndArrivalButtonsState
                     SizedBox(
                       width: 10,
                     ),
-                    Text(
-                      '출발',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
+                    Text('출발',
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.secondary,
+                            decoration: TextDecoration.none)),
                   ],
                 ),
               )),
@@ -71,8 +71,11 @@ class _MyDepartureAndArrivalButtonsState
                     Text(
                       '도착',
                       style: TextStyle(
+                          fontSize: 15,
                           color: Theme.of(context).colorScheme.surface),
+                          decoration: TextDecoration.none
                     ),
+                   )
                   ],
                 ),
               )),
