@@ -46,7 +46,7 @@ Icon getIcon(dynamic leg) {
       return const Icon(Icons.directions_walk, color: Colors.grey);
     case 'SUBWAY':
       return Icon(
-        Icons.subway,
+        Icons.directions_subway,
         color: hexToColor(leg['routeColor'] ?? '00A5DE'),
       );
     case 'BUS':

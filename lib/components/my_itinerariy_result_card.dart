@@ -244,7 +244,7 @@ class MyItineraryResultCard extends StatelessWidget {
                             text: TextSpan(
                               children: [
                                 const TextSpan(
-                                  text: '도착지 | ',
+                                  text: '하차 | ',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.black,
