@@ -51,11 +51,12 @@ class _MyCategoryTagState extends State<MyCategoryTag> {
               },
               child: Container(
                 margin: EdgeInsets.only(right: spacing),
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.background,
+                      : Theme.of(context).colorScheme.surface,
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
@@ -72,7 +73,7 @@ class _MyCategoryTagState extends State<MyCategoryTag> {
                       child: ColorFiltered(
                         colorFilter: ColorFilter.mode(
                           isSelected
-                              ? Theme.of(context).colorScheme.background
+                              ? Theme.of(context).colorScheme.surface
                               : Theme.of(context).colorScheme.secondary,
                           BlendMode.srcIn,
                         ),
@@ -84,7 +85,7 @@ class _MyCategoryTagState extends State<MyCategoryTag> {
                       category['label'],
                       style: TextStyle(
                         color: isSelected
-                            ? Theme.of(context).colorScheme.background
+                            ? Theme.of(context).colorScheme.surface
                             : Theme.of(context).colorScheme.secondary,
                       ),
                     ),

@@ -82,11 +82,12 @@ class _MySearchBarState extends State<MySearchBar> {
         onChanged: widget.onChanged,
         onSubmitted: widget.onSubmitted,
         decoration: InputDecoration(
-          fillColor: Theme.of(context).colorScheme.background,
+          fillColor: Theme.of(context).colorScheme.surface,
           filled: true,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary),
+            borderSide:
+                BorderSide(color: Theme.of(context).colorScheme.secondary),
           ),
           hintText: widget.hintText,
           hintStyle: TextStyle(color: Theme.of(context).colorScheme.outline),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/pages/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -16,44 +17,51 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
-          'assets/images/mapsee_logo.png', // 로고 이미지 경로
-          height: 40, // 로고 크기
+          'assets/images/mapsee_logo.png',
+          height: 40,
         ),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: Column(
         children: [
-          SizedBox(height: 20), // 위쪽 여백
-          // 프로필 이미지 및 정보
+          SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
-                radius: 40, // 프로필 이미지 크기
-                backgroundImage: AssetImage('assets/images/dummy/katt.png'), // 프로필 이미지 경로
+                radius: 40,
+                backgroundColor: Colors.grey[300],
+                child: CircleAvatar(
+                  radius: 38,
+                  backgroundImage: AssetImage(userData['user_image']),
+                ),
               ),
-              SizedBox(width: 20), // 이미지와 텍스트 사이 간격
+              SizedBox(width: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '구슬이',
+                    userData['user_name'],
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('@cherror'),
+                  Text(userData['user_id']),
                 ],
               ),
             ],
           ),
-          SizedBox(height: 20), // 프로필 이미지 아래 여백
-          // 게시물, 팔로워, 팔로잉 정보
+          SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50),
             child: Row(
@@ -62,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 Column(
                   children: [
                     Text(
-                      '56',
+                      userData['archive_cnt'].toString(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -74,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 Column(
                   children: [
                     Text(
-                      '27',
+                      userData['like_cnt'].toString(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -86,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 Column(
                   children: [
                     Text(
-                      '472',
+                      userData['follower_cnt'].toString(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -98,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 Column(
                   children: [
                     Text(
-                      '486',
+                      userData['following_cnt'].toString(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -110,74 +118,64 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               ],
             ),
           ),
-          SizedBox(height: 20), // 정보와 버튼 사이 여백
-          // 정보 수정 및 공유 버튼
+          SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // 내 정보 수정 버튼 동작
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditProfilePage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200], // 연한 회색 배경색
-                  foregroundColor: Colors.black, // 검은색 글씨
+                  backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // 모서리 둥글게
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 6), // 버튼 패딩
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.12,
+                    vertical: 6,
+                  ),
                 ),
                 child: Text('내 정보 수정'),
               ),
-              SizedBox(width: 10), // 버튼 사이 간격
+              SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {
-                  // 내 프로필 공유 버튼 동작
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200], // 연한 회색 배경색
-                  foregroundColor: Colors.black, // 검은색 글씨
+                  backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // 모서리 둥글게
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 6), // 버튼 패딩
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.11,
+                    vertical: 6,
+                  ),
                 ),
                 child: Text('내 프로필 공유'),
               ),
             ],
           ),
-          SizedBox(height: 10,),
-          // 탭바
+          SizedBox(height: 10),
           TabBar(
             controller: _tabController,
             tabs: [
-              Tab(
-                icon: Image.asset(
-                  'assets/images/png/marker.png', // 사용자 아이콘 1
-                  height: 25,
-                ),
-              ),
-              Tab(
-                icon: Image.asset(
-                  'assets/images/png/route.png', // 사용자 아이콘 2
-                  height: 28,
-                ),
-              ),
-              Tab(
-                icon: Image.asset(
-                  'assets/images/png/filled_heart.png', // 사용자 아이콘 3
-                  height: 25,
-                ),
-              ),
+              Tab(icon: Image.asset('assets/images/png/marker.png', height: 24,)),
+              Tab(icon: Image.asset('assets/images/png/route.png', height: 25,)),
+              Tab(icon: Image.asset('assets/images/png/filled_heart.png', height: 22,)),
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildListView(dummyProfileData1), // 첫 번째 탭에 대한 리스트뷰
-                _buildListView(dummyProfileData2), // 두 번째 탭에 대한 리스트뷰
-                _buildListView(dummyProfileData3), // 세 번째 탭에 대한 리스트뷰
+                _buildListView(dummyProfileData1),
+                _buildListView(dummyProfileData2),
+                _buildListView(dummyProfileData3),
               ],
             ),
           ),
@@ -186,49 +184,78 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     );
   }
 
-  // 리스트뷰 빌드 메서드
   Widget _buildListView(List<Map<String, dynamic>> data) {
     if (data.isEmpty) {
       return Center(
         child: Text(
           '아직 데이터가 없습니다!',
-          style: TextStyle(color: Colors.grey, fontSize: 16), // 회색 텍스트 스타일
+          style: TextStyle(color: Colors.grey, fontSize: 16),
         ),
       );
     }
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
+        final archiveName = data[index]['archive_name'] ?? '아카이브 없음';
+        final collaboratorName = data[index]['collaborator_name'];
+
         return ListTile(
           leading: Icon(Icons.favorite, color: Colors.pink),
-          title: Text(data[index]['title']),
-          subtitle: Text(data[index]['subtitle']),
+          title: Text(archiveName),
+          subtitle: collaboratorName != null
+              ? Text(
+            '${collaboratorName} 님과 함께',
+            style: TextStyle(color: Colors.grey[700]),
+          )
+              : null,
           trailing: data[index]['locked'] ? Icon(Icons.lock) : null,
         );
       },
     );
   }
-}
 
-// 더미 데이터들
-List<Map<String, dynamic>> dummyProfileData1 = [
-  {"title": "데이트 코스", "subtitle": "김현진님과 함께", "locked": true},
-  {"title": "고독한 미식가", "subtitle": "910개의 장소", "locked": false},
-  {"title": "동아리 정기 모임 장소", "subtitle": "27개의 장소", "locked": false},
-  {"title": "클라이밍", "subtitle": "45개의 장소", "locked": false},
-];
+// 더미 유저 데이터
+  Map<String, dynamic> userData = {
+    "user_image": "assets/images/dummy/katt.png",
+    "user_name": "구슬이",
+    "user_id": "@cherror",
+    "archive_cnt": 56,
+    "like_cnt": 27,
+    "follower_cnt": 472,
+    "following_cnt": 486
+  };
 
-List<Map<String, dynamic>> dummyProfileData2 = [
-  {"title": "강릉 초당길 맛집 투어", "subtitle": "6개의 장소", "locked": false},
-  {"title": "경주 가볼 곳", "subtitle": "18개의 장소", "locked": true},
-];
+// 더미 아카이브 데이터들
+  List<Map<String, dynamic>> dummyProfileData1 = [
+    {"archive_name": "데이트 코스", "collaborator_name": "김현진", "locked": true},
+    {"archive_name": "고독한 미식가", "collaborator_name": null, "locked": false},
+    {"archive_name": "동아리 정기 모임 장소", "collaborator_name": "민수", "locked": false},
+    {"archive_name": "클라이밍", "collaborator_name": null, "locked": false},
+  ];
 
-List<Map<String, dynamic>> dummyProfileData3 = [
+  List<Map<String, dynamic>> dummyProfileData2 = [
+    {
+      "archive_name": "강릉 초당길 맛집 투어",
+      "archive_collaborator": "6개의 장소",
+      "locked": false
+    },
+    {
+      "archive_name": "경주 가볼 곳",
+      "archive_collaborator": "18개의 장소",
+      "locked": true
+    },
+  ];
 
-];
-
-void main() {
-  runApp(MaterialApp(
-    home: ProfilePage(),
-  ));
+  List<Map<String, dynamic>> dummyProfileData3 = [
+    {
+      "archive_name": "서울 인생샷 스팟",
+      "archive_collaborator": "20개의 장소",
+      "locked": false
+    },
+    {
+      "archive_name": "남산 벚꽃 구경",
+      "archive_collaborator": "8개의 장소",
+      "locked": true
+    },
+  ];
 }
