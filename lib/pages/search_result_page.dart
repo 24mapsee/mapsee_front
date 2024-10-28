@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:mapsee/components/my_itinerariy_result_card.dart';
@@ -33,8 +34,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
       _isLoading = true;
     });
 
-    const String url =
-        'http://default-test-deployment-21d4e-100106193-2d0c9fdd6415.kr.lb.naverncp.com/map/test-route';
+    String url = '${dotenv.env["API_BASE_URL"]}/map/test-route';
     try {
       final response = await http.get(Uri.parse(url));
 
