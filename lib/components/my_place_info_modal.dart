@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/components/my_departure_and_arrival_buttons.dart';
+import 'package:mapsee/components/my_select_modal.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
 
 class MyPlaceInfoModal extends StatefulWidget {
@@ -26,6 +27,18 @@ class MyPlaceInfoModal extends StatefulWidget {
 
 class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
   bool isSaved = false;
+
+  void savePlace() {
+    setState(() {
+      isSaved = !isSaved;
+    });
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MySelectModal();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,9 +141,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                                   children: [
                                     GestureDetector(
                                       onTap: () {
-                                        setState(() {
-                                          isSaved = !isSaved;
-                                        });
+                                        savePlace();
                                       },
                                       child: Image.asset(
                                         isSaved
@@ -356,3 +367,5 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
     );
   }
 }
+
+
