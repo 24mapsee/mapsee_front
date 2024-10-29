@@ -58,9 +58,8 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
-
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -108,7 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 7),
-        
+
               // 휴대전화
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ],
               ),
               const SizedBox(height: 7),
-        
+
               // 회원가입 버튼
               MyButton(
                 text: "회원가입",

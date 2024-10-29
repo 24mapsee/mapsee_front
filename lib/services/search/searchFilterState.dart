@@ -6,7 +6,7 @@ abstract class SearchFilterState extends Equatable {
   final Timer? timer;
   final String query;
   final List<List<String>>? strings;
-  final List<List<Map<String, int>>>? filterings;
+  final List<List<Map<String, dynamic>>>? filterings;
 
   const SearchFilterState({
     this.timer,

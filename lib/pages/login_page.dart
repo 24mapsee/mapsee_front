@@ -13,8 +13,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
-
   // id, pw text controller
   final TextEditingController _emailController = TextEditingController();
 
@@ -30,31 +28,29 @@ class _LoginPageState extends State<LoginPage> {
       await authService.signInWithEmailAndPassword(
           _emailController.text, _pwController.text);
     } catch (e) {
-      showDialog(context: context, builder: (context) => AlertDialog(
-        title: Text(e.toString()),
-      ));
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(e.toString()),
+              ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth= MediaQuery.of(context).size.width;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .background,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
-
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               SizedBox(height: screenHeight * 0.15),
+              SizedBox(height: screenHeight * 0.15),
               Image.asset(
                 'assets/images/mapsee_logo.png',
                 width: 126,
@@ -205,17 +201,17 @@ class _LoginPageState extends State<LoginPage> {
               // 구글, 카카오, 네이버
               MyButton(
                 text: "구글",
-                onTap: ()=>{},
+                onTap: () => {},
               ),
               const SizedBox(height: 7),
               MyButton(
                 text: "카카오",
-                onTap: ()=>{},
+                onTap: () => {},
               ),
               const SizedBox(height: 7),
               MyButton(
                 text: "네이버",
-                onTap: ()=>{},
+                onTap: () => {},
               ),
               const SizedBox(height: 7),
               // 회원가입 이동
@@ -225,10 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     "아직 계정이 없으신가요?",
                     style:
-                    TextStyle(color: Theme
-                        .of(context)
-                        .colorScheme
-                        .outline),
+                        TextStyle(color: Theme.of(context).colorScheme.outline),
                   ),
                   const SizedBox(width: 20),
                   GestureDetector(
@@ -237,10 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .outline)),
+                            color: Theme.of(context).colorScheme.outline)),
                   ),
                 ],
               )

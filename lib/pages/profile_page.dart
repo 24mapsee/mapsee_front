@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mapsee/pages/edit_profile_page.dart';
 import 'post_detail_page.dart';
 import 'place_folder_detail_page.dart';
+import 'package:mapsee/pages/following_follwer_page.dart';
+
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -19,7 +21,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+
+    final double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +39,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       body: Column(
         children: [
           SizedBox(height: 20),
+          
           _buildProfileInfo(screenWidth),
+
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -80,10 +88,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           TabBar(
             controller: _tabController,
             tabs: [
+
               Tab(icon: Image.asset('assets/images/png/feeds.png', height: 23)),
               Tab(icon: Image.asset('assets/images/png/marker.png', height: 24)),
               Tab(icon: Image.asset('assets/images/png/route.png', height: 25)),
               Tab(icon: Image.asset('assets/images/png/filled_heart.png', height: 22)),
+
             ],
           ),
           Expanded(
@@ -163,32 +173,53 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Text('찜'),
                 ],
               ),
-              Column(
-                children: [
-                  Text(
-                    userData['follower_cnt'].toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingFollwerPage(initialTabIndex: 0,),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        userData['follower_cnt'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text('팔로워'),
+                    ],
                   ),
-                  Text('팔로워'),
-                ],
-              ),
-              Column(
-                children: [
-                  Text(
-                    userData['following_cnt'].toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        userData['following_cnt'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text('팔로잉'),
+                    ],
                   ),
-                  Text('팔로잉'),
-                ],
-              ),
+                ),
             ],
           ),
+
         ),
       ],
     );
@@ -296,6 +327,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   }
 
   // 더미 유저 데이터
+
   Map<String, dynamic> userData = {
     "user_image": "assets/images/dummy/katt.png",
     "user_name": "구슬이",
@@ -306,25 +338,39 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     "following_cnt": 486
   };
 
-  // 더미 데이터들
+
+// 더미 아카이브 데이터들
   List<Map<String, dynamic>> dummyProfileData1 = [
-    {
-      "user_image": "assets/images/dummy/katt.png",
-      "user_id": "구슬이",
-      "created_at": "1분 전",
-      "image_url": "assets/images/dummy/dummy1.jpg",
-      "title": "개야무진 부산여행 2일차!!!",
-      "description": "부산 서면역과 전포역 부근 맛집 위주의 찐 내돈내산 리얼후기임!!"
-    },
+    {"archive_name": "데이트 코스", "collaborator_name": "김현진", "locked": true},
+    {"archive_name": "고독한 미식가", "collaborator_name": null, "locked": false},
+    {"archive_name": "동아리 정기 모임 장소", "collaborator_name": "민수", "locked": false},
+    {"archive_name": "클라이밍", "collaborator_name": null, "locked": false},
   ];
 
   List<Map<String, dynamic>> dummyProfileData2 = [
-    {"archive_name": "데이트 코스", "collaborator_name": "김현진"},
-    {"archive_name": "고독한 미식가", "collaborator_name": null},
+    {
+      "archive_name": "강릉 초당길 맛집 투어",
+      "archive_collaborator": "6개의 장소",
+      "locked": false
+    },
+    {
+      "archive_name": "경주 가볼 곳",
+      "archive_collaborator": "18개의 장소",
+      "locked": true
+    },
   ];
 
   List<Map<String, dynamic>> dummyProfileData3 = [
-    {"archive_name": "서울 인생샷 스팟", "collaborator_name": "20개의 장소"},
-    {"archive_name": "남산 벚꽃 구경", "collaborator_name": "8개의 장소"},
+    {
+      "archive_name": "서울 인생샷 스팟",
+      "archive_collaborator": "20개의 장소",
+      "locked": false
+    },
+    {
+      "archive_name": "남산 벚꽃 구경",
+      "archive_collaborator": "8개의 장소",
+      "locked": true
+    },
+
   ];
 }
