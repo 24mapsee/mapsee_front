@@ -4,6 +4,7 @@ import 'package:mapsee/pages/place_info_page.dart';
 import 'package:mapsee/services/search/searchFilterBloc.dart';
 import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
+import 'package:mapsee/utils/common.dart';
 
 class SearchFilterPage extends StatelessWidget {
   const SearchFilterPage({super.key});
@@ -11,11 +12,6 @@ class SearchFilterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController searchTextController = TextEditingController();
-
-    String removeHtmlTags(String input) {
-      final regex = RegExp(r'<[^>]*>');
-      return input.replaceAll(regex, '');
-    }
 
     return BlocProvider(
       create: (_) => SearchFilterBloc(true),
