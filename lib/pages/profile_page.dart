@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/edit_profile_page.dart';
+import 'package:mapsee/pages/following_follwer_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -91,30 +92,51 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     Text('찜'),
                   ],
                 ),
-                Column(
-                  children: [
-                    Text(
-                      userData['follower_cnt'].toString(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingFollwerPage(initialTabIndex: 0,),
                       ),
-                    ),
-                    Text('팔로워'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      userData['following_cnt'].toString(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        userData['follower_cnt'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Text('팔로잉'),
-                  ],
+                      Text('팔로워'),
+                    ],
+                  ),
                 ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        userData['following_cnt'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text('팔로잉'),
+                    ],
+                  ),
+                ),
+
               ],
             ),
           ),

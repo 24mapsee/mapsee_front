@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/components/my_departure_and_arrival_buttons.dart';
+import 'package:mapsee/components/my_select_modal.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
 
 class MyPlaceInfoModal extends StatefulWidget {
@@ -26,6 +27,18 @@ class MyPlaceInfoModal extends StatefulWidget {
 
 class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
   bool isSaved = false;
+
+  void savePlace() {
+    setState(() {
+      isSaved = !isSaved;
+    });
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MySelectModal();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +78,6 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                   ),
                 ),
               ),
-              // Scrollable Content
               Expanded(
                 child: ListView(
                   controller: scrollController,
@@ -73,10 +85,12 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                     Container(
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(
-                                  color:
-                                      Theme.of(context).colorScheme.outline))),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ),
+                      ),
                       width: screenWidth,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -87,39 +101,43 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                             children: [
                               Flexible(
                                 child: Text(
-                                  widget.title,
+                                  widget.title.replaceFirst(' ', '\n'),
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w200,
-                                      fontSize: 30,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                      decoration: TextDecoration.none),
-                                  maxLines: 1,
+                                    fontWeight: FontWeight.w200,
+                                    fontSize: 30,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                  textAlign: TextAlign.center,
                                   softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+
+
                             ],
                           ),
                           SizedBox(width: 8),
-                          Text(widget.category.split('>').last,
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black45,
-                                  decoration: TextDecoration.none),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis),
+                          Text(
+                            widget.category.split('>').last,
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.black45,
+                              decoration: TextDecoration.none,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           SizedBox(height: 20),
                           MyDepartureAndArrivalButtons(),
                           SizedBox(height: 15),
                           Container(
                             decoration: BoxDecoration(
-                                border: Border(
-                                    top: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline))),
+                              border: Border(
+                                top: BorderSide(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                              ),
+                            ),
                             padding: EdgeInsets.only(top: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -127,11 +145,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                                 Column(
                                   children: [
                                     GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isSaved = !isSaved;
-                                        });
-                                      },
+                                      onTap: savePlace,
                                       child: Image.asset(
                                         isSaved
                                             ? 'assets/images/png/filled_heart.png'
@@ -145,12 +159,13 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                                     Text(
                                       '저장하기',
                                       style: TextStyle(
-                                          fontSize: 15,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                          decoration: TextDecoration.none),
-                                    )
+                                        fontSize: 15,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        decoration: TextDecoration.none,
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 MyVerticalDivider(height: 0.05),
@@ -165,11 +180,12 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                                     ),
                                     Text('공유하기',
                                         style: TextStyle(
-                                            fontSize: 15,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                            decoration: TextDecoration.none))
+                                          fontSize: 15,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                          decoration: TextDecoration.none,
+                                        ))
                                   ],
                                 )
                               ],
