@@ -6,6 +6,7 @@ import 'package:mapsee/components/my_search_result_container.dart';
 import 'package:mapsee/services/search/searchFilterBloc.dart';
 import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
+import 'package:mapsee/utils/common.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -42,11 +43,6 @@ class _SearchPageState extends State<SearchPage> {
       });
       _searchController.clear();
     }
-  }
-
-  String removeHtmlTags(String input) {
-    final regex = RegExp(r'<[^>]*>');
-    return input.replaceAll(regex, '');
   }
 
   Widget _buildCategoryItem(String label, String assetPath) {

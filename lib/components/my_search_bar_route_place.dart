@@ -3,11 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mapsee/components/my_textfield.dart';
 import 'package:mapsee/services/search/searchRepository.dart';
+import 'package:mapsee/utils/common.dart';
 
 class MySearchBarRoutePlace extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final Function(String) onItemSelected;
+  final Function(Map<String, dynamic>) onItemSelected;
 
   const MySearchBarRoutePlace(
       {super.key,
@@ -41,7 +42,7 @@ class _MySearchBarRoutePlaceState extends State<MySearchBarRoutePlace> {
     );
     if (result != null) {
       setState(() {
-        _textController.text = result;
+        _textController.text = removeHtmlTags(result["title"]);
       });
     }
   }
@@ -69,7 +70,7 @@ class _MySearchBarRoutePlaceState extends State<MySearchBarRoutePlace> {
 
 // 전체화면 검색 위젯
 class FullScreenSearch extends StatefulWidget {
-  final Function(String) onItemSelected;
+  final Function(Map<String, dynamic>) onItemSelected;
 
   const FullScreenSearch({super.key, required this.onItemSelected});
 
@@ -132,10 +133,6 @@ class _FullScreenSearchState extends State<FullScreenSearch> {
     }
   }
 
-  String removeHtmlTags(String htmlString) {
-    return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,8 +162,8 @@ class _FullScreenSearchState extends State<FullScreenSearch> {
                     title: Text(removeHtmlTags(item['title'])),
                     subtitle: Text(item['roadAddress']),
                     onTap: () {
-                      Navigator.pop(context, removeHtmlTags(item['title']));
-                      widget.onItemSelected(item['title']);
+                      Navigator.pop(context, item);
+                      widget.onItemSelected(item);
                     },
                   );
                 },

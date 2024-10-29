@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // 초를 시간 분으로 변환
 String formatTimeSToHM(int totalTimeInSeconds) {
@@ -55,4 +56,28 @@ Icon getIcon(dynamic leg) {
     default:
       return const Icon(Icons.directions_walk);
   }
+}
+
+// HTML 태그 제거
+String removeHtmlTags(String input) {
+  final regex = RegExp(r'<[^>]*>');
+  return input.replaceAll(regex, '');
+}
+
+// 사용자 UID 가져오기
+Future<String?> getUserId() async {
+  // FirebaseAuth에서 현재 로그인된 사용자 가져오기
+  User? user = FirebaseAuth.instance.currentUser;
+
+  // 사용자가 로그인되어 있으면 UID 반환
+  if (user != null) {
+    return user.uid; // 사용자 UID
+  } else {
+    return null; // 로그인된 사용자가 없으면 null 반환
+  }
+}
+
+//
+double convertToDecimalWGS84(String value) {
+  return int.parse(value) / 10000000;
 }
