@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mapsee/pages/post_page.dart';
+import 'package:mapsee/pages/select_page.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -79,7 +79,7 @@ class _FeedPageState extends State<FeedPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PostPage()),
+            MaterialPageRoute(builder: (context) => SelectPage()),
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
