@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/edit_profile_page.dart';
+import 'post_detail_page.dart';
+import 'place_folder_detail_page.dart';
 import 'package:mapsee/pages/following_follwer_page.dart';
+
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -13,11 +16,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this); // 탭 개수 4개로 설정
   }
 
   @override
   Widget build(BuildContext context) {
+
     final double screenWidth = MediaQuery
         .of(context)
         .size
@@ -35,111 +39,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       body: Column(
         children: [
           SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundColor: Colors.grey[300],
-                child: CircleAvatar(
-                  radius: 38,
-                  backgroundImage: AssetImage(userData['user_image']),
-                ),
-              ),
-              SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userData['user_name'],
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(userData['user_id']),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      userData['archive_cnt'].toString(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('저장소'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      userData['like_cnt'].toString(),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('찜'),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FollowingFollwerPage(initialTabIndex: 0,),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        userData['follower_cnt'].toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text('팔로워'),
-                    ],
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        userData['following_cnt'].toString(),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text('팔로잉'),
-                    ],
-                  ),
-                ),
+          
+          _buildProfileInfo(screenWidth),
 
-              ],
-            ),
-          ),
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -186,18 +88,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           TabBar(
             controller: _tabController,
             tabs: [
-              Tab(icon: Image.asset('assets/images/png/marker.png', height: 24,)),
-              Tab(icon: Image.asset('assets/images/png/route.png', height: 25,)),
-              Tab(icon: Image.asset('assets/images/png/filled_heart.png', height: 22,)),
+
+              Tab(icon: Image.asset('assets/images/png/feeds.png', height: 23)),
+              Tab(icon: Image.asset('assets/images/png/marker.png', height: 24)),
+              Tab(icon: Image.asset('assets/images/png/route.png', height: 25)),
+              Tab(icon: Image.asset('assets/images/png/filled_heart.png', height: 22)),
+
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildListView(dummyProfileData1),
-                _buildListView(dummyProfileData2),
-                _buildListView(dummyProfileData3),
+                _buildPostCardView(dummyProfileData1), // feeds 탭
+                _buildListView(dummyProfileData2), // place 탭
+                _buildToggleListView(dummyProfileData3), // route 탭
+                _buildPostCardView(dummyProfileData1), // filled_heart 탭
               ],
             ),
           ),
@@ -206,37 +112,222 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildListView(List<Map<String, dynamic>> data) {
-    if (data.isEmpty) {
-      return Center(
-        child: Text(
-          '아직 데이터가 없습니다!',
-          style: TextStyle(color: Colors.grey, fontSize: 16),
+  // 프로필 정보 위젯
+  Widget _buildProfileInfo(double screenWidth) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: Colors.grey[300],
+              child: CircleAvatar(
+                radius: 38,
+                backgroundImage: AssetImage(userData['user_image']),
+              ),
+            ),
+            SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userData['user_name'],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(userData['user_id']),
+              ],
+            ),
+          ],
         ),
-      );
-    }
+        SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    userData['archive_cnt'].toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('저장소'),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    userData['like_cnt'].toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('찜'),
+                ],
+              ),
+GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingFollwerPage(initialTabIndex: 0,),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        userData['follower_cnt'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text('팔로워'),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        userData['following_cnt'].toString(),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text('팔로잉'),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+
+        ),
+      ],
+    );
+  }
+
+  // 게시물 카드 형태의 리스트 (feeds와 filled_heart 탭에서 사용)
+  Widget _buildPostCardView(List<Map<String, dynamic>> data) {
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
-        final archiveName = data[index]['archive_name'] ?? '아카이브 없음';
-        final collaboratorName = data[index]['collaborator_name'];
-
-        return ListTile(
-          leading: Icon(Icons.favorite, color: Colors.pink),
-          title: Text(archiveName),
-          subtitle: collaboratorName != null
-              ? Text(
-            '${collaboratorName} 님과 함께',
-            style: TextStyle(color: Colors.grey[700]),
-          )
-              : null,
-          trailing: data[index]['locked'] ? Icon(Icons.lock) : null,
+        final item = data[index];
+        return GestureDetector(
+          onTap: () {
+            // 카드 클릭 시 PostDetailPage로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailPage(
+                  feedData: item, // feedData로 item 전달
+                ),
+              ),
+            );
+          },
+          child: Card(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(item['user_image'] ?? 'assets/images/dummy/katt.png'),
+                  ),
+                  title: Text(item['user_id'] ?? '사용자 이름'),
+                  subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    item['title'] ?? '제목 없음',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    item['description'] ?? '설명 없음',
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 
-// 더미 유저 데이터
+  // 일반 리스트 (place 탭에서 사용)
+  Widget _buildListView(List<Map<String, dynamic>> data) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final item = data[index];
+        return ListTile(
+          leading: Icon(Icons.place, color: Colors.blue),
+          title: Text(item['archive_name'] ?? '장소 없음'),
+          subtitle: Text(item['collaborator_name'] ?? '공동 작업자 없음'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaceFolderDetailPage(
+                  title: item['archive_name'],
+                  placeNames: ['장소1', '장소2', '장소3'], // 임시 장소 목록
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // 토글 가능한 리스트 (route 탭에서 사용)
+  Widget _buildToggleListView(List<Map<String, dynamic>> data) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final item = data[index];
+        return ExpansionTile(
+          title: Text(item['archive_name'] ?? '경로 없음'),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 더미 유저 데이터
+
   Map<String, dynamic> userData = {
     "user_image": "assets/images/dummy/katt.png",
     "user_name": "구슬이",
@@ -246,6 +337,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     "follower_cnt": 472,
     "following_cnt": 486
   };
+
 
 // 더미 아카이브 데이터들
   List<Map<String, dynamic>> dummyProfileData1 = [
@@ -279,5 +371,6 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       "archive_collaborator": "8개의 장소",
       "locked": true
     },
+
   ];
 }
