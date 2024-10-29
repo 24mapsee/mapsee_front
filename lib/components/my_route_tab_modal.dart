@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -81,28 +80,46 @@ class _MyRouteTabModalState extends State<MyRouteTabModal> {
       minChildSize: 0.1,
       maxChildSize: 0.6,
       builder: (BuildContext context, ScrollController scrollController) {
-        return Material(
-          color: Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          child: Container(
-            width: screenWidth,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            padding: const EdgeInsets.all(10.0),
+        return Container(
+          width: screenWidth,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            controller: scrollController,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                const MyGribber(),
                 const SizedBox(height: 8),
-                const Text(
-                  '내 경로',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
+                const MyGribber(),
                 isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : Expanded(child: _buildListView(scrollController)),
+                    : Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10.0),
+                          child: Column(
+                            children: [
+                              const Text(
+                                '내 경로 목록',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildListView(scrollController),
+                            ],
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -122,7 +139,6 @@ class _MyRouteTabModalState extends State<MyRouteTabModal> {
     }
 
     return ListView.builder(
-      controller: scrollController,
       itemCount: routes.length,
       shrinkWrap: true,
       padding: EdgeInsets.zero,
