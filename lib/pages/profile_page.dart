@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'edit_profile_page.dart';
+import 'package:mapsee/pages/edit_profile_page.dart';
+import 'post_detail_page.dart';
+import 'place_folder_detail_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -12,107 +14,27 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this); // 탭 개수 4개로 설정
   }
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Image.asset(
-          'assets/images/mapsee_logo.png', // 로고 이미지 경로
-          height: 40, // 로고 크기
+          'assets/images/mapsee_logo.png',
+          height: 40,
         ),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: Column(
         children: [
-          SizedBox(height: 20), // 위쪽 여백
-          // 프로필 이미지 및 정보
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 40, // 프로필 이미지 크기
-                backgroundImage: AssetImage('assets/images/dummy/katt.png'), // 프로필 이미지 경로
-              ),
-              SizedBox(width: 20), // 이미지와 텍스트 사이 간격
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '구슬이',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text('@cherror'),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 20), // 프로필 이미지 아래 여백
-          // 게시물, 팔로워, 팔로잉 정보
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      '56',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('저장소'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      '27',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('찜'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      '472',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('팔로워'),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      '486',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text('팔로잉'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 20), // 정보와 버튼 사이 여백
-          // 정보 수정 및 공유 버튼
+          SizedBox(height: 20),
+          _buildProfileInfo(screenWidth),
+          SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -120,68 +42,58 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => EditProfilePage()), // 수정된 부분
+                    MaterialPageRoute(builder: (context) => EditProfilePage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200], // 연한 회색 배경색
-                  foregroundColor: Colors.black, // 검은색 글씨
+                  backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // 모서리 둥글게
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 6), // 버튼 패딩
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.12,
+                    vertical: 6,
+                  ),
                 ),
                 child: Text('내 정보 수정'),
               ),
-              SizedBox(width: 10), // 버튼 사이 간격
+              SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {
-                  // 내 프로필 공유 버튼 동작
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200], // 연한 회색 배경색
-                  foregroundColor: Colors.black, // 검은색 글씨
+                  backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // 모서리 둥글게
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 6), // 버튼 패딩
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.11,
+                    vertical: 6,
+                  ),
                 ),
                 child: Text('내 프로필 공유'),
               ),
             ],
           ),
           SizedBox(height: 10),
-          // 탭바
           TabBar(
             controller: _tabController,
             tabs: [
-              Tab(
-                icon: Image.asset(
-                  'assets/images/png/marker.png', // 사용자 아이콘 1
-                  height: 25,
-                ),
-              ),
-              Tab(
-                icon: Image.asset(
-                  'assets/images/png/route.png', // 사용자 아이콘 2
-                  height: 28,
-                ),
-              ),
-              Tab(
-                icon: Image.asset(
-                  'assets/images/png/filled_heart.png', // 사용자 아이콘 3
-                  height: 25,
-                ),
-              ),
+              Tab(icon: Image.asset('assets/images/png/feeds.png', height: 23)),
+              Tab(icon: Image.asset('assets/images/png/marker.png', height: 24)),
+              Tab(icon: Image.asset('assets/images/png/route.png', height: 25)),
+              Tab(icon: Image.asset('assets/images/png/filled_heart.png', height: 22)),
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildListView(dummyProfileData1), // 첫 번째 탭에 대한 리스트뷰
-                _buildListView(dummyProfileData2), // 두 번째 탭에 대한 리스트뷰
-                _buildListView(dummyProfileData3), // 세 번째 탭에 대한 리스트뷰
+                _buildPostCardView(dummyProfileData1), // feeds 탭
+                _buildListView(dummyProfileData2), // place 탭
+                _buildToggleListView(dummyProfileData3), // route 탭
+                _buildPostCardView(dummyProfileData1), // filled_heart 탭
               ],
             ),
           ),
@@ -190,41 +102,229 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     );
   }
 
-  // 리스트뷰 빌드 메서드
-  Widget _buildListView(List<Map<String, dynamic>> data) {
-    if (data.isEmpty) {
-      return Center(
-        child: Text(
-          '아직 데이터가 없습니다!',
-          style: TextStyle(color: Colors.grey, fontSize: 16), // 회색 텍스트 스타일
+  // 프로필 정보 위젯
+  Widget _buildProfileInfo(double screenWidth) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: Colors.grey[300],
+              child: CircleAvatar(
+                radius: 38,
+                backgroundImage: AssetImage(userData['user_image']),
+              ),
+            ),
+            SizedBox(width: 20),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userData['user_name'],
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(userData['user_id']),
+              ],
+            ),
+          ],
         ),
-      );
-    }
+        SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    userData['archive_cnt'].toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('저장소'),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    userData['like_cnt'].toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('찜'),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    userData['follower_cnt'].toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('팔로워'),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    userData['following_cnt'].toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text('팔로잉'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // 게시물 카드 형태의 리스트 (feeds와 filled_heart 탭에서 사용)
+  Widget _buildPostCardView(List<Map<String, dynamic>> data) {
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          leading: Icon(Icons.favorite, color: Colors.pink),
-          title: Text(data[index]['title']),
-          subtitle: Text(data[index]['subtitle']),
-          trailing: data[index]['locked'] ? Icon(Icons.lock) : null,
+        final item = data[index];
+        return GestureDetector(
+          onTap: () {
+            // 카드 클릭 시 PostDetailPage로 이동
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailPage(
+                  feedData: item, // feedData로 item 전달
+                ),
+              ),
+            );
+          },
+          child: Card(
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(item['user_image'] ?? 'assets/images/dummy/katt.png'),
+                  ),
+                  title: Text(item['user_id'] ?? '사용자 이름'),
+                  subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset(item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    item['title'] ?? '제목 없음',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    item['description'] ?? '설명 없음',
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
+
+  // 일반 리스트 (place 탭에서 사용)
+  Widget _buildListView(List<Map<String, dynamic>> data) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final item = data[index];
+        return ListTile(
+          leading: Icon(Icons.place, color: Colors.blue),
+          title: Text(item['archive_name'] ?? '장소 없음'),
+          subtitle: Text(item['collaborator_name'] ?? '공동 작업자 없음'),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaceFolderDetailPage(
+                  title: item['archive_name'],
+                  placeNames: ['장소1', '장소2', '장소3'], // 임시 장소 목록
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // 토글 가능한 리스트 (route 탭에서 사용)
+  Widget _buildToggleListView(List<Map<String, dynamic>> data) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final item = data[index];
+        return ExpansionTile(
+          title: Text(item['archive_name'] ?? '경로 없음'),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 더미 유저 데이터
+  Map<String, dynamic> userData = {
+    "user_image": "assets/images/dummy/katt.png",
+    "user_name": "구슬이",
+    "user_id": "@cherror",
+    "archive_cnt": 56,
+    "like_cnt": 27,
+    "follower_cnt": 472,
+    "following_cnt": 486
+  };
+
+  // 더미 데이터들
+  List<Map<String, dynamic>> dummyProfileData1 = [
+    {
+      "user_image": "assets/images/dummy/katt.png",
+      "user_id": "구슬이",
+      "created_at": "1분 전",
+      "image_url": "assets/images/dummy/dummy1.jpg",
+      "title": "개야무진 부산여행 2일차!!!",
+      "description": "부산 서면역과 전포역 부근 맛집 위주의 찐 내돈내산 리얼후기임!!"
+    },
+  ];
+
+  List<Map<String, dynamic>> dummyProfileData2 = [
+    {"archive_name": "데이트 코스", "collaborator_name": "김현진"},
+    {"archive_name": "고독한 미식가", "collaborator_name": null},
+  ];
+
+  List<Map<String, dynamic>> dummyProfileData3 = [
+    {"archive_name": "서울 인생샷 스팟", "collaborator_name": "20개의 장소"},
+    {"archive_name": "남산 벚꽃 구경", "collaborator_name": "8개의 장소"},
+  ];
 }
-
-// 더미 데이터들
-List<Map<String, dynamic>> dummyProfileData1 = [
-  {"title": "데이트 코스", "subtitle": "김현진님과 함께", "locked": true},
-  {"title": "고독한 미식가", "subtitle": "910개의 장소", "locked": false},
-  {"title": "동아리 정기 모임 장소", "subtitle": "27개의 장소", "locked": false},
-  {"title": "클라이밍", "subtitle": "45개의 장소", "locked": false},
-];
-
-List<Map<String, dynamic>> dummyProfileData2 = [
-  {"title": "강릉 초당길 맛집 투어", "subtitle": "6개의 장소", "locked": false},
-  {"title": "경주 가볼 곳", "subtitle": "18개의 장소", "locked": true},
-];
-
-List<Map<String, dynamic>> dummyProfileData3 = [];
