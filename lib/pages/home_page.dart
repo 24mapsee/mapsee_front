@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mapsee/auth/auth_service.dart';
-import 'package:mapsee/components/my_bottom_modal_sheet.dart';
 import 'package:mapsee/components/my_botton_navigation_bar.dart';
-import 'package:mapsee/components/my_category_tag.dart';
+import 'package:mapsee/components/my_route_tab_modal.dart';
+import 'package:mapsee/components/my_bottom_modal_sheet.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/services/naver_map_widget.dart';
 
@@ -14,10 +13,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void logout() {
-    //get auth service
-    final auth = AuthService();
-    auth.signOut();
+  int _selectedTabIndex = 0;
+
+  // Callback to update selected tab index from BottomNavigationBar
+  void _onTabSelected(int index) {
+    setState(() {
+      _selectedTabIndex = index;
+    });
   }
 
   @override
@@ -26,33 +28,7 @@ class _HomePageState extends State<HomePage> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      bottomNavigationBar: const MyBottomNavigationBar(),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: const Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: () {
-                logout();
-              },
-            ),
-          ],
-        ),
-      ),
+      bottomNavigationBar: MyBottomNavigationBar(onTabSelected: _onTabSelected),
       body: SizedBox(
         width: screenWidth,
         height: screenHeight,
@@ -67,19 +43,21 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Row(
                     children: [
-                      Builder(builder: (BuildContext context) {
-                        return CircleAvatar(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          child: IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            color: Theme.of(context).colorScheme.surface,
-                          ),
-                        );
-                      }),
+                      Builder(
+                        builder: (BuildContext context) {
+                          return CircleAvatar(
+                            backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                            child: IconButton(
+                              icon: const Icon(Icons.menu),
+                              onPressed: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                          );
+                        },
+                      ),
                       const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () {
@@ -95,29 +73,26 @@ class _HomePageState extends State<HomePage> {
                           child: TextField(
                             enabled: false,
                             decoration: InputDecoration(
-                              fillColor: Theme.of(context).colorScheme.surface,
+                              fillColor:
+                              Theme.of(context).colorScheme.surface,
                               filled: true,
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide:
-                                    const BorderSide(color: Colors.transparent),
-                              ),
                               hintText: '검색',
                               hintStyle: TextStyle(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent)),
+                                borderRadius: BorderRadius.circular(30.0),
+                                borderSide: BorderSide.none,
+                              ),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Image.asset(
                                     'assets/images/png/mic.png',
                                     width: 20,
-                                    color:
-                                        Theme.of(context).colorScheme.outline,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outline,
                                   ),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.search),
@@ -130,14 +105,17 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  const MyCategoryTag(),
+
                 ],
               ),
             ),
-            const Align(
+
+            Align(
               alignment: Alignment.bottomCenter,
-              child: MyBottomModalSheet(),
-            )
+              child: _selectedTabIndex == 1
+                  ? const MyRouteTabModal()
+                  : const MyBottomModalSheet(),
+            ),
           ],
         ),
       ),

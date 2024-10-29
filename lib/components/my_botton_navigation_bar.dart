@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mapsee/pages/home_page.dart';
-import 'package:mapsee/pages/search_page.dart';
-import 'package:mapsee/pages/search_result_page.dart';
 import 'package:mapsee/pages/feed_page.dart';
 import 'package:mapsee/pages/profile_page.dart';
+import 'package:mapsee/pages/search_page.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
-  const MyBottomNavigationBar({super.key});
+  final ValueChanged<int> onTabSelected;
+
+  const MyBottomNavigationBar({Key? key, required this.onTabSelected}) : super(key: key);
 
   @override
   _MyBottomNavigationBarState createState() => _MyBottomNavigationBarState();
@@ -23,43 +23,33 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
       unselectedItemColor: Theme.of(context).colorScheme.secondary,
       type: BottomNavigationBarType.fixed,
       onTap: (int idx) {
-        setState(() {
-          _currentIndex = idx;
-        });
+        if (idx == 0 || idx == 1) {
 
-        switch (idx) {
-          case 0:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
-            );
-            break;
-          case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SearchResultPage()),
-            );
-            break;
-          case 2:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SearchPage()),
-            );
-            break;
-          case 3:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => FeedPage()), // FeedPage로 이동
-            );
-            break;
-          case 4:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProfilePage()), // ProfilePage로 이동
-            );
-            break;
+          setState(() {
+            _currentIndex = idx;
+          });
+          widget.onTabSelected(idx);
+        } else {
+          switch (idx) {
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
+              break;
+            case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  FeedPage()),
+              );
+              break;
+            case 4:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  ProfilePage()),
+              );
+              break;
+          }
         }
       },
       items: [

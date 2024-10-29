@@ -30,7 +30,6 @@ class MyBottomModalSheet extends StatelessWidget {
           child: ListView(
             controller: scrollController,
             children: <Widget>[
-              // Gripper
               Center(
                 child: Container(
                   width: 50,
