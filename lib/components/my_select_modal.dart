@@ -9,6 +9,7 @@ class MySelectModal extends StatefulWidget {
 
 class _MySelectModalState extends State<MySelectModal> {
   int? selectedIndex;
+  final TextEditingController _archiveNameController = TextEditingController();
 
   void _confirmSelection() {
     if (selectedIndex != null) {
@@ -18,10 +19,62 @@ class _MySelectModalState extends State<MySelectModal> {
     }
   }
 
+  void _buildNewArchive() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "새 저장소",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  controller: _archiveNameController,
+                  decoration: InputDecoration(
+                    labelText: "저장소 이름",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print("저장소 이름: ${_archiveNameController.text}");
+                      Navigator.pop(context);
+                      _archiveNameController.clear();
+                    },
+                    child: Text("저장"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
@@ -46,9 +99,7 @@ class _MySelectModalState extends State<MySelectModal> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        // 새 저장 목록 만들기
-                      },
+                      onTap: _buildNewArchive,
                       child: Image.asset(
                         'assets/images/png/add.png',
                         width: 25,
@@ -112,7 +163,7 @@ class _MySelectModalState extends State<MySelectModal> {
           selectedTileColor: Colors.blue[100],
           onTap: () {
             setState(() {
-              selectedIndex = index; // 선택된 인덱스 저장
+              selectedIndex = index;
             });
           },
         );
