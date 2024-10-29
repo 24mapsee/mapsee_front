@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
       theme: lightMode,
       home: Scaffold(
         body: const AuthGate(),
-
       ),
     );
   }
