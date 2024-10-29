@@ -1,7 +1,14 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapsee/components/my_gribber.dart';
+import 'package:mapsee/pages/customroute_detail_page.dart';
+import 'package:mapsee/utils/common.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -10,7 +17,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Scaffold(
         body: MyRouteTabModal(),
       ),
@@ -22,11 +29,47 @@ class MyRouteTabModal extends StatefulWidget {
   const MyRouteTabModal({super.key});
 
   @override
-  _MyRouteTabModalState createState() => _MyRouteTabModalState();
+  State<MyRouteTabModal> createState() => _MyRouteTabModalState();
 }
 
 class _MyRouteTabModalState extends State<MyRouteTabModal> {
   int? selectedIndex;
+  List<Map<String, dynamic>> routes = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRoutes();
+  }
+
+  Future<void> _fetchRoutes() async {
+    try {
+      String? userId = await getUserId();
+      final url =
+          '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
+      final response = await http.get(Uri.parse(url));
+      log(response.body);
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        setState(() {
+          routes = List<Map<String, dynamic>>.from(jsonResponse['routes']);
+          isLoading = false;
+        });
+      } else {
+        // Handle error
+        log('Failed to load routes');
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      log('Error fetching routes: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +80,46 @@ class _MyRouteTabModalState extends State<MyRouteTabModal> {
       minChildSize: 0.1,
       maxChildSize: 0.6,
       builder: (BuildContext context, ScrollController scrollController) {
-        return Material(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          child: Container(
-            width: screenWidth,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            padding: const EdgeInsets.all(10.0),
+        return Container(
+          width: screenWidth,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            controller: scrollController,
             child: Column(
               children: <Widget>[
-                MyGribber(),
-                SizedBox(height: 20),
-                Expanded(
-                  child: _buildListView(scrollController),
-                ),
+                const SizedBox(height: 8),
+                const MyGribber(),
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10.0),
+                          child: Column(
+                            children: [
+                              const Text(
+                                '내 경로 목록',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildListView(scrollController),
+                            ],
+                          ),
+                        ),
+                      ),
               ],
             ),
           ),
@@ -62,49 +129,41 @@ class _MyRouteTabModalState extends State<MyRouteTabModal> {
   }
 
   Widget _buildListView(ScrollController scrollController) {
-    if (dummyProfileData1.isEmpty) {
-      return Center(
+    if (routes.isEmpty) {
+      return const Center(
         child: Text(
           '아직 데이터가 없습니다!',
           style: TextStyle(color: Colors.grey, fontSize: 16),
         ),
       );
     }
+
     return ListView.builder(
-      controller: scrollController,
-      itemCount: dummyProfileData1.length,
+      itemCount: routes.length,
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
       itemBuilder: (context, index) {
-        final archiveName =
-            dummyProfileData1[index]['archive_name'] ?? '아카이브 없음';
-        final collaboratorName = dummyProfileData1[index]['collaborator_name'];
+        final title = routes[index]['title'] ?? 'No Title';
+        final description = routes[index]['description'] ?? 'No Description';
 
         return ListTile(
-          leading: Icon(Icons.favorite, color: Colors.pink),
-          title: Text(archiveName),
-          subtitle: collaboratorName != null
-              ? Text(
-            '${collaboratorName} 님과 함께',
-            style: TextStyle(color: Colors.grey[700]),
-          )
-              : null,
-          trailing:
-          dummyProfileData1[index]['locked'] ? Icon(Icons.lock) : null,
-          selected: selectedIndex == index,
-          selectedTileColor: Colors.blue[100],
+          leading: const Icon(Icons.map, color: Colors.blue),
+          title: Text(title),
+          subtitle: Text(description),
           onTap: () {
             setState(() {
               selectedIndex = index;
             });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    CustomRouteDetailPage(customRoute: routes[index]),
+              ),
+            );
           },
         );
       },
     );
   }
 }
-
-List<Map<String, dynamic>> dummyProfileData1 = [
-  {"archive_name": "데이트 코스", "collaborator_name": "김현진", "locked": true},
-  {"archive_name": "고독한 미식가", "collaborator_name": null, "locked": false},
-  {"archive_name": "동아리 정기 모임 장소", "collaborator_name": "민수", "locked": false},
-  {"archive_name": "클라이밍", "collaborator_name": null, "locked": false},
-];
