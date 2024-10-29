@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/components/my_gribber.dart';
 import 'package:mapsee/services/getCurrentAddr.dart';
 
 class MyBottomModalSheet extends StatelessWidget {
@@ -26,75 +27,63 @@ class MyBottomModalSheet extends StatelessWidget {
               ),
             ],
           ),
-          padding: const EdgeInsets.all(5.0),
-          child: ListView(
+          child: SingleChildScrollView(
             controller: scrollController,
-            children: <Widget>[
-              Center(
-                child: Container(
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.outline,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/png/marker.png',
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 30,
+            child: Padding(
+              padding: const EdgeInsets.all(9.0),
+              child: Column(
+                children: <Widget>[
+                  MyGribber(),
+                  SizedBox(height: 20),
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: Theme.of(context).colorScheme.primary),
                       ),
-                      SizedBox(width: 10),
-                      FutureBuilder<List<String>>(
-                        future: getCurrentAddr(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<String>> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            print('Error: ${snapshot.error}');
-                            return Text(
-                              '현재 위치를 찾을 수 없습니다.',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            );
-                          } else if (snapshot.hasData) {
-                            return Text(
-                              "${snapshot.data![0]} ${snapshot.data![1]} ${snapshot.data![2]}",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            );
-                          } else {
-                            return Text(
-                              '현재 위치를 찾을 수 없습니다.',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            );
-                          }
-                        },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/png/marker.png',
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 30,
+                          ),
+                          SizedBox(width: 10),
+                          FutureBuilder<List<String>>(
+                            future: getCurrentAddr(),
+                            builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                print('Error: ${snapshot.error}');
+                                return Text(
+                                  '현재 위치를 찾을 수 없습니다.',
+                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                );
+                              } else if (snapshot.hasData) {
+                                return Text(
+                                  "${snapshot.data![0]} ${snapshot.data![1]} ${snapshot.data![2]}",
+                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                );
+                              } else {
+                                return Text(
+                                  '현재 위치를 찾을 수 없습니다.',
+                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },

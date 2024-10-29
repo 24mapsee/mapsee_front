@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/components/my_departure_and_arrival_buttons.dart';
+import 'package:mapsee/components/my_gribber.dart';
 import 'package:mapsee/components/my_select_modal.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
 
@@ -65,19 +66,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
           padding: const EdgeInsets.all(5.0),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Center(
-                  child: Container(
-                    width: 50,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outline,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
+              MyGribber(),
               Expanded(
                 child: ListView(
                   controller: scrollController,

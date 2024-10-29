@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/components/my_gribber.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,19 +48,7 @@ class _MyRouteTabModalState extends State<MyRouteTabModal> {
             padding: const EdgeInsets.all(10.0),
             child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Center(
-                    child: Container(
-                      width: 50,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.outline,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
+                MyGribber(),
                 SizedBox(height: 20),
                 Expanded(
                   child: _buildListView(scrollController),
