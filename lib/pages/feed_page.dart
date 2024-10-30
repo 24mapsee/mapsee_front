@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mapsee/pages/post_page.dart';
+import 'package:mapsee/pages/post_detail_page.dart';
+import 'package:mapsee/pages/select_page.dart';
+import 'package:mapsee/pages/external_profile_page.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -79,7 +81,7 @@ class _FeedPageState extends State<FeedPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PostPage()),
+            MaterialPageRoute(builder: (context) => SelectPage()),
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -111,81 +113,113 @@ class FeedItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          ListTile(
-            leading: Container(
-              padding: EdgeInsets.all(2), // 테두리 두께 조절
-              decoration: BoxDecoration(
-                color: Colors.white, // 배경색
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline, // 테두리 색상
-                  width: 1.2, // 테두리 두께
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PostDetailPage(feedData: feedData),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ListTile(
+              leading: GestureDetector(
+                onTap: () {
+                  // 프로필 이미지 클릭 시 외부 프로필 페이지로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage(feedData['user_image'] ?? 'assets/images/dummy/katt.png'),
+                    radius: 20,
+                  ),
                 ),
               ),
-              child: CircleAvatar(
-                backgroundImage: AssetImage(feedData['user_image'] ?? 'assets/images/dummy/katt.png'),
-                radius: 20, // CircleAvatar 크기
+              title: GestureDetector(
+                onTap: () {
+                  // 유저 이름 클릭 시 외부 프로필 페이지로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                    ),
+                  );
+                },
+                child: Text(
+                  feedData['user_id'].toString(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              subtitle: Text(
+                feedData['created_at'] ?? '시간 정보 없음',
+                style: TextStyle(
+                  color: Color(0xFF606060),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
-            title: Text(
-              feedData['user_id'].toString(),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  feedData['image_url'],
+                  fit: BoxFit.cover,
+                  height: 200,
+                  width: double.infinity,
+                ),
               ),
             ),
-            subtitle: Text(
-              feedData['created_at'] ?? '시간 정보 없음',
-              style: TextStyle(
-                color: Color(0xFF606060),
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 1.2,
-              ),
-            ), // 게시 시간
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                feedData['image_url'],
-                fit: BoxFit.cover,
-                height: 200,
-                width: double.infinity,
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+              child: Text(
+                feedData['title'] ?? '제목 없음',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.6,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
-            child: Text(
-              feedData['title'] ?? '제목 없음', // 제목
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.6,
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
+              child: Text(
+                feedData['description'] ?? '설명 없음',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.5,
+                  color: Color(0xff9d9d9d),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
-            child: Text(
-              feedData['description'] ?? '설명 없음', // 설명
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.5,
-                color: Color(0xff9d9d9d),
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
