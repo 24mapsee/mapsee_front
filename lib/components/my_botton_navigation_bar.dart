@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mapsee/pages/search_filter_page.dart';
 import 'package:mapsee/pages/home_page.dart';
 import 'package:mapsee/pages/search_page.dart';
-import 'package:mapsee/pages/search_page2.dart';
 import 'package:mapsee/pages/search_result_page.dart';
 import 'package:mapsee/pages/feed_page.dart';
 import 'package:mapsee/pages/profile_page.dart';
@@ -51,13 +49,15 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 3:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => FeedPage()), // FeedPage로 이동
+              MaterialPageRoute(
+                  builder: (context) => FeedPage()), // FeedPage로 이동
             );
             break;
           case 4:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage()), // ProfilePage로 이동
+              MaterialPageRoute(
+                  builder: (context) => ProfilePage()), // ProfilePage로 이동
             );
             break;
         }

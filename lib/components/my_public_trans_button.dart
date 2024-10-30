@@ -24,8 +24,6 @@ class _MyPublicTransButtonState extends State<MyPublicTransButton> {
             _buildTransportButton(context, 'assets/images/png/car.png', 'car'),
             _buildTransportButton(
                 context, 'assets/images/png/walk.png', 'walk'),
-            _buildTransportButton(
-                context, 'assets/images/png/bicycle.png', 'bicycle'),
           ],
         ),
       ),
@@ -47,12 +45,12 @@ class _MyPublicTransButtonState extends State<MyPublicTransButton> {
         }
       },
       child: Container(
-        width: screenWidth * 0.2,
+        width: screenWidth * 0.25,
         height: screenHeight * 0.04,
         decoration: BoxDecoration(
           color: _selectedTransport == transportType
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.background,
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(30),
         ),
         padding: const EdgeInsets.all(5),

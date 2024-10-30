@@ -74,19 +74,88 @@ flutter:
   assets:
     - assets/images/mapsee_logo.png
     - assets/.env
+    # 아이콘
+    - assets/images/png/mic.png
+    - assets/images/png/home.png
+    - assets/images/png/star.png
+    - assets/images/png/user.png
+    - assets/images/png/flag.png
+    - assets/images/png/add.png
+    - assets/images/png/minus.png
+    - assets/images/png/marker.png
+    - assets/images/png/cancel.png
+    - assets/images/png/world.png
+    - assets/images/png/griber.png
+    - assets/images/png/call.png
+    - assets/images/png/clock.png
+    - assets/images/png/filled_heart.png
+    - assets/images/png/unfilled_heart.png
+    - assets/images/png/share.png
+    - assets/images/png/startpoint.png
+
+    #    장소
+    - assets/images/png/coffee.png
+    - assets/images/png/bank.png
+    - assets/images/png/mart.png
+    - assets/images/png/parking.png
+    - assets/images/png/school.png
+    - assets/images/png/medical.png
+    - assets/images/png/company.png
+    - assets/images/png/cutlery.png
+    - assets/images/png/gas.png
+    - assets/images/png/convenience.png
+
+    #대중교통
+    - assets/images/png/bus.png
+    - assets/images/png/car.png
+    - assets/images/png/walk.png
+    - assets/images/png/bike.png
 
     #더미데이터
     - assets/images/dummy/
     - assets/images/png/
 
+    #임시 사진
+    - assets/images/place_example.jpeg
+
   fonts:
     - family: Pretendard
       fonts:
         - asset: fonts/Pretendard-Regular.otf
-        - asset: fonts/Pretendard-Light.ttf
-        - asset: fonts/Pretendard-Medium.ttf
+        - asset: fonts/Pretendard-Light.otf
+        - asset: fonts/Pretendard-Medium.otf
         - asset: fonts/Pretendard-SemiBold.otf
         - asset: fonts/Pretendard-Bold.otf
-        - asset: fonts/Pretendard-ExtraBold.ttf
+        - asset: fonts/Pretendard-ExtraBold.otf
+        - asset: fonts/Pretendard-Black.otf
         - asset: fonts/Pretendard-Thin.otf
-        - asset: fonts/Pretendard-ExtraLight.ttf
+        - asset: fonts/Pretendard-ExtraLight.otf
+
+    - family: HSSantokki
+      fonts:
+        - asset: fonts/HSSantokki-Regular.ttf
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package

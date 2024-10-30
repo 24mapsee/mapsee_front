@@ -69,7 +69,7 @@ class GenderSelection extends StatelessWidget {
                 ),
                 selected: selectedGender == option['value'],
                 selectedColor: Theme.of(context).colorScheme.primary,
-                backgroundColor: Theme.of(context).colorScheme.background,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4)),
                 onSelected: (selected) {

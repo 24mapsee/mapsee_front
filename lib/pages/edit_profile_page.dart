@@ -15,7 +15,7 @@ class EditProfilePage extends StatelessWidget {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView( // 추가된 부분
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

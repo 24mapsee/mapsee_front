@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mapsee/pages/edit_profile_page.dart';
 import 'post_detail_page.dart';
 import 'place_folder_detail_page.dart';
+import 'external_profile_page.dart';
+import 'package:mapsee/pages/following_follwer_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -14,7 +16,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this); // 탭 개수 4개로 설정
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -90,10 +92,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildPostCardView(dummyProfileData1), // feeds 탭
-                _buildListView(dummyProfileData2), // place 탭
-                _buildToggleListView(dummyProfileData3), // route 탭
-                _buildPostCardView(dummyProfileData1), // filled_heart 탭
+                _buildPostCardView(Feeds), // feeds 탭
+                _buildListView(Place_Folders), // place 탭
+                _buildToggleListView(Custom_Routes), // route 탭
+                _buildPostCardView(Saved_Feeds), // filled_heart 탭
               ],
             ),
           ),
@@ -163,29 +165,49 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Text('찜'),
                 ],
               ),
-              Column(
-                children: [
-                  Text(
-                    userData['follower_cnt'].toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FollowingFollwerPage(initialTabIndex: 0),
                     ),
-                  ),
-                  Text('팔로워'),
-                ],
+                  );
+                },
+                child: Column(
+                  children: [
+                    Text(
+                      userData['follower_cnt'].toString(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text('팔로워'),
+                  ],
+                ),
               ),
-              Column(
-                children: [
-                  Text(
-                    userData['following_cnt'].toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
                     ),
-                  ),
-                  Text('팔로잉'),
-                ],
+                  );
+                },
+                child: Column(
+                  children: [
+                    Text(
+                      userData['following_cnt'].toString(),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text('팔로잉'),
+                  ],
+                ),
               ),
             ],
           ),
@@ -202,12 +224,18 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         final item = data[index];
         return GestureDetector(
           onTap: () {
-            // 카드 클릭 시 PostDetailPage로 이동
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => PostDetailPage(
-                  feedData: item, // feedData로 item 전달
+                  feedData: {
+                    "user_id": item['user_id'] ?? '사용자 이름',
+                    "title": item['title'] ?? '제목 없음',
+                    "description": item['description'] ?? '설명 없음',
+                    "created_at": item['created_at'] ?? '시간 정보 없음',
+                    "image_url": item['image_url'] ?? 'assets/images/dummy/dummy1.jpg',
+                    "user_image": item['user_image'] ?? 'assets/images/dummy/default_user.png'
+                  },
                 ),
               ),
             );
@@ -218,10 +246,30 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(item['user_image'] ?? 'assets/images/dummy/katt.png'),
+                  leading: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExternalProfilePage(userId: item['user_id'] ?? 'unknown'),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage(item['user_image'] ?? 'assets/images/dummy/default_user.png'),
+                    ),
                   ),
-                  title: Text(item['user_id'] ?? '사용자 이름'),
+                  title: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExternalProfilePage(userId: item['user_id'] ?? 'unknown'),
+                        ),
+                      );
+                    },
+                    child: Text(item['user_id'] ?? '사용자 이름'),
+                  ),
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
                 Padding(
@@ -306,25 +354,28 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     "following_cnt": 486
   };
 
-  // 더미 데이터들
-  List<Map<String, dynamic>> dummyProfileData1 = [
-    {
-      "user_image": "assets/images/dummy/katt.png",
-      "user_id": "구슬이",
-      "created_at": "1분 전",
-      "image_url": "assets/images/dummy/dummy1.jpg",
-      "title": "개야무진 부산여행 2일차!!!",
-      "description": "부산 서면역과 전포역 부근 맛집 위주의 찐 내돈내산 리얼후기임!!"
-    },
+  // 더미 아카이브 데이터들
+  List<Map<String, dynamic>> Feeds = [
+    {"user_id": "구슬이", "title": "데이트 코스", "description": "멋진 데이트 장소", "created_at": "1일 전", "image_url": "assets/images/dummy/dummy1.jpg", "user_image": "assets/images/dummy/katt.png"},
+    {"user_id": "철수", "title": "고독한 미식가", "description": "미식가의 여정", "created_at": "2일 전", "image_url": "assets/images/dummy/dummy2.jpg"},
+    {"user_id": "민수", "title": "동아리 정기 모임 장소", "description": "모임 장소", "created_at": "3일 전"},
+    {"user_id": "영희", "title": "클라이밍", "description": "즐거운 클라이밍", "created_at": "5일 전"},
   ];
 
-  List<Map<String, dynamic>> dummyProfileData2 = [
-    {"archive_name": "데이트 코스", "collaborator_name": "김현진"},
-    {"archive_name": "고독한 미식가", "collaborator_name": null},
+  List<Map<String, dynamic>> Place_Folders = [
+    {"archive_name": "강릉 초당길 맛집 투어", "archive_collaborator": "6개의 장소", "locked": false},
+    {"archive_name": "경주 가볼 곳", "archive_collaborator": "18개의 장소", "locked": true},
   ];
 
-  List<Map<String, dynamic>> dummyProfileData3 = [
-    {"archive_name": "서울 인생샷 스팟", "collaborator_name": "20개의 장소"},
-    {"archive_name": "남산 벚꽃 구경", "collaborator_name": "8개의 장소"},
+  List<Map<String, dynamic>> Custom_Routes = [
+    {"archive_name": "서울 인생샷 스팟", "archive_collaborator": "20개의 장소", "locked": false},
+    {"archive_name": "남산 벚꽃 구경", "archive_collaborator": "8개의 장소", "locked": true},
+  ];
+
+  List<Map<String, dynamic>> Saved_Feeds = [
+    {"user_id": "지현", "title": "Saved Post 1", "description": "멋진 풍경", "created_at": "1주 전", "image_url": "assets/images/dummy/dummy3.jpg"},
+    {"user_id": "지수", "title": "Saved Post 2", "description": "멋진 사진", "created_at": "2주 전"},
+    {"user_id": "상민", "title": "Saved Post 3", "description": "즐거운 여행", "created_at": "3주 전"},
+    {"user_id": "하늘", "title": "Saved Post 4", "description": "아름다운 풍경", "created_at": "4주 전"},
   ];
 }

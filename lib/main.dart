@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
@@ -13,7 +14,7 @@ void main() async {
   await NaverMapSdk.instance.initialize(
       clientId: 'nt3da0f7bp',
       onAuthFailed: (ex) {
-        print("********* 네이버맵 인증오류 : $ex *********");
+        log("********* 네이버맵 인증오류 : $ex *********");
       });
   runApp(const MyApp());
 }
@@ -26,8 +27,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: lightMode,
-      home: Scaffold(
-        body: const AuthGate(),
+      home: const Scaffold(
+        body: AuthGate(),
       ),
     );
   }

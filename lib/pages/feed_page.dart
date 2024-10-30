@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
 import 'package:mapsee/pages/select_page.dart';
+import 'package:mapsee/pages/external_profile_page.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -127,27 +128,49 @@ class FeedItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ListTile(
-              leading: Container(
-                padding: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline,
-                    width: 1.2,
+              leading: GestureDetector(
+                onTap: () {
+                  // 프로필 이미지 클릭 시 외부 프로필 페이지로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                      width: 1.2,
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage(feedData['user_image'] ?? 'assets/images/dummy/katt.png'),
+                    radius: 20,
                   ),
                 ),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(feedData['user_image'] ?? 'assets/images/dummy/katt.png'),
-                  radius: 20,
-                ),
               ),
-              title: Text(
-                feedData['user_id'].toString(),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+              title: GestureDetector(
+                onTap: () {
+                  // 유저 이름 클릭 시 외부 프로필 페이지로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                    ),
+                  );
+                },
+                child: Text(
+                  feedData['user_id'].toString(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
               subtitle: Text(
