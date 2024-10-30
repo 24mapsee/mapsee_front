@@ -8,6 +8,7 @@ import 'package:mapsee/components/my_itinerariy_result_card.dart';
 import 'package:mapsee/components/my_public_trans_button.dart';
 import 'package:mapsee/components/my_search_bar_route_place.dart';
 import 'package:mapsee/components/my_vertical_divider.dart';
+import 'package:mapsee/utils/common.dart';
 
 class SearchResultPage extends StatefulWidget {
   const SearchResultPage({super.key});
@@ -16,16 +17,38 @@ class SearchResultPage extends StatefulWidget {
   State<SearchResultPage> createState() => _SearchResultPageState();
 }
 
+class RouteItem {
+  final double startX;
+  final double startY;
+  final double endX;
+  final double endY;
+  final String startName;
+  final String endName;
+  final Map<String, dynamic> data;
+
+  RouteItem({
+    required this.startX,
+    required this.startY,
+    required this.endX,
+    required this.endY,
+    required this.startName,
+    required this.endName,
+    required this.data,
+  });
+}
+
 class _SearchResultPageState extends State<SearchResultPage> {
   final TextEditingController _departureSearchController =
       TextEditingController();
   final TextEditingController _destinationSearchController =
       TextEditingController();
 
-  String _selectedDeparture = '';
-  String _selectedDestination = '';
+  Map<String, dynamic> _selectedDeparture = {};
+  Map<String, dynamic> _selectedDestination = {};
   List<dynamic>? _itineraries;
-  final List<dynamic> _addedItineraries = [];
+  Map<String, dynamic>? _requestParameters;
+
+  final List<RouteItem> _addedItineraries = [];
   bool _isLoading = false;
 
   // 경로 데이터 가져오기
@@ -34,10 +57,24 @@ class _SearchResultPageState extends State<SearchResultPage> {
       _isLoading = true;
     });
 
-    String url = '${dotenv.env["API_BASE_URL"]}/map/test-route';
-    try {
-      final response = await http.get(Uri.parse(url));
+    Map<String, dynamic> json_data = {
+      'startX': convertToDecimalWGS84(_selectedDeparture['mapx']),
+      'startY': convertToDecimalWGS84(_selectedDeparture['mapy']),
+      'endX': convertToDecimalWGS84(_selectedDestination['mapx']),
+      'endY': convertToDecimalWGS84(_selectedDestination['mapy']),
+      'count': 10,
+      'lang': 0,
+      'format': 'json'
+    };
 
+    String url = '${dotenv.env["API_BASE_URL"]}/map/route/publictransport';
+    try {
+      log("[시작] 경로 가져오기");
+      log(jsonEncode(json_data));
+      final response = await http.post(Uri.parse(url),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(json_data));
+      // log(response.body.toString());
       // 데이터 성공
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
@@ -45,17 +82,20 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
         setState(() {
           _itineraries = data['metaData']['plan']['itineraries'];
+          _requestParameters = data['metaData']['requestParameters'];
           _isLoading = false;
         });
       } else {
         setState(() {
           _itineraries = [];
+          _requestParameters = {};
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
         _itineraries = [];
+        _requestParameters = {};
         _isLoading = false;
         log("[오류] 데이터 패치 ${e.toString()}");
       });
@@ -71,26 +111,145 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
   // 장바구니에 아이템 추가
   void _addItinerary(int index, dynamic itinerary) {
+    var route = RouteItem(
+      startX: double.parse(_requestParameters!['startX'].toString()),
+      startY: double.parse(_requestParameters!['startY'].toString()),
+      endX: double.parse(_requestParameters!['endX'].toString()),
+      endY: double.parse(_requestParameters!['endY'].toString()),
+      startName: removeHtmlTags(_selectedDeparture["title"]),
+      endName: removeHtmlTags(_selectedDestination["title"]),
+      data: itinerary, // dynamic 타입의 리스트
+    );
+
     setState(() {
       log("경로 추가: ${itinerary['totalTime']}");
       if (itinerary != null) {
-        _addedItineraries.add(itinerary);
+        _addedItineraries.add(route);
       }
     });
+  }
+
+  // 데이터 저장 함수
+  Future<void> saveData(String title, String description) async {
+    String? userId = await getUserId();
+    // 서버에 POST 요청 보낼 데이터 구성
+    List<Map<String, dynamic>> stringifiedItineraries =
+        _addedItineraries.map((item) {
+      return {
+        "startX": item.startX,
+        "startY": item.startY,
+        "endX": item.endX,
+        "endY": item.endY,
+        "startName": item.startName,
+        "endName": item.endName,
+        "data": jsonEncode(item.data)
+      };
+    }).toList();
+
+    Map<String, dynamic> postData = {
+      "title": title,
+      "description": description,
+      "user_id": userId,
+      "routes": stringifiedItineraries
+    };
+
+    String url = '${dotenv.env["API_BASE_URL"]}/route/create';
+    log('[시작] 경로 저장 ${url}');
+    // log(jsonEncode(postData).toString());
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(postData),
+      );
+
+      if (response.statusCode == 201) {
+        log("[성공] 데이터 저장 완료");
+        setState(() {
+          _addedItineraries.clear(); // 장바구니 비우기
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("경로가 성공적으로 저장되었습니다.")),
+          );
+        }
+      } else {
+        log("[오류] 서버 응답 실패: ${response.statusCode} ${response.body}");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("저장 중 오류가 발생했습니다.")),
+          );
+        }
+      }
+    } catch (e) {
+      log("[오류] 서버 요청 실패: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("저장 중 오류가 발생했습니다.")),
+        );
+      }
+    }
+  }
+
+  // 제목과 설명을 입력받는 AlertDialog 띄우기
+  Future<void> showSaveDialog() async {
+    final TextEditingController titleController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('경로 저장하기'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: '제목',
+                ),
+              ),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  labelText: '내용',
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('저장'),
+              onPressed: () {
+                final String title = titleController.text;
+                final String description = descriptionController.text;
+
+                if (title.isNotEmpty && description.isNotEmpty) {
+                  saveData(title, description);
+                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("제목과 내용을 입력해주세요.")),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-
-    // 출도착지 Swap
-    void exchangeText() {
-      setState(() {
-        String temp = _departureSearchController.text;
-        _departureSearchController.text = _destinationSearchController.text;
-        _destinationSearchController.text = temp;
-      });
-    }
 
     // 출도착지 검증함수
     void checkAndFetchRouteData() {
@@ -98,6 +257,20 @@ class _SearchResultPageState extends State<SearchResultPage> {
       if (_selectedDeparture.isNotEmpty && _selectedDestination.isNotEmpty) {
         fetchRouteData();
       }
+    }
+
+    // 출도착지 Swap
+    void exchangeText() {
+      setState(() {
+        String temp = _departureSearchController.text;
+        _departureSearchController.text = _destinationSearchController.text;
+        _destinationSearchController.text = temp;
+
+        Map<String, dynamic> temp2 = _selectedDeparture;
+        _selectedDeparture = _selectedDestination;
+        _selectedDestination = temp2;
+      });
+      checkAndFetchRouteData();
     }
 
     return Scaffold(
@@ -144,8 +317,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
                                           controller:
                                               _departureSearchController,
                                           hintText: "출발지",
-                                          onItemSelected:
-                                              (String selectedItem) {
+                                          onItemSelected: (Map<String, dynamic>
+                                              selectedItem) {
                                             setState(() {
                                               _selectedDeparture = selectedItem;
                                               checkAndFetchRouteData();
@@ -178,8 +351,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
                                           controller:
                                               _destinationSearchController,
                                           hintText: "도착지",
-                                          onItemSelected:
-                                              (String selectedItem) {
+                                          onItemSelected: (Map<String, dynamic>
+                                              selectedItem) {
                                             setState(() {
                                               _selectedDestination =
                                                   selectedItem;
@@ -325,8 +498,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
                             return Card(
                               child: ListTile(
                                 title: Text('추가된 경로 ${index + 1}'),
-                                subtitle:
-                                    Text('경로 정보: ${itinerary['totalTime']}'),
+                                subtitle: Text(
+                                    '경로 정보: ${itinerary.startName} -> ${itinerary.endName}'),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () {
@@ -346,6 +519,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
                           child: OutlinedButton(
                             onPressed: () {
                               log("경로 저장하기 버튼 클릭");
+                              _addedItineraries.isNotEmpty
+                                  ? showSaveDialog()
+                                  : null;
                             },
                             child: const Text(
                               "경로 저장하기",

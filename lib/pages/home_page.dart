@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/auth/auth_service.dart';
-import 'package:mapsee/components/my_bottom_modal_sheet.dart';
 import 'package:mapsee/components/my_botton_navigation_bar.dart';
-import 'package:mapsee/components/my_category_tag.dart';
+import 'package:mapsee/components/my_route_tab_modal.dart';
+import 'package:mapsee/components/my_bottom_modal_sheet.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/services/naver_map_widget.dart';
 
@@ -20,39 +20,62 @@ class _HomePageState extends State<HomePage> {
     auth.signOut();
   }
 
+  int _selectedTabIndex = 0;
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _selectedTabIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      bottomNavigationBar: const MyBottomNavigationBar(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.secondary,
               ),
-              child: const Text(
-                'Menu',
+              child: Text(
+                '메뉴',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.background,
                   fontSize: 24,
                 ),
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
+              leading: Icon(Icons.home),
+              title: Text('Home'),
               onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            const Spacer(),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {
+                Navigator.pop(context);
                 logout();
               },
             ),
           ],
         ),
       ),
+      bottomNavigationBar: MyBottomNavigationBar(onTabSelected: _onTabSelected),
       body: SizedBox(
         width: screenWidth,
         height: screenHeight,
@@ -67,19 +90,21 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Row(
                     children: [
-                      Builder(builder: (BuildContext context) {
-                        return CircleAvatar(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          child: IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            color: Theme.of(context).colorScheme.surface,
-                          ),
-                        );
-                      }),
+                      Builder(
+                        builder: (BuildContext context) {
+                          return CircleAvatar(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.secondary,
+                            child: IconButton(
+                              icon: const Icon(Icons.menu),
+                              onPressed: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                          );
+                        },
+                      ),
                       const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () {
@@ -97,19 +122,14 @@ class _HomePageState extends State<HomePage> {
                             decoration: InputDecoration(
                               fillColor: Theme.of(context).colorScheme.surface,
                               filled: true,
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide:
-                                    const BorderSide(color: Colors.transparent),
-                              ),
                               hintText: '검색',
                               hintStyle: TextStyle(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: const BorderSide(
-                                      color: Colors.transparent)),
+                                borderRadius: BorderRadius.circular(30.0),
+                                borderSide: BorderSide.none,
+                              ),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -130,14 +150,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  const MyCategoryTag(),
                 ],
               ),
             ),
-            const Align(
+            Align(
               alignment: Alignment.bottomCenter,
-              child: MyBottomModalSheet(),
-            )
+              child: _selectedTabIndex == 1
+                  ? const MyRouteTabModal()
+                  : const MyBottomModalSheet(),
+            ),
           ],
         ),
       ),
