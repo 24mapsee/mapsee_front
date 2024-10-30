@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:mapsee/components/my_gribber.dart';
 import 'package:mapsee/components/my_route_card.dart';
+import 'package:mapsee/components/my_route_detail_card.dart';
 import 'package:mapsee/utils/common.dart';
 
 class RouteDetailTestPage extends StatefulWidget {
@@ -160,10 +161,13 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
                                             ),
                                           ),
                                           const SizedBox(height: 16),
-                                          MyRouteCard(
-                                            index: 0,
+                                          // MyRouteCard(
+                                          //   index: 0,
+                                          //   itinerary: widget.itinerary,
+                                          // ),
+                                          MyRouteDetailCard(
                                             itinerary: widget.itinerary,
-                                          )
+                                          ),
                                         ],
                                       ),
                                     ),
