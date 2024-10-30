@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
 import 'package:mapsee/utils/common.dart';
 
-
-
 class NaverMapMarker extends StatefulWidget {
   final String title;
   final String mapx;
@@ -69,13 +67,18 @@ class _NaverMapMarkerState extends State<NaverMapMarker> {
 
             final marker = NMarker(
                 id: 'test',
-                position: NLatLng(latitude, longitude));
+                position: NLatLng(latitude, longitude),
+              // icon: await NOverlayImage.fromAssetImage('assets/images/png/marker.png'),
+            );
             controller.addOverlayAll({
               marker,
             });
+            marker.setIcon(NOverlayImage.fromAssetImage('assets/images/png/marker.png'),);
+            marker.setIconTintColor(Theme.of(context).colorScheme.primary);
+            marker.setSize(Size(30,30));
 
             final show_marker =
-                NInfoWindow.onMarker(id: marker.info.id, text: widget.title);
+                NInfoWindow.onMarker(id: marker.info.id, text: widget.title, );
             marker.openInfoWindow(show_marker);
           },
         ),
