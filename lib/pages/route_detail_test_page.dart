@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
+import 'package:mapsee/components/my_gribber.dart';
+import 'package:mapsee/components/my_route_card.dart';
 import 'package:mapsee/utils/common.dart';
 
 class RouteDetailTestPage extends StatefulWidget {
@@ -20,11 +22,23 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
   List<NLatLng> allCoordinates = [];
   // 로딩 상태 저장
   bool isLoading = true;
+  // Scroll controller for DraggableScrollableSheet
+  ScrollController _scrollController = ScrollController();
+  double initialZoom = 14.0; // Starting zoom level
 
   @override
   void initState() {
     super.initState();
     fetchRouteData();
+    // Listen to scroll controller changes to trigger zoom changes
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.removeListener(_onScroll);
+    // _scrollController.dispose();
   }
 
   // 위경도 파싱
@@ -89,6 +103,22 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
     return NCameraUpdate.fitBounds(bounds, padding: const EdgeInsets.all(100));
   }
 
+  // Scroll listener for zoom effect
+  void _onScroll() {
+    if (_mapController != null) {
+      // Calculate the zoom level based on scroll position
+      double zoomLevel =
+          initialZoom - (_scrollController.position.pixels / 100);
+      zoomLevel =
+          zoomLevel.clamp(10.0, 18.0); // Set zoom range between 10 and 18
+
+      // Update camera with new zoom level
+
+      _mapController!
+          .updateCamera(NCameraUpdate.scrollAndZoomTo(zoom: zoomLevel));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +146,64 @@ class _RouteDetailTestPageState extends State<RouteDetailTestPage> {
                     controller.updateCamera(getCameraBounds(allCoordinates));
                   },
                 ),
+                DraggableScrollableSheet(
+                  initialChildSize: 0.2,
+                  minChildSize: 0.1,
+                  maxChildSize: 0.6,
+                  builder: (BuildContext context,
+                      ScrollController scrollController) {
+                    _scrollController =
+                        scrollController; // Assign the scroll controller
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 8,
+                          ),
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          children: <Widget>[
+                            const SizedBox(height: 8),
+                            const MyGribber(),
+                            isLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0, vertical: 10.0),
+                                      child: Column(
+                                        children: [
+                                          const Text(
+                                            '경로 상세보기',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          MyRouteCard(
+                                            index: 0,
+                                            itinerary: widget.itinerary,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                )
               ],
             ),
     );
