@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/pages/feed_post_step1_page.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
-import 'package:mapsee/pages/select_page.dart';
 import 'package:mapsee/pages/external_profile_page.dart';
 
 class FeedPage extends StatefulWidget {
@@ -9,7 +9,7 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  String selectedFilter = '팔로워만 보기';
+  String ectedFilter = '팔로워만 보기';
   final List<String> filterOptions = ['팔로워만 보기', '전체 보기', '현재 지역 보기'];
   List<dynamic> feedData = [];
   bool isLoading = true;
@@ -50,7 +50,7 @@ class _FeedPageState extends State<FeedPage> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: selectedFilter,
+                  value: ectedFilter,
                   icon: Icon(Icons.arrow_drop_down, color: Colors.grey),
                   items: filterOptions.map((String option) {
                     return DropdownMenuItem<String>(
@@ -68,7 +68,7 @@ class _FeedPageState extends State<FeedPage> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedFilter = newValue!;
+                      ectedFilter = newValue!;
                     });
                   },
                 ),
@@ -81,7 +81,7 @@ class _FeedPageState extends State<FeedPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SelectPage()),
+            MaterialPageRoute(builder: (context) => FeedPostStep1Page()),
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -90,19 +90,19 @@ class _FeedPageState extends State<FeedPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.separated(
-        itemCount: feedData.length,
-        itemBuilder: (context, index) {
-          return FeedItem(feedData: feedData[index]);
-        },
-        separatorBuilder: (context, index) {
-          return Divider(
-            color: Color(0xFFE5E5E5),
-            thickness: 0.7,
-            indent: 15,
-            endIndent: 15,
-          );
-        },
-      ),
+              itemCount: feedData.length,
+              itemBuilder: (context, index) {
+                return FeedItem(feedData: feedData[index]);
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  color: Color(0xFFE5E5E5),
+                  thickness: 0.7,
+                  indent: 15,
+                  endIndent: 15,
+                );
+              },
+            ),
     );
   }
 }
@@ -134,7 +134,8 @@ class FeedItem extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                      builder: (context) =>
+                          ExternalProfilePage(userId: feedData['user_id']),
                     ),
                   );
                 },
@@ -149,7 +150,8 @@ class FeedItem extends StatelessWidget {
                     ),
                   ),
                   child: CircleAvatar(
-                    backgroundImage: AssetImage(feedData['user_image'] ?? 'assets/images/dummy/katt.png'),
+                    backgroundImage: AssetImage(feedData['user_image'] ??
+                        'assets/images/dummy/katt.png'),
                     radius: 20,
                   ),
                 ),
@@ -160,7 +162,8 @@ class FeedItem extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                      builder: (context) =>
+                          ExternalProfilePage(userId: feedData['user_id']),
                     ),
                   );
                 },
@@ -207,7 +210,8 @@ class FeedItem extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
+              padding: const EdgeInsets.only(
+                  left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
               child: Text(
                 feedData['description'] ?? '설명 없음',
                 style: TextStyle(
