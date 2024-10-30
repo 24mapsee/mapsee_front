@@ -210,75 +210,85 @@ class MyRouteDetailCard extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       // leg["mode"]에 따른 리스트 뷰 생성
-                      if (leg['mode'] == 'WALK' && leg['steps'] != null)
-                        Column(
-                          children: leg['steps'].map<Widget>((step) {
-                            String distance = step['distance'].toString();
-                            String streetName =
-                                step['streetName'] ?? 'Unnamed Street';
-                            String description =
-                                step['description'] ?? 'No Description';
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 8),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                      width: 6,
-                                      height: 44,
-                                      color: getLegColor(leg)),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      '$description $streetName',
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: Colors.grey[800]),
-                                      // overflow: TextOverflow.ellipsis,
+                      ExpansionTile(
+                          title: Text(
+                            leg['mode'] == 'WALK'
+                                ? '세부 경로 (도보)'
+                                : '세부 경로 (대중교통)',
+                            style: TextStyle(
+                                fontSize: 16, color: getLegColor(leg)),
+                          ),
+                          children: [
+                            if (leg['mode'] == 'WALK' && leg['steps'] != null)
+                              Column(
+                                children: leg['steps'].map<Widget>((step) {
+                                  String distance = step['distance'].toString();
+                                  String streetName =
+                                      step['streetName'] ?? 'Unnamed Street';
+                                  String description =
+                                      step['description'] ?? 'No Description';
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                            width: 6,
+                                            height: 44,
+                                            color: getLegColor(leg)),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            '$description $streetName',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey[800]),
+                                            // overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${distance}m',
+                                          style: const TextStyle(
+                                              fontSize: 14, color: Colors.grey),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '${distance}m',
-                                    style: const TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                  ),
-                                ],
+                                  );
+                                }).toList(),
+                              )
+                            else if (leg['mode'] != 'WALK' &&
+                                leg['passStopList'] != null &&
+                                leg['passStopList']['stationList'] != null)
+                              Column(
+                                children: leg['passStopList']['stationList']
+                                    .map<Widget>((station) {
+                                  String stationName = station['stationName'] ??
+                                      'Unnamed Station';
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 8),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                            width: 6,
+                                            height: 44,
+                                            color: getLegColor(leg)),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          stationName,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: Colors.grey[800]),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
                               ),
-                            );
-                          }).toList(),
-                        )
-                      else if (leg['mode'] != 'WALK' &&
-                          leg['passStopList'] != null &&
-                          leg['passStopList']['stationList'] != null)
-                        Column(
-                          children: leg['passStopList']['stationList']
-                              .map<Widget>((station) {
-                            String stationName =
-                                station['stationName'] ?? 'Unnamed Station';
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 8),
-                              child: Row(
-                                children: [
-                                  Container(
-                                      width: 6,
-                                      height: 44,
-                                      color: getLegColor(leg)),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    stationName,
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.grey[800]),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
-
+                          ]),
                       const SizedBox(height: 8),
                     ],
                   ),
