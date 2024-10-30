@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapsee/components/my_place_info_modal.dart';
 import 'package:mapsee/components/my_search_bar.dart';
 import 'package:mapsee/components/my_search_result_container.dart';
+import 'package:mapsee/pages/place_info_background.dart';
 import 'package:mapsee/services/search/searchFilterBloc.dart';
 import 'package:mapsee/services/search/searchFilterEvent.dart';
 import 'package:mapsee/services/search/searchFilterState.dart';
@@ -229,6 +229,8 @@ class _SearchPageState extends State<SearchPage> {
                         return ListTile(
                           title: Text(title),
                           onTap: () {
+                            print("따엉ㄻ");
+                            print(data);
                             final link = data['link']?.toString() ?? '';
                             final category = data['category']?.toString() ?? '';
                             final roadAddress =
@@ -236,17 +238,21 @@ class _SearchPageState extends State<SearchPage> {
                             final address = data['address']?.toString() ?? '';
                             final telephone =
                                 data['telephone']?.toString() ?? '';
+                            final mapx = data['mapx']?.toString() ?? '';
+                            final mapy = data['mapy']?.toString() ?? '';
 
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MyPlaceInfoModal(
+                                builder: (context) => PlaceInfoBackground(
                                   title: title,
                                   category: category,
                                   roadAddress: roadAddress,
                                   address: address,
                                   link: link,
                                   telephone: telephone,
+                                  mapx: mapx,
+                                  mapy: mapy,
                                 ),
                               ),
                             );
