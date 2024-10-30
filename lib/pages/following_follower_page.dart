@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class FollowingFollwerPage extends StatefulWidget {
+class FollowingFollowerPage extends StatefulWidget {
   final int initialTabIndex;
 
-  const FollowingFollwerPage({super.key, required this.initialTabIndex});
+  const FollowingFollowerPage({super.key, required this.initialTabIndex});
 
   @override
-  State<FollowingFollwerPage> createState() => _FollowingFollwerPageState();
+  State<FollowingFollowerPage> createState() => _FollowingFollowerPageState();
 }
 
-class _FollowingFollwerPageState extends State<FollowingFollwerPage>
+class _FollowingFollowerPageState extends State<FollowingFollowerPage>
 
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
