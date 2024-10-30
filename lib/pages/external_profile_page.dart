@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
 import 'package:mapsee/pages/place_folder_detail_page.dart';
-import 'package:mapsee/pages/following_follwer_page.dart';
+import 'package:mapsee/pages/following_follower_page.dart';
 
 class ExternalProfilePage extends StatefulWidget {
   final String userId;
@@ -15,6 +15,7 @@ class ExternalProfilePage extends StatefulWidget {
 class _ExternalProfilePageState extends State<ExternalProfilePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isFollowing = false; // 팔로우 상태 관리 변수
+  int? expandedIndex; // Route 탭의 현재 열려 있는 인덱스 추적
 
   @override
   void initState() {
@@ -135,7 +136,7 @@ class _ExternalProfilePageState extends State<ExternalProfilePage> with SingleTi
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FollowingFollwerPage(initialTabIndex: 0),
+                  builder: (context) => FollowingFollowerPage(initialTabIndex: 0),
                 ),
               );
             },
@@ -157,7 +158,7 @@ class _ExternalProfilePageState extends State<ExternalProfilePage> with SingleTi
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
+                  builder: (context) => FollowingFollowerPage(initialTabIndex: 1),
                 ),
               );
             },
@@ -291,14 +292,29 @@ class _ExternalProfilePageState extends State<ExternalProfilePage> with SingleTi
       itemCount: data.length,
       itemBuilder: (context, index) {
         final item = data[index];
-        return ExpansionTile(
-          title: Text(item['archive_name'] ?? '경로 없음'),
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+        return AnimatedSize(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: ExpansionTile(
+            key: UniqueKey(),
+            title: Text(item['archive_name'] ?? '경로 없음'),
+            trailing: RotationTransition(
+              turns: AlwaysStoppedAnimation(expandedIndex == index ? 0.5 : 0.0),
+              child: Icon(Icons.expand_more),
             ),
-          ],
+            initiallyExpanded: expandedIndex == index,
+            onExpansionChanged: (isExpanded) {
+              setState(() {
+                expandedIndex = isExpanded ? index : null;
+              });
+            },
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+              ),
+            ],
+          ),
         );
       },
     );

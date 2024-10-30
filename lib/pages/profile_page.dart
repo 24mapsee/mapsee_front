@@ -3,7 +3,7 @@ import 'package:mapsee/pages/edit_profile_page.dart';
 import 'post_detail_page.dart';
 import 'place_folder_detail_page.dart';
 import 'external_profile_page.dart';
-import 'package:mapsee/pages/following_follwer_page.dart';
+import 'package:mapsee/pages/following_follower_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -170,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FollowingFollwerPage(initialTabIndex: 0),
+                      builder: (context) => FollowingFollowerPage(initialTabIndex: 0),
                     ),
                   );
                 },
@@ -192,7 +192,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FollowingFollwerPage(initialTabIndex: 1),
+                      builder: (context) => FollowingFollowerPage(initialTabIndex: 1),
                     ),
                   );
                 },
