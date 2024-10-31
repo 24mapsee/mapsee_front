@@ -23,9 +23,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   List<Map<String, dynamic>> Place_Folders = [];
   List<Map<String, dynamic>> Custom_Routes = [];
   List<Map<String, dynamic>> Saved_Feeds = [];
-  
   bool isLoading = true;
-  
+  int? expandedIndex; // 현재 열려 있는 인덱스 추적
+
+
   @override
   void initState() {
     super.initState();
@@ -376,6 +377,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         final item = data[index];
         return ExpansionTile(
           title: Text(item['title'] ?? '경로 없음'),
+          initiallyExpanded: expandedIndex == index,
+            onExpansionChanged: (isExpanded) {
+              setState(() {
+                expandedIndex = isExpanded ? index : null;
+              });
+            },
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -386,40 +393,4 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       },
     );
   }
-
-  // // 더미 유저 데이터
-  // Map<String, dynamic> userData = {
-  //   "user_image": "assets/images/dummy/katt.png",
-  //   "user_name": "구슬이",
-  //   "user_id": "@cherror",
-  //   "archive_cnt": 56,
-  //   "like_cnt": 27,
-  //   "follower_cnt": 472,
-  //   "following_cnt": 486
-  // };
-
-  // // 더미 아카이브 데이터들
-  // List<Map<String, dynamic>> Feeds = [
-  //   {"user_id": "구슬이", "title": "데이트 코스", "description": "멋진 데이트 장소", "created_at": "1일 전", "image_url": "assets/images/dummy/dummy1.jpg", "user_image": "assets/images/dummy/katt.png"},
-  //   {"user_id": "철수", "title": "고독한 미식가", "description": "미식가의 여정", "created_at": "2일 전", "image_url": "assets/images/dummy/dummy2.jpg"},
-  //   {"user_id": "민수", "title": "동아리 정기 모임 장소", "description": "모임 장소", "created_at": "3일 전"},
-  //   {"user_id": "영희", "title": "클라이밍", "description": "즐거운 클라이밍", "created_at": "5일 전"},
-  // ];
-
-  // List<Map<String, dynamic>> Place_Folders = [
-  //   {"archive_name": "강릉 초당길 맛집 투어", "archive_collaborator": "6개의 장소", "locked": false},
-  //   {"archive_name": "경주 가볼 곳", "archive_collaborator": "18개의 장소", "locked": true},
-  // ];
-
-  // List<Map<String, dynamic>> Custom_Routes = [
-  //   {"archive_name": "서울 인생샷 스팟", "archive_collaborator": "20개의 장소", "locked": false},
-  //   {"archive_name": "남산 벚꽃 구경", "archive_collaborator": "8개의 장소", "locked": true},
-  // ];
-
-  // List<Map<String, dynamic>> Saved_Feeds = [
-  //   {"user_id": "지현", "title": "Saved Post 1", "description": "멋진 풍경", "created_at": "1주 전", "image_url": "assets/images/dummy/dummy3.jpg"},
-  //   {"user_id": "지수", "title": "Saved Post 2", "description": "멋진 사진", "created_at": "2주 전"},
-  //   {"user_id": "상민", "title": "Saved Post 3", "description": "즐거운 여행", "created_at": "3주 전"},
-  //   {"user_id": "하늘", "title": "Saved Post 4", "description": "아름다운 풍경", "created_at": "4주 전"},
-  // ];
 }

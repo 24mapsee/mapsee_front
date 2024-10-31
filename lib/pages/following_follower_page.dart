@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../utils/common.dart';
-
+import 'package:mapsee/pages/external_profile_page.dart';
 
 
 class FollowingFollowerPage extends StatefulWidget {
@@ -18,7 +19,6 @@ class FollowingFollowerPage extends StatefulWidget {
 }
 
 class _FollowingFollowerPageState extends State<FollowingFollowerPage>
-
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   List<Map<String, dynamic>> followerData = [];
@@ -158,21 +158,18 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
                   children: [
                     const Text(
                       '팔로워 ',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       followerData.length.toString(),
                       style: const TextStyle(
                         fontSize: 15,
                       ),
+
                     ),
                     const Text(
                       '명',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
@@ -183,21 +180,18 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
                   children: [
                     const Text(
                       '팔로잉 ',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       followingData.length.toString(),
                       style: const TextStyle(
                         fontSize: 15,
                       ),
+
                     ),
                     const Text(
                       '명',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
@@ -240,6 +234,7 @@ Widget _buildListView(BuildContext context, List<Map<String, dynamic>> data,
       ),
     );
   }
+
   return ListView.builder(
     itemCount: data.length,
      itemBuilder: (context, index) {
@@ -253,6 +248,7 @@ Widget _buildListView(BuildContext context, List<Map<String, dynamic>> data,
          leading: profileImg.startsWith('http')
             ? Image.network(profileImg, width: 40, height: 40)  // URL인 경우 Image.network 사용
             : Image.asset(profileImg, width: 40, height: 40),   // 로컬 파일인 경우 Image.asset 사용
+
         title: Text(userName),
         subtitle: Text(userId),
         trailing: ElevatedButton(
@@ -275,68 +271,3 @@ Widget _buildListView(BuildContext context, List<Map<String, dynamic>> data,
   );
 }
 
-// Map<String, dynamic> userData = {
-//   "user_image": "assets/images/dummy/katt.png",
-//   "user_name": "구슬이",
-//   "user_id": "@cherror",
-//   "archive_cnt": 56,
-//   "like_cnt": 27,
-//   "follower_cnt": 472,
-//   "following_cnt": 486
-// };
-
-// List<Map<String, dynamic>> follwing_data = [
-//   {
-//     "userName": "민수",
-//     "userId": "@minsoo123",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "유나",
-//     "userId": "@yuna_456",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "지호",
-//     "userId": "@jiho789",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "해린",
-//     "userId": "@haerin_lovely",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "도영",
-//     "userId": "@doyoung_world",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-// ];
-
-// List<Map<String, dynamic>> follwer_data = [
-//   {
-//     "userName": "수빈",
-//     "userId": "@subin_the_best",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "준영",
-//     "userId": "@junyoung_999",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "예지",
-//     "userId": "@yeji_star",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "찬희",
-//     "userId": "@chanhee_go",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-//   {
-//     "userName": "지수",
-//     "userId": "@jisoo_light",
-//     "profileImg": "assets/images/dummy/katt.png"
-//   },
-// ];
