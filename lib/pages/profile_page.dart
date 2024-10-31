@@ -198,7 +198,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(userData['user_id'] ?? ''),
+                
               ],
             ),
           ],
@@ -311,10 +311,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(item['user_image'] ?? 'assets/images/dummy/default_user.png'),
+                  leading:  CircleAvatar(
+                    backgroundImage: NetworkImage(userData['profile_picture'] ?? 'assets/images/dummy/default_user.png'),
                   ),
-                  title: Text(item['user_id'] ?? '사용자 이름'),
+      
+                  title: Text(userData['name'] ?? '사용자 이름'),
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
                 Padding(

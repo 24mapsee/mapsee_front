@@ -110,10 +110,6 @@ Future<void> deleteFollower(String followerId, String followingId) async {
     print('Error unfollowing user: $e');
   }
 }
-
-
-
-  
   
     // 팔로우 및 언팔로우 버튼에 따라 doFollowing 및 deleteFollower 호출
   Future<void> toggleFollow() async {
@@ -149,6 +145,7 @@ Future<void> deleteFollower(String followerId, String followingId) async {
     try {
       final response = await http.get(Uri.parse(url));
 
+      print("Response: ${response.body}"); // 응답 확인
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -178,7 +175,7 @@ Future<void> deleteFollower(String followerId, String followingId) async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(externalUserData['user_name'] ?? '사용자 이름'),
+        title: Text(externalUserData['name'] ?? '사용자 이름'),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -224,8 +221,8 @@ Future<void> deleteFollower(String followerId, String followingId) async {
         CircleAvatar(
           radius: 40,
           backgroundColor: Colors.grey[300],
-          backgroundImage: externalUserData['user_image'] != null
-              ? NetworkImage(externalUserData['user_image'])
+          backgroundImage: externalUserData['profile_picture'] != null
+              ? NetworkImage(externalUserData['profile_picture'])
               : const AssetImage('assets/images/dummy/default_user.png') as ImageProvider,
         ),
         const SizedBox(width: 20),
@@ -239,7 +236,6 @@ Future<void> deleteFollower(String followerId, String followingId) async {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(externalUserData['user_id']),
           ],
         ),
       ],
@@ -364,11 +360,11 @@ Widget _buildFollowButton() {
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: item['user_image'] != null
-                        ? NetworkImage(item['user_image'])
+                    backgroundImage: externalUserData['profile_picture'] != null
+                        ? NetworkImage(externalUserData['profile_picture'])
                         : const AssetImage('assets/images/dummy/default_user.png'),
                   ),
-                  title: Text(item['user_id'] ?? '사용자 이름'),
+                  title: Text(externalUserData['name'] ?? '사용자 이름'),
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
                 if (item['image_url'] != null)
@@ -461,28 +457,3 @@ Widget _buildFollowButton() {
     );
   }
 }
-
-// // 더미 데이터
-// final Map<String, dynamic> externalUserData = {
-//   "user_image": "assets/images/dummy/katt.png",
-//   "user_name": "구슬이",
-//   "user_id": "@cherror",
-//   "archive_count": 56,
-//   "follower_count": 472,
-//   "following_count": 486,
-// };
-
-// final List<Map<String, dynamic>> feedsData = [
-//   {"user_id": "구슬이", "title": "데일리 카페 방문", "description": "카페에서 공부하는 중", "image_url": "assets/images/dummy/dummy1.jpg"},
-//   {"user_id": "구슬이", "title": "아름다운 산책로", "description": "산책하기 좋은 날씨", "image_url": "assets/images/dummy/dummy2.jpg"},
-// ];
-
-// final List<Map<String, dynamic>> placeData = [
-//   {"archive_name": "서울의 명소", "collaborator_name": "지인들과 함께", "locked": false},
-//   {"archive_name": "부산의 숨은 맛집", "collaborator_name": null, "locked": true},
-// ];
-
-// final List<Map<String, dynamic>> routeData = [
-//   {"archive_name": "서울에서 강릉까지의 루트", "collaborator_name": "드라이브 코스", "locked": false},
-//   {"archive_name": "부산 맛집 투어", "collaborator_name": "미식가의 여정", "locked": true},
-// ];

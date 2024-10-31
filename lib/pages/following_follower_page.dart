@@ -250,7 +250,6 @@ Widget _buildListView(BuildContext context, List<Map<String, dynamic>> data,
             : Image.asset(profileImg, width: 40, height: 40),   // 로컬 파일인 경우 Image.asset 사용
 
         title: Text(userName),
-        subtitle: Text(userId),
         trailing: ElevatedButton(
           onPressed: () =>onButtonPressed(userId),
           style: ElevatedButton.styleFrom(
