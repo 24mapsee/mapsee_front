@@ -44,17 +44,33 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     final url = '${dotenv.env["API_BASE_URL"]}/profile/$userId';
     print("API URL: $url"); // URL 확인
     final response = await http.get(Uri.parse(url));
+    print("Response: ${response.body}"); // 응답 확인
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
-        userData = data['userInfo'];
-        Place_Folders = List<Map<String, dynamic>>.from(data['places']);
-        Custom_Routes = List<Map<String, dynamic>>.from(data['routes']);
-        Feeds = List<Map<String, dynamic>>.from(data['feeds']);
-        Saved_Feeds = List<Map<String, dynamic>>.from(data['savedFeeds']);
+        userData = data['userInfo'] as Map<String, dynamic>;
+
+        // 리스트 형태가 아니면 빈 리스트 할당
+        Place_Folders = (data['places'] is List)
+            ? List<Map<String, dynamic>>.from(data['places'])
+            : [];
+        Custom_Routes = (data['routes'] is List)
+            ? List<Map<String, dynamic>>.from(data['routes'])
+            : [];
+        Feeds = (data['feeds'] is List)
+            ? List<Map<String, dynamic>>.from(data['feeds'])
+            : [];
+        Saved_Feeds = (data['savedFeeds'] is List)
+            ? List<Map<String, dynamic>>.from(data['savedFeeds'])
+            : [];
+        isLoading = false;
       });
-      print('userData: $userData'); // setState 내부에서 userData 출력
+      print('userData: $userData'); // userData 출력
+      print('Place_Folders: $Place_Folders'); // Place_Folders 데이터 출력
+      print('Custom_Routes: $Custom_Routes'); // Custom_Routes 데이터 출력
+      print('Feeds: $Feeds'); // Feeds 데이터 출력
+      print('Saved_Feeds: $Saved_Feeds'); // Saved_Feeds 데이터 출력
     } else {
       print('사용자 정보 불러오기 실패: ${response.statusCode}');
       setState(() {
@@ -221,7 +237,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FollowingFollowerPage(initialTabIndex: 0),
+                      builder: (context) => FollowingFollowerPage(
+                        accessUserId: userData['user_id'],
+                        initialTabIndex: 0),
                     ),
                   );
                 },
@@ -243,7 +261,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FollowingFollowerPage(initialTabIndex: 1),
+                      builder: (context) => FollowingFollowerPage(
+                        accessUserId: userData['user_id'],
+                        initialTabIndex: 1),
                     ),
                   );
                 },
