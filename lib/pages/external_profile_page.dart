@@ -7,6 +7,8 @@ import 'package:mapsee/pages/place_folder_detail_page.dart';
 import 'package:mapsee/pages/following_follower_page.dart';
 import '../utils/common.dart';
 
+
+
 class ExternalProfilePage extends StatefulWidget {
   final String userId;
 
@@ -18,86 +20,124 @@ class ExternalProfilePage extends StatefulWidget {
 
 class _ExternalProfilePageState extends State<ExternalProfilePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool isFollowing = false; // 팔로우 상태 관리 변수
-  int? expandedIndex; // Route 탭의 현재 열려 있는 인덱스 추적
-   
- Future<void> followUser() async {
-  final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/follow/add-follow');
-  final userId = await getUserId();
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'followerId': widget.userId,
-      'followingId': userId,
-    }),
-  );
-
-  if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 409) {  // 409도 성공 상태로 처리
-    setState(() {
-      isFollowing = true;
-    });
-  } else {
-    print('Failed to follow user: ${response.statusCode}');
-  }
-}
-
-Future<void> unfollowUser() async {
-  final userId = await getUserId(); // 로그인한 사용자 ID 가져오기
-  final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/follow/delete-follow');
-  final response = await http.delete(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'followerId': widget.userId,
-      'followingId': userId,
-    }),
-  );
-
-  if (response.statusCode == 200 || response.statusCode == 204) {  // 204는 성공적인 삭제
-    setState(() {
-      isFollowing = false;
-    });
-  } else {
-    print('Failed to unfollow user: ${response.statusCode}');
-  }
-}
-
- 
-   // API로 불러온 데이터 변수
+  bool isFollowing = false;
+  int? expandedIndex;
   Map<String, dynamic> externalUserData = {};
   List<Map<String, dynamic>> feedsData = [];
   List<Map<String, dynamic>> placeData = [];
   List<Map<String, dynamic>> routeData = [];
   bool isLoading = true;
-
-  @override
+   
+    @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     fetchExternalUserProfile();
     checkFollowStatus();
   }
-  Future<void> checkFollowStatus() async {
-  final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/follow/check-follow');
-  final userId = await getUserId(); // 로그인한 사용자 ID 가져오기
+    Future<void> checkFollowStatus() async {
+    final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/follow/check-follow');
+    final userId = await getUserId();
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'followerId': widget.userId, 'followingId': userId}),
+    );
 
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'followerId': widget.userId,
-      'followingId': userId,
-    }),
-  );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        isFollowing = data['isFollowing'] ?? false;
+      });
+    } else {
+      print('Failed to check follow status: ${response.statusCode}');
+    }
+  }
 
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
+  Future<void> doFollowing(String followerId, String followingId) async {
+  final url = '${dotenv.env["API_BASE_URL"]}/follow/add-follow';
+  final userId = await getUserId();
+
+  if (userId == null) {
+    print("로그인된 사용자가 없습니다.");
+    return;
+  }
+
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'followerId': widget.userId, 'followingId': userId}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Successfully followed user: ${widget.userId}');
+      setState(() {
+        isFollowing = true;
+      });
+    } else {
+      print('Failed to follow user: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error following user: $e');
+  }
+}
+Future<void> deleteFollower(String followerId, String followingId) async {
+  final url = '${dotenv.env["API_BASE_URL"]}/follow/delete-follow';
+  final userId = await getUserId();
+
+  if (userId == null) {
+    print("로그인된 사용자가 없습니다.");
+    return;
+  }
+
+  try {
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'followerId': widget.userId, 'followingId': userId}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      print('Successfully unfollowed user: ${widget.userId}');
+      setState(() {
+        isFollowing = false;
+      });
+    } else {
+      print('Failed to unfollow user: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error unfollowing user: $e');
+  }
+}
+
+
+
+  
+  
+    // 팔로우 및 언팔로우 버튼에 따라 doFollowing 및 deleteFollower 호출
+  Future<void> toggleFollow() async {
+    print("toggleFollow 호출됨");  // 디버그 출력
+  final userId = await getUserId();
+  if (userId == null) {
+    print("로그인된 사용자가 없습니다.");
+    return;
+  }
+
+  if (isFollowing) {
+    print("DELETE 요청: /follow/delete-follow");  // 언팔로우 엔드포인트 출력
+    print("Calling deleteFollower...");
+    await deleteFollower(userId, widget.userId);  
     setState(() {
-      isFollowing = data['isFollowing'] ?? false;
+      isFollowing = false;
     });
   } else {
-    print('Failed to check follow status: ${response.statusCode}');
+     print("Calling doFollowing...");
+     print("POST 요청: /follow/add-follow");  // 팔로우 엔드포인트 출력
+    await doFollowing(userId, widget.userId);
+    setState(() {
+      isFollowing = true;
+    });
   }
 }
 
@@ -207,27 +247,26 @@ Future<void> unfollowUser() async {
   }
 
   // 팔로우 버튼
-  Widget _buildFollowButton() {
-    final buttonWidth = MediaQuery.of(context).size.width * 0.8;
-    return ElevatedButton(
-      onPressed: () async {
-        if (isFollowing) {
-          await unfollowUser();
-        } else {
-          await followUser();
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isFollowing ? Colors.grey : Colors.blue,
-        foregroundColor: Colors.white,
-        minimumSize: Size(buttonWidth, 48),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+Widget _buildFollowButton() {
+  final buttonWidth = MediaQuery.of(context).size.width * 0.8;
+  print("팔로우 버튼 생성됨. 현재 상태: ${isFollowing ? '팔로우 중' : '팔로우 안 함'}");  // 디버그 출력
+  return ElevatedButton(
+    onPressed: () {
+      print("팔로우 버튼 클릭됨");  // 버튼 클릭 디버그 출력
+      toggleFollow();
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: isFollowing ? Colors.grey : Colors.blue,
+      foregroundColor: Colors.white,
+      minimumSize: Size(buttonWidth, 48),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(isFollowing ? "팔로우 취소" : "팔로우"),
-    );
-  }
+    ),
+    child: Text(isFollowing ? "팔로우 취소" : "팔로우"),
+  );
+}
+
 
   
 

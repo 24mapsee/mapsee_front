@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import '../utils/common.dart';
+
+
 
 class FollowingFollowerPage extends StatefulWidget {
   final int initialTabIndex;
   final String accessUserId;
+  
 
   const FollowingFollowerPage({super.key, required this.initialTabIndex,required this.accessUserId});
 
@@ -20,16 +24,23 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
   List<Map<String, dynamic>> followerData = [];
   List<Map<String, dynamic>> followingData = [];
   bool isLoading = true;
+  String? loginUserId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: widget.initialTabIndex);
-
+      // Fetch loginUserId asynchronously
+  getUserId().then((id) {
+    setState(() {
+      loginUserId = id;
+    });
+  });
     print("accessUserId: ${widget.accessUserId}");
     fetchFollowerAndFollowingData();
   }
    Future<void> fetchFollowerAndFollowingData() async {
+
   final followerUrl = '${dotenv.env["API_BASE_URL"]}/follow/follower/${widget.accessUserId}';
   final followingUrl = '${dotenv.env["API_BASE_URL"]}/follow/following/${widget.accessUserId}';
   
@@ -59,12 +70,10 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
     print('Error fetching data: $e');
   }
 }
-
-
-
 // 팔로우 삭제 함수
  Future<void> deleteFollower(String userId) async {
   final url = '${dotenv.env["API_BASE_URL"]}/follow/delete-follow';
+  print("요청 URL: $url");
   try {
     final response = await http.delete(
       Uri.parse(url),
@@ -90,13 +99,19 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
 // 팔로우 요청 보내는 함수
   Future<void> doFollowing(String userId) async {
   final url = '${dotenv.env["API_BASE_URL"]}/follow/add-follow';
+  print("요청 URL: $url");
   try {
+    final loginUserId = await getUserId();
+    if (loginUserId == null) {
+    print('로그인된 사용자가 없습니다.');
+    return;
+  }
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'followerId': userId,
-        'followingId': widget.accessUserId,
+        'followingId': loginUserId,
       }),
     );
 
@@ -110,6 +125,10 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
     print('Error following user: $e');
   }
 }
+
+
+
+
 
   @override
   void dispose() {
@@ -189,9 +208,16 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildListView(context, followerData, "팔로잉", doFollowing),
-                      _buildListView(context, followingData, "삭제", deleteFollower),
-              ],
+              _buildListView(
+                context,followerData,"팔로잉", doFollowing
+              ),
+              _buildListView(
+                context, 
+                followingData, 
+                (loginUserId == widget.accessUserId) ? "삭제" : "팔로잉", 
+                (loginUserId == widget.accessUserId) ? deleteFollower : doFollowing
+              ),
+            ],
             ),
           ),
         ],
