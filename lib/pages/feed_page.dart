@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:mapsee/pages/feed_post_step1_page.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
-import 'package:mapsee/pages/select_page.dart';
 import 'package:mapsee/pages/external_profile_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -70,11 +70,11 @@ class _FeedPageState extends State<FeedPage> {
         elevation: 0,
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 8.0),
             child: Container(
               width: 132,
               height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
                 borderRadius: BorderRadius.circular(40),
@@ -88,7 +88,7 @@ class _FeedPageState extends State<FeedPage> {
                       value: option,
                       child: Text(
                         option,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -126,7 +126,7 @@ class _FeedPageState extends State<FeedPage> {
                 return FeedItem(feedData: feedData[index]);
               },
               separatorBuilder: (context, index) {
-                return Divider(
+                return const Divider(
                   color: Color(0xFFE5E5E5),
                   thickness: 0.7,
                   indent: 15,
@@ -140,7 +140,7 @@ class _FeedPageState extends State<FeedPage> {
 
 class FeedItem extends StatelessWidget {
   final Map<String, dynamic> feedData;
-  FeedItem({required this.feedData});
+  const FeedItem({super.key, required this.feedData});
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +200,7 @@ class FeedItem extends StatelessWidget {
                 },
                 child: Text(
                   feedData['user_id']?.toString() ?? '사용자 이름 없음',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1.2,
@@ -209,7 +209,7 @@ class FeedItem extends StatelessWidget {
               ),
               subtitle: Text(
                 feedData['created_at'] ?? '시간 정보 없음',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF606060),
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -234,7 +234,7 @@ class FeedItem extends StatelessWidget {
               padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
               child: Text(
                 feedData['title'] ?? '제목 없음',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.6,
@@ -246,7 +246,7 @@ class FeedItem extends StatelessWidget {
                   left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
               child: Text(
                 feedData['description'] ?? '설명 없음',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                   letterSpacing: 0.5,
