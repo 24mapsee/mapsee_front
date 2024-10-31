@@ -1,27 +1,39 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import '../utils/common.dart';
 import 'package:mapsee/pages/feed_post_step1_page.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
 import 'package:mapsee/pages/external_profile_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mapsee/pages/profile_page.dart';
 
 class FeedPage extends StatefulWidget {
+  const FeedPage({super.key});
+
   @override
   _FeedPageState createState() => _FeedPageState();
 }
 
 class _FeedPageState extends State<FeedPage> {
+  String? loginUserId;
   String selectedFilter = '팔로워만 보기';
   final List<String> filterOptions = ['팔로워만 보기', '전체 보기', '현재 지역 보기'];
   List<dynamic> feedData = [];
   bool isLoading = true;
+  
 
   @override
   void initState() {
     super.initState();
+    _initializeUserId();
     fetchFeedsData();
+  }
+  Future<void> _initializeUserId() async {
+    final id = await getUserId();
+    setState(() {
+      loginUserId = id;
+    });
   }
 
   Future<void> fetchFeedsData() async {
@@ -82,7 +94,7 @@ class _FeedPageState extends State<FeedPage> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: selectedFilter,
-                  icon: Icon(Icons.arrow_drop_down, color: Colors.grey),
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
                   items: filterOptions.map((String option) {
                     return DropdownMenuItem<String>(
                       value: option,
@@ -116,14 +128,16 @@ class _FeedPageState extends State<FeedPage> {
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.separated(
               itemCount: feedData.length,
               itemBuilder: (context, index) {
-                return FeedItem(feedData: feedData[index]);
+                return FeedItem(
+                  feedData: feedData[index],
+                  loginUserId: loginUserId);
               },
               separatorBuilder: (context, index) {
                 return const Divider(
@@ -140,18 +154,29 @@ class _FeedPageState extends State<FeedPage> {
 
 class FeedItem extends StatelessWidget {
   final Map<String, dynamic> feedData;
-  const FeedItem({super.key, required this.feedData});
+  final String? loginUserId;
+
+  const FeedItem({super.key, required this.feedData, required this.loginUserId});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PostDetailPage(feedData: feedData),
-          ),
-        );
+        if (loginUserId == feedData['user_id']) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ProfilePage(),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+            ),
+          );
+        }
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -161,17 +186,24 @@ class FeedItem extends StatelessWidget {
             ListTile(
               leading: GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExternalProfilePage(
-                        userId: feedData['user_id'],
-                      ),
-                    ),
-                  );
-                },
+                    if (loginUserId == feedData['user_id']) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                        ),
+                      );
+                    }
+                  },
                 child: Container(
-                  padding: EdgeInsets.all(2),
+                  padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -189,15 +221,22 @@ class FeedItem extends StatelessWidget {
               ),
               title: GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExternalProfilePage(
-                        userId: feedData['user_id'],
-                      ),
-                    ),
-                  );
-                },
+                    if (loginUserId == feedData['user_id']) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfilePage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
+                        ),
+                      );
+                    }
+                  },
                 child: Text(
                   feedData['name']?.toString() ?? '사용자 이름 없음',
                   style: const TextStyle(

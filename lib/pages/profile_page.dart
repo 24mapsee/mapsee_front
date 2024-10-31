@@ -1,24 +1,91 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:mapsee/pages/edit_profile_page.dart';
 import 'post_detail_page.dart';
 import 'place_folder_detail_page.dart';
 import 'external_profile_page.dart';
 import 'package:mapsee/pages/following_follower_page.dart';
+import '../utils/common.dart';
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+   Map<String, dynamic> userData = {};
+  List<Map<String, dynamic>> Feeds = [];
+  List<Map<String, dynamic>> Place_Folders = [];
+  List<Map<String, dynamic>> Custom_Routes = [];
+  List<Map<String, dynamic>> Saved_Feeds = [];
+  bool isLoading = true;
   int? expandedIndex; // 현재 열려 있는 인덱스 추적
+
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    fetchProfileData();
+    print(userData); // userData에 어떤 데이터가 들어오는지 확인
   }
+  Future<void> fetchProfileData() async {
+  try {
+    final userId = await getUserId();
+  if (userId == null) {
+    print('로그인된 사용자가 없습니다.');
+    return;
+  }
+
+    final url = '${dotenv.env["API_BASE_URL"]}/profile/$userId';
+    print("API URL: $url"); // URL 확인
+    final response = await http.get(Uri.parse(url));
+    print("Response: ${response.body}"); // 응답 확인
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        userData = data['userInfo'] as Map<String, dynamic>;
+
+        // 리스트 형태가 아니면 빈 리스트 할당
+        Place_Folders = (data['places'] is List)
+            ? List<Map<String, dynamic>>.from(data['places'])
+            : [];
+        Custom_Routes = (data['routes'] is List)
+            ? List<Map<String, dynamic>>.from(data['routes'])
+            : [];
+        Feeds = (data['feeds'] is List)
+            ? List<Map<String, dynamic>>.from(data['feeds'])
+            : [];
+        Saved_Feeds = (data['savedFeeds'] is List)
+            ? List<Map<String, dynamic>>.from(data['savedFeeds'])
+            : [];
+        isLoading = false;
+      });
+      print('userData: $userData'); // userData 출력
+      print('Place_Folders: $Place_Folders'); // Place_Folders 데이터 출력
+      print('Custom_Routes: $Custom_Routes'); // Custom_Routes 데이터 출력
+      print('Feeds: $Feeds'); // Feeds 데이터 출력
+      print('Saved_Feeds: $Saved_Feeds'); // Saved_Feeds 데이터 출력
+    } else {
+      print('사용자 정보 불러오기 실패: ${response.statusCode}');
+      setState(() {
+        userData = {};  // 오류가 발생해도 userData를 빈 값으로 설정
+      });
+    }
+  } catch (e) {
+    print('오류 발생: $e');
+    setState(() {
+      userData = {};  // 오류가 발생해도 userData를 빈 값으로 설정
+    });
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +100,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Column(
+      body: userData.isNotEmpty ?Column(
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildProfileInfo(screenWidth),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -59,9 +126,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     vertical: 6,
                   ),
                 ),
-                child: Text('내 정보 수정'),
+                child: const Text('내 정보 수정'),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
@@ -75,11 +142,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                     vertical: 6,
                   ),
                 ),
-                child: Text('내 프로필 공유'),
+                child: const Text('내 프로필 공유'),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           TabBar(
             controller: _tabController,
             tabs: [
@@ -101,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             ),
           ),
         ],
-      ),
+      ) : const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -117,26 +184,26 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               backgroundColor: Colors.grey[300],
               child: CircleAvatar(
                 radius: 38,
-                backgroundImage: AssetImage(userData['user_image']),
+                backgroundImage: NetworkImage(userData['profile_picture'] ?? 'assets/images/dummy/default_user.png'),
               ),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  userData['user_name'],
-                  style: TextStyle(
+                   userData['name'] ?? '',
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(userData['user_id']),
+                
               ],
             ),
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
           child: Row(
@@ -145,25 +212,25 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               Column(
                 children: [
                   Text(
-                    userData['archive_cnt'].toString(),
-                    style: TextStyle(
+                    userData['repository'].toString(),
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('저장소'),
+                  const Text('저장소'),
                 ],
               ),
               Column(
                 children: [
                   Text(
-                    userData['like_cnt'].toString(),
-                    style: TextStyle(
+                    userData['saved_feeds'].toString(),
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text('찜'),
+                  const Text('찜'),
                 ],
               ),
               GestureDetector(
@@ -171,20 +238,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FollowingFollowerPage(initialTabIndex: 0),
+                      builder: (context) => FollowingFollowerPage(
+                        accessUserId: userData['user_id'],
+                        initialTabIndex: 0),
                     ),
                   );
                 },
                 child: Column(
                   children: [
                     Text(
-                      userData['follower_cnt'].toString(),
-                      style: TextStyle(
+                      userData['follower'].toString(),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('팔로워'),
+                    const Text('팔로워'),
                   ],
                 ),
               ),
@@ -193,20 +262,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => FollowingFollowerPage(initialTabIndex: 1),
+                      builder: (context) => FollowingFollowerPage(
+                        accessUserId: userData['user_id'],
+                        initialTabIndex: 1),
                     ),
                   );
                 },
                 child: Column(
                   children: [
                     Text(
-                      userData['following_cnt'].toString(),
-                      style: TextStyle(
+                      userData['following'].toString(),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('팔로잉'),
+                    const Text('팔로잉'),
                   ],
                 ),
               ),
@@ -229,59 +300,33 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               context,
               MaterialPageRoute(
                 builder: (context) => PostDetailPage(
-                  feedData: {
-                    "user_id": item['user_id'] ?? '사용자 이름',
-                    "title": item['title'] ?? '제목 없음',
-                    "description": item['description'] ?? '설명 없음',
-                    "created_at": item['created_at'] ?? '시간 정보 없음',
-                    "image_url": item['image_url'] ?? 'assets/images/dummy/dummy1.jpg',
-                    "user_image": item['user_image'] ?? 'assets/images/dummy/default_user.png'
-                  },
+                  feedData: item,
                 ),
               ),
             );
           },
           child: Card(
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  leading: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ExternalProfilePage(userId: item['user_id'] ?? 'unknown'),
-                        ),
-                      );
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(item['user_image'] ?? 'assets/images/dummy/default_user.png'),
-                    ),
+                  leading:  CircleAvatar(
+                    backgroundImage: NetworkImage(userData['profile_picture'] ?? 'assets/images/dummy/default_user.png'),
                   ),
-                  title: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ExternalProfilePage(userId: item['user_id'] ?? 'unknown'),
-                        ),
-                      );
-                    },
-                    child: Text(item['user_id'] ?? '사용자 이름'),
-                  ),
+      
+                  title: Text(userData['name'] ?? '사용자 이름'),
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
+                  child: Image.network(item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     item['title'] ?? '제목 없음',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
                 Padding(
@@ -306,16 +351,16 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       itemBuilder: (context, index) {
         final item = data[index];
         return ListTile(
-          leading: Icon(Icons.place, color: Colors.blue),
-          title: Text(item['archive_name'] ?? '장소 없음'),
-          subtitle: Text(item['collaborator_name'] ?? '공동 작업자 없음'),
+          leading: const Icon(Icons.place, color: Colors.blue),
+          title: Text(item['name'] ?? '장소 없음'),
+          subtitle: Text(item['description'] ?? '공동 작업자 없음'),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => PlaceFolderDetailPage(
-                  title: item['archive_name'],
-                  placeNames: ['장소1', '장소2', '장소3'], // 임시 장소 목록
+                  title: item['name'],
+                  placeNames: const ['장소1', '장소2', '장소3'], // 임시 장소 목록
                 ),
               ),
             );
@@ -331,68 +376,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       itemCount: data.length,
       itemBuilder: (context, index) {
         final item = data[index];
-        return AnimatedSize(
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: ExpansionTile(
-            key: UniqueKey(),
-            title: Text(item['archive_name'] ?? '경로 없음'),
-            trailing: RotationTransition(
-              turns: expandedIndex == index
-                  ? AlwaysStoppedAnimation(0.5)
-                  : AlwaysStoppedAnimation(0),
-              child: Icon(Icons.expand_more),
-            ),
-            initiallyExpanded: expandedIndex == index,
+        return ExpansionTile(
+          title: Text(item['title'] ?? '경로 없음'),
+          initiallyExpanded: expandedIndex == index,
             onExpansionChanged: (isExpanded) {
               setState(() {
                 expandedIndex = isExpanded ? index : null;
               });
             },
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
-              ),
-            ],
-          ),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+            ),
+          ],
         );
       },
     );
   }
-  // 더미 유저 데이터
-  Map<String, dynamic> userData = {
-    "user_image": "assets/images/dummy/katt.png",
-    "user_name": "구슬이",
-    "user_id": "@cherror",
-    "archive_cnt": 56,
-    "like_cnt": 27,
-    "follower_cnt": 472,
-    "following_cnt": 486
-  };
-
-  // 더미 아카이브 데이터들
-  List<Map<String, dynamic>> Feeds = [
-    {"user_id": "구슬이", "title": "데이트 코스", "description": "멋진 데이트 장소", "created_at": "1일 전", "image_url": "assets/images/dummy/dummy1.jpg", "user_image": "assets/images/dummy/katt.png"},
-    {"user_id": "철수", "title": "고독한 미식가", "description": "미식가의 여정", "created_at": "2일 전", "image_url": "assets/images/dummy/dummy2.jpg"},
-    {"user_id": "민수", "title": "동아리 정기 모임 장소", "description": "모임 장소", "created_at": "3일 전"},
-    {"user_id": "영희", "title": "클라이밍", "description": "즐거운 클라이밍", "created_at": "5일 전"},
-  ];
-
-  List<Map<String, dynamic>> Place_Folders = [
-    {"archive_name": "강릉 초당길 맛집 투어", "archive_collaborator": "6개의 장소", "locked": false},
-    {"archive_name": "경주 가볼 곳", "archive_collaborator": "18개의 장소", "locked": true},
-  ];
-
-  List<Map<String, dynamic>> Custom_Routes = [
-    {"archive_name": "서울 인생샷 스팟", "archive_collaborator": "20개의 장소", "locked": false},
-    {"archive_name": "남산 벚꽃 구경", "archive_collaborator": "8개의 장소", "locked": true},
-  ];
-
-  List<Map<String, dynamic>> Saved_Feeds = [
-    {"user_id": "지현", "title": "Saved Post 1", "description": "멋진 풍경", "created_at": "1주 전", "image_url": "assets/images/dummy/dummy3.jpg"},
-    {"user_id": "지수", "title": "Saved Post 2", "description": "멋진 사진", "created_at": "2주 전"},
-    {"user_id": "상민", "title": "Saved Post 3", "description": "즐거운 여행", "created_at": "3주 전"},
-    {"user_id": "하늘", "title": "Saved Post 4", "description": "아름다운 풍경", "created_at": "4주 전"},
-  ];
 }
