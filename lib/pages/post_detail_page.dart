@@ -16,11 +16,12 @@ class PostDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              feedData['image_url'],
+            Image.network(
+              feedData['image_url'] ??
+                  'https://via.placeholder.com/200', // 이미지가 없을 경우 기본 이미지 URL로 대체
               fit: BoxFit.cover,
-              width: double.infinity,
               height: 200,
+              width: double.infinity,
             ),
             SizedBox(height: 16),
             Text(

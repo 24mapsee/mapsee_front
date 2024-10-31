@@ -9,6 +9,8 @@ import 'package:mapsee/pages/feed_post_step2_page.dart';
 import 'package:mapsee/utils/common.dart';
 
 class FeedPostStep1Page extends StatefulWidget {
+  const FeedPostStep1Page({super.key});
+
   @override
   State<FeedPostStep1Page> createState() => _FeedPostStep1PageState();
 }
