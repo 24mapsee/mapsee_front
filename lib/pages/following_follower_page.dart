@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapsee/pages/external_profile_page.dart';
 
 class FollowingFollowerPage extends StatefulWidget {
   final int initialTabIndex;
@@ -10,7 +11,6 @@ class FollowingFollowerPage extends StatefulWidget {
 }
 
 class _FollowingFollowerPageState extends State<FollowingFollowerPage>
-
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
@@ -52,21 +52,15 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
                   children: [
                     Text(
                       '팔로워 ',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       userData['follower_cnt'].toString(),
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       '명',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
@@ -77,21 +71,15 @@ class _FollowingFollowerPageState extends State<FollowingFollowerPage>
                   children: [
                     Text(
                       '팔로잉 ',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       userData['following_cnt'].toString(),
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       '명',
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
@@ -125,6 +113,7 @@ Widget _buildListView(BuildContext context, List<Map<String, dynamic>> data,
       ),
     );
   }
+
   return ListView.builder(
     itemCount: data.length,
     itemBuilder: (context, index) {
@@ -133,6 +122,15 @@ Widget _buildListView(BuildContext context, List<Map<String, dynamic>> data,
       final profileImg = data[index]['profileImg'];
 
       return ListTile(
+        onTap: () {
+          // 사용자 프로필 페이지로 이동
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExternalProfilePage(userId: userId),
+            ),
+          );
+        },
         leading: Image.asset(profileImg, width: 40, height: 40),
         title: Text(userName),
         subtitle: Text(userId),

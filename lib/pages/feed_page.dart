@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mapsee/pages/feed_post_step1_page.dart';
+import 'package:http/http.dart' as http;
 import 'package:mapsee/pages/post_detail_page.dart';
+import 'package:mapsee/pages/select_page.dart';
 import 'package:mapsee/pages/external_profile_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FeedPage extends StatefulWidget {
   @override
@@ -9,7 +12,7 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  String ectedFilter = '팔로워만 보기';
+  String selectedFilter = '팔로워만 보기';
   final List<String> filterOptions = ['팔로워만 보기', '전체 보기', '현재 지역 보기'];
   List<dynamic> feedData = [];
   bool isLoading = true;
@@ -17,14 +20,40 @@ class _FeedPageState extends State<FeedPage> {
   @override
   void initState() {
     super.initState();
-    fetchFeedData();
+    fetchFeedsData();
   }
 
-  Future<void> fetchFeedData() async {
+  Future<void> fetchFeedsData() async {
     setState(() {
-      feedData = dummyFeedData;
-      isLoading = false;
+      isLoading = true;
     });
+
+    try {
+      final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/feed/get-feed');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+
+        // 응답 내용을 출력하여 구조를 확인합니다.
+        print('Response body: $responseBody');
+
+        setState(() {
+          feedData = responseBody['feedItems'] ?? [];  // feedItems 키에 접근하여 데이터 추출
+          isLoading = false;
+        });
+      } else {
+        // 상태 코드 및 오류 메시지를 출력합니다.
+        print('Failed with status code: ${response.statusCode}');
+        print('Error response: ${response.body}');
+        throw Exception('Failed to load feed data');
+      }
+    } catch (error) {
+      print('Error fetching data: $error');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -50,7 +79,7 @@ class _FeedPageState extends State<FeedPage> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: ectedFilter,
+                  value: selectedFilter,
                   icon: Icon(Icons.arrow_drop_down, color: Colors.grey),
                   items: filterOptions.map((String option) {
                     return DropdownMenuItem<String>(
@@ -68,7 +97,7 @@ class _FeedPageState extends State<FeedPage> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      ectedFilter = newValue!;
+                      selectedFilter = newValue!;
                     });
                   },
                 ),
@@ -81,7 +110,7 @@ class _FeedPageState extends State<FeedPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => FeedPostStep1Page()),
+            MaterialPageRoute(builder: (context) => SelectPage()),
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -90,19 +119,19 @@ class _FeedPageState extends State<FeedPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.separated(
-              itemCount: feedData.length,
-              itemBuilder: (context, index) {
-                return FeedItem(feedData: feedData[index]);
-              },
-              separatorBuilder: (context, index) {
-                return Divider(
-                  color: Color(0xFFE5E5E5),
-                  thickness: 0.7,
-                  indent: 15,
-                  endIndent: 15,
-                );
-              },
-            ),
+        itemCount: feedData.length,
+        itemBuilder: (context, index) {
+          return FeedItem(feedData: feedData[index]);
+        },
+        separatorBuilder: (context, index) {
+          return Divider(
+            color: Color(0xFFE5E5E5),
+            thickness: 0.7,
+            indent: 15,
+            endIndent: 15,
+          );
+        },
+      ),
     );
   }
 }
@@ -130,12 +159,12 @@ class FeedItem extends StatelessWidget {
             ListTile(
               leading: GestureDetector(
                 onTap: () {
-                  // 프로필 이미지 클릭 시 외부 프로필 페이지로 이동
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ExternalProfilePage(userId: feedData['user_id']),
+                      builder: (context) => ExternalProfilePage(
+                        userId: feedData['user_id'],
+                      ),
                     ),
                   );
                 },
@@ -150,7 +179,7 @@ class FeedItem extends StatelessWidget {
                     ),
                   ),
                   child: CircleAvatar(
-                    backgroundImage: AssetImage(feedData['user_image'] ??
+                    backgroundImage: NetworkImage(feedData['profile_picture'] ??
                         'assets/images/dummy/katt.png'),
                     radius: 20,
                   ),
@@ -158,17 +187,17 @@ class FeedItem extends StatelessWidget {
               ),
               title: GestureDetector(
                 onTap: () {
-                  // 유저 이름 클릭 시 외부 프로필 페이지로 이동
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ExternalProfilePage(userId: feedData['user_id']),
+                      builder: (context) => ExternalProfilePage(
+                        userId: feedData['user_id'],
+                      ),
                     ),
                   );
                 },
                 child: Text(
-                  feedData['user_id'].toString(),
+                  feedData['user_id']?.toString() ?? '사용자 이름 없음',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -190,8 +219,9 @@ class FeedItem extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  feedData['image_url'],
+                child: Image.network(
+                  feedData['image_url'] ??
+                      'https://via.placeholder.com/200', // 이미지가 없을 경우 기본 이미지 URL로 대체
                   fit: BoxFit.cover,
                   height: 200,
                   width: double.infinity,
@@ -210,8 +240,7 @@ class FeedItem extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
+              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
               child: Text(
                 feedData['description'] ?? '설명 없음',
                 style: TextStyle(
@@ -228,30 +257,3 @@ class FeedItem extends StatelessWidget {
     );
   }
 }
-
-// 더미 데이터
-List<Map<String, dynamic>> dummyFeedData = [
-  {
-    "feed_id": 1,
-    "user_id": "구슬이",
-    "place_id": 201,
-    "route_id": 301,
-    "title": "부산 여행 2일차!",
-    "description": "부산 서면역과 전포역 부근 맛집 위주의 찐 리얼후기!",
-    "image_url": "assets/images/dummy/dummy1.jpg",
-    "created_at": "1분 전",
-    "user_image": "assets/images/dummy/katt.png"
-  },
-  {
-    "feed_id": 2,
-    "user_id": "웅성은성",
-    "place_id": 202,
-    "route_id": 302,
-    "title": "국민대생 필수 루트",
-    "description": "국민대에서 양주 예비군 훈련소 가는 지름길 노하우",
-    "image_url": "assets/images/dummy/dummy2.jpg",
-    "created_at": "6시간 전",
-    "user_image": "assets/images/dummy/katt.png"
-  },
-  // 추가 더미 데이터 ...
-];

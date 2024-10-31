@@ -12,6 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  int? expandedIndex; // 현재 열려 있는 인덱스 추적
 
   @override
   void initState() {
@@ -330,19 +331,35 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       itemCount: data.length,
       itemBuilder: (context, index) {
         final item = data[index];
-        return ExpansionTile(
-          title: Text(item['archive_name'] ?? '경로 없음'),
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+        return AnimatedSize(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: ExpansionTile(
+            key: UniqueKey(),
+            title: Text(item['archive_name'] ?? '경로 없음'),
+            trailing: RotationTransition(
+              turns: expandedIndex == index
+                  ? AlwaysStoppedAnimation(0.5)
+                  : AlwaysStoppedAnimation(0),
+              child: Icon(Icons.expand_more),
             ),
-          ],
+            initiallyExpanded: expandedIndex == index,
+            onExpansionChanged: (isExpanded) {
+              setState(() {
+                expandedIndex = isExpanded ? index : null;
+              });
+            },
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(item['collaborator_name'] ?? '추가 정보 없음'),
+              ),
+            ],
+          ),
         );
       },
     );
   }
-
   // 더미 유저 데이터
   Map<String, dynamic> userData = {
     "user_image": "assets/images/dummy/katt.png",
