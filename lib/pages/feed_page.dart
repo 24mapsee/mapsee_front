@@ -199,7 +199,7 @@ class FeedItem extends StatelessWidget {
                   );
                 },
                 child: Text(
-                  feedData['user_id']?.toString() ?? '사용자 이름 없음',
+                  feedData['name']?.toString() ?? '사용자 이름 없음',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -245,7 +245,7 @@ class FeedItem extends StatelessWidget {
               padding: const EdgeInsets.only(
                   left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
               child: Text(
-                feedData['description'] ?? '설명 없음',
+                jsonDecode(feedData['description']).join(" ") ?? '설명 없음',
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
