@@ -45,69 +45,75 @@ class MyBottomModalSheet extends StatelessWidget {
                         border: Border.all(
                             color: Theme.of(context).colorScheme.primary),
                       ),
-                      child: Column(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/png/marker.png',
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 30,
-                              ),
-                              SizedBox(width: 10),
-                              FutureBuilder<List<String>>(
-                                future: getCurrentAddr(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<List<String>> snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    print('Error: ${snapshot.error}');
-                                    return Text(
-                                      '현재 위치를 찾을 수 없습니다.',
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                    );
-                                  } else if (snapshot.hasData) {
-                                    return Text(
-                                      "${snapshot.data![0]} ${snapshot.data![1]} ${snapshot.data![2]}",
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                    );
-                                  } else {
-                                    return Text(
-                                      '현재 위치를 찾을 수 없습니다.',
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
+                          Image.asset(
+                            'assets/images/png/marker.png',
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 30,
                           ),
-                          OutlinedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SearchResultPage(),
-                                ),
-                              );
+                          SizedBox(width: 10),
+                          FutureBuilder<List<String>>(
+                            future: getCurrentAddr(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<List<String>> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                print('Error: ${snapshot.error}');
+                                return Text(
+                                  '현재 위치를 찾을 수 없습니다.',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                );
+                              } else if (snapshot.hasData) {
+                                return Text(
+                                  "${snapshot.data![0]} ${snapshot.data![1]} ${snapshot.data![2]}",
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                );
+                              } else {
+                                return Text(
+                                  '현재 위치를 찾을 수 없습니다.',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                );
+                              }
                             },
-                            child: const Text('길찾기'),
-                          )
+                          ),
                         ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10), // 위치 텍스트와 버튼 사이에 공간 추가
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SearchResultPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      '길찾기',
+                      style: TextStyle(color: Colors.white), // 텍스트를 흰색으로 설정
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary, // 버튼 배경을 Theme의 primary 색상으로 설정
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                   ),
