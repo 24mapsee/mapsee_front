@@ -123,36 +123,36 @@ class _RegisterPageState extends State<RegisterPage> {
                           controller: _telNumController,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      MyButton(
-                        text: "인증번호 발송",
-                        onTap: () {
-                          // 인증번호 발송 로직
-                        },
-                      ),
+                      // const SizedBox(width: 10),
+                      // MyButton(
+                      //   text: "인증번호 발송",
+                      //   onTap: () {
+                      //     // 인증번호 발송 로직
+                      //   },
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 5),
                   // 인증번호 입력
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: MyTextfield(
-                          hintText: "인증번호를 입력하세요",
-                          obscureText: false,
-                          controller: _confirmTelNumController,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      MyButton(
-                        text: "인증번호 확인",
-                        onTap: () {
-                          // 인증번호 확인 로직
-                        },
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Expanded(
+                  //       child: MyTextfield(
+                  //         hintText: "인증번호를 입력하세요",
+                  //         obscureText: false,
+                  //         controller: _confirmTelNumController,
+                  //       ),
+                  //     ),
+                  //     const SizedBox(width: 10),
+                  //     MyButton(
+                  //       text: "인증번호 확인",
+                  //       onTap: () {
+                  //         // 인증번호 확인 로직
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
               const SizedBox(height: 7),

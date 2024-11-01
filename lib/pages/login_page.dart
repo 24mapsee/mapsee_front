@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:mapsee/auth/auth_service.dart';
 import 'package:mapsee/components/my_button.dart';
+import 'package:mapsee/components/my_login_social_button.dart';
 import 'package:mapsee/components/my_textfield.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,7 +18,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // id, pw text controller
   final TextEditingController _emailController = TextEditingController();
-
   final TextEditingController _pwController = TextEditingController();
 
   // login method
@@ -59,7 +60,6 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
           // await _loginWithNaver(authService);
-
           break;
         default:
           break;
@@ -77,214 +77,185 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: screenHeight * 0.15),
-              Image.asset(
-                'assets/images/mapsee_logo.png',
-                width: 126,
-                height: 100,
-              ),
-              // Id field
-              MyTextfield(
-                hintText: "ID를 입력하세요",
-                obscureText: false,
-                controller: _emailController,
-              ),
-              const SizedBox(height: 7),
-              // PW field
-              MyTextfield(
-                hintText: "비밀번호를 입력하세요",
-                obscureText: true,
-                controller: _pwController,
-              ),
-              // 아이디 비번 잊으셨나요
-              const SizedBox(height: 16),
-              const SizedBox(
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'ID',
-                        style: TextStyle(
-                          color: Color(0xFFB3B3B3),
-                          fontSize: 13,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          height: 0,
-                          letterSpacing: 1.69,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ' 또는 ',
-                        style: TextStyle(
-                          color: Color(0xFFB3B3B3),
-                          fontSize: 13,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w200,
-                          height: 0,
-                          letterSpacing: 1.69,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '비밀번호',
-                        style: TextStyle(
-                          color: Color(0xFFB3B3B3),
-                          fontSize: 13,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          height: 0,
-                          letterSpacing: 1.69,
-                        ),
-                      ),
-                      TextSpan(
-                        text: '를 잊으셨나요?',
-                        style: TextStyle(
-                          color: Color(0xFFB3B3B3),
-                          fontSize: 13,
-                          fontFamily: 'Pretendard',
-                          fontWeight: FontWeight.w200,
-                          height: 0,
-                          letterSpacing: 1.69,
-                        ),
-                      ),
-                    ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: constraints.maxHeight * 0.15),
+                  Center(
+                    child: Image.asset(
+                      'assets/images/mapsee_logo.png',
+                      width: 126,
+                      height: 100,
+                    ),
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-              // 로그인 버튼
-              MyButton(
-                text: "로그인",
-                onTap: () {
-                  if (_emailController.text.isNotEmpty &&
-                      _pwController.text.isNotEmpty) {
-                    login(context, "email");
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('ID와 비밀번호를 모두 입력해주세요.')),
-                      );
-                    }
-                  }
-                },
-              ),
-              const SizedBox(height: 7),
-              // 더욱 간편한 로그인
-              Center(
-                child: Container(
-                  width: 265,
-                  height: 14.35,
-                  child: Stack(
-                    children: [
-                      const Positioned(
-                        left: 80.60,
-                        top: 0,
-                        child: SizedBox(
-                          width: 104.90,
-                          height: 14.35,
-                          child: Text(
+                  SizedBox(height: constraints.maxHeight * 0.02),
+                  // Id field
+                  MyTextfield(
+                    hintText: "ID를 입력하세요",
+                    obscureText: false,
+                    controller: _emailController,
+                  ),
+                  const SizedBox(height: 7),
+                  // PW field
+                  MyTextfield(
+                    hintText: "비밀번호를 입력하세요",
+                    obscureText: true,
+                    controller: _pwController,
+                  ),
+                  const SizedBox(height: 16),
+                  const Center(
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'ID',
+                            style: TextStyle(
+                              color: Color(0xFFB3B3B3),
+                              fontSize: 13,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline,
+                              letterSpacing: 1.69,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' 또는 ',
+                            style: TextStyle(
+                              color: Color(0xFFB3B3B3),
+                              fontSize: 13,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w200,
+                              letterSpacing: 1.69,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '비밀번호',
+                            style: TextStyle(
+                              color: Color(0xFFB3B3B3),
+                              fontSize: 13,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w500,
+                              decoration: TextDecoration.underline,
+                              letterSpacing: 1.69,
+                            ),
+                          ),
+                          TextSpan(
+                            text: '를 잊으셨나요?',
+                            style: TextStyle(
+                              color: Color(0xFFB3B3B3),
+                              fontSize: 13,
+                              fontFamily: 'Pretendard',
+                              fontWeight: FontWeight.w200,
+                              letterSpacing: 1.69,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  MyButton(
+                    text: "로그인",
+                    onTap: () {
+                      if (_emailController.text.isNotEmpty &&
+                          _pwController.text.isNotEmpty) {
+                        login(context, "email");
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('ID와 비밀번호를 모두 입력해주세요.')),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 7),
+                  Center(
+                    child: Container(
+                      width: constraints.maxWidth * 0.8,
+                      child: const Column(
+                        children: [
+                          Text(
                             '더욱 간편한 로그인',
                             style: TextStyle(
                               color: Color(0xFFB3B3B3),
                               fontSize: 11,
                               fontFamily: 'Pretendard',
                               fontWeight: FontWeight.w300,
-                              height: 0,
                               letterSpacing: 1.43,
                             ),
                           ),
-                        ),
+                          const Divider(color: Color(0xFFD9D9D9)),
+                        ],
                       ),
-                      Positioned(
-                        left: 0,
-                        top: 6.62,
-                        child: Container(
-                          width: 68.46,
-                          decoration: const ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                width: 0.50,
-                                strokeAlign: BorderSide.strokeAlignCenter,
-                                color: Color(0xFFD9D9D9),
-                              ),
-                            ),
-                          ),
-                        ),
+                    ),
+                  ),
+                  const SizedBox(height: 7),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 7,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      MyLoginSocialButton(
+                        onPressed: () => login(context, "google"),
+                        imagePath: 'assets/images/svg/ic_login_google.svg',
+                        buttonText: 'Google 계정 로그인',
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
                       ),
-                      Positioned(
-                        left: 196.54,
-                        top: 6.62,
-                        child: Container(
-                          width: 68.46,
-                          decoration: const ShapeDecoration(
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                width: 0.50,
-                                strokeAlign: BorderSide.strokeAlignCenter,
-                                color: Color(0xFFD9D9D9),
-                              ),
-                            ),
-                          ),
-                        ),
+                      MyLoginSocialButton(
+                        onPressed: () => login(context, "kakao"),
+                        imagePath: 'assets/images/svg/ic_login_kakao.svg',
+                        buttonText: '카카오 로그인',
+                        backgroundColor: const Color(0xFFFEE500),
+                        textColor: Colors.black,
+                      ),
+                      MyLoginSocialButton(
+                        onPressed: () => login(context, "naver"),
+                        imagePath: 'assets/images/svg/ic_login_naver.svg',
+                        buttonText: '네이버 로그인',
+                        backgroundColor: const Color(0xFF03C75A),
+                        textColor: Colors.white,
                       ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 7),
-              // 구글, 카카오, 네이버
-              MyButton(
-                text: "구글",
-                onTap: () => {login(context, "google")},
-              ),
-              const SizedBox(height: 7),
-              MyButton(
-                text: "카카오",
-                onTap: () => {login(context, "kakao")},
-              ),
-              const SizedBox(height: 7),
-              MyButton(
-                text: "네이버",
-                onTap: () => {login(context, "naver")},
-              ),
-              const SizedBox(height: 7),
-              // 회원가입 이동
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "아직 계정이 없으신가요?",
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.outline),
-                  ),
-                  const SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: widget.onTap,
-                    child: Text("회원가입",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                            color: Theme.of(context).colorScheme.outline)),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "아직 계정이 없으신가요?",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                        const SizedBox(width: 5),
+                        GestureDetector(
+                          onTap: widget.onTap,
+                          child: Text(
+                            "회원가입",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                color: Theme.of(context).colorScheme.outline),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-              )
-            ],
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
