@@ -29,7 +29,7 @@ class SearchFilterBloc extends Bloc<SearchFilterEvent, SearchFilterState> {
   Future<void> _searching(
       SearchFilterSearchingEvent event, Emitter<SearchFilterState> emit) async {
     List<Map<String, dynamic>> _result =
-        await SearchRepository.instance.getNaverPlaceSearch(query: event.query);
+        await SearchRepository.instance.getKakaoPlaceSearch(query: event.query);
 
     if (isFilter) {
       List<List<Map<String, dynamic>>> _filteredResults =

@@ -58,10 +58,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
     });
 
     Map<String, dynamic> json_data = {
-      'startX': convertToDecimalWGS84(_selectedDeparture['mapx']),
-      'startY': convertToDecimalWGS84(_selectedDeparture['mapy']),
-      'endX': convertToDecimalWGS84(_selectedDestination['mapx']),
-      'endY': convertToDecimalWGS84(_selectedDestination['mapy']),
+      'startX': (_selectedDeparture['mapx']),
+      'startY': (_selectedDeparture['mapy']),
+      'endX': (_selectedDestination['mapx']),
+      'endY': (_selectedDestination['mapy']),
       'count': 10,
       'lang': 0,
       'format': 'json'
