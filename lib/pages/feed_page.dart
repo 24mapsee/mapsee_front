@@ -17,8 +17,8 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   String? loginUserId;
-  String selectedFilter = '팔로워만 보기';
-  final List<String> filterOptions = ['팔로워만 보기', '전체 보기', '현재 지역 보기'];
+  String selectedFilter = '전체 보기';
+  final List<String> filterOptions = ['전체 보기', '팔로잉만 보기'];
   List<dynamic> feedData = [];
   bool isLoading = true;
 
@@ -26,7 +26,6 @@ class _FeedPageState extends State<FeedPage> {
   void initState() {
     super.initState();
     _initializeUserId();
-    fetchFeedsData();
   }
 
   Future<void> _initializeUserId() async {
@@ -34,16 +33,30 @@ class _FeedPageState extends State<FeedPage> {
     setState(() {
       loginUserId = id;
     });
+    fetchFeedsData();
   }
 
   Future<void> fetchFeedsData() async {
+    if (loginUserId == null) return;
+
     setState(() {
       isLoading = true;
     });
 
     try {
+      final followingOnly = selectedFilter == '팔로잉만 보기';
+      print("Sending user_id: $loginUserId");
+      print("Following Only Option: $followingOnly");
       final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/feed/get-feed');
-      final response = await http.get(url);
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'user_id': loginUserId,
+          'followingOnly': followingOnly,
+        }),
+      );
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
@@ -108,6 +121,7 @@ class _FeedPageState extends State<FeedPage> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedFilter = newValue!;
+                      fetchFeedsData();
                     });
                   },
                 ),
@@ -177,6 +191,15 @@ class _FeedItemState extends State<FeedItem> {
     });
   }
 
+  void _navigateToPostDetail() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostDetailPage(feedData: widget.feedData),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -198,7 +221,8 @@ class _FeedItemState extends State<FeedItem> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ExternalProfilePage(userId: widget.feedData['user_id']),
+                      builder: (context) =>
+                          ExternalProfilePage(userId: widget.feedData['user_id']),
                     ),
                   );
                 }
@@ -233,7 +257,8 @@ class _FeedItemState extends State<FeedItem> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ExternalProfilePage(userId: widget.feedData['user_id']),
+                      builder: (context) =>
+                          ExternalProfilePage(userId: widget.feedData['user_id']),
                     ),
                   );
                 }
@@ -258,14 +283,7 @@ class _FeedItemState extends State<FeedItem> {
             ),
           ),
           GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PostDetailPage(feedData: widget.feedData),
-                ),
-              );
-            },
+            onTap: _navigateToPostDetail,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
