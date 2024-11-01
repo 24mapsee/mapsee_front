@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: _selectedTabIndex == 1
+              child: _selectedTabIndex == 2
                   ? const MyRouteTabModal()
                   : const MyBottomModalSheet(),
             ),
