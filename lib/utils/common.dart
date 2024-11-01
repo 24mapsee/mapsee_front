@@ -77,6 +77,19 @@ Future<String?> getUserId() async {
   }
 }
 
+// 사용자 객체 가져오기
+Future<String?> getUserInfo() async {
+  // FirebaseAuth에서 현재 로그인된 사용자 가져오기
+  User? user = FirebaseAuth.instance.currentUser;
+
+  // 사용자가 로그인되어 있으면 UID 반환
+  if (user != null) {
+    return user.toString(); // 사용자 UID
+  } else {
+    return null; // 로그인된 사용자가 없으면 null 반환
+  }
+}
+
 //
 double convertToDecimalWGS84(String value) {
   return int.parse(value) / 10000000;
