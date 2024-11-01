@@ -49,6 +49,7 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_svg: ^2.0.11
   url_launcher: ^6.0.20
+  package_info_plus: ^8.1.0
 
 dev_dependencies:
   flutter_test:
