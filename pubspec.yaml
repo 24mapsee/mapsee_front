@@ -46,6 +46,7 @@ dependencies:
   flutter_hooks: ^0.18.0
   speech_to_text: ^7.0.0
   image_picker:
+  url_launcher: ^6.0.20
 
 dev_dependencies:
   flutter_test:
