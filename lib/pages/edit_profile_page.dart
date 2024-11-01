@@ -15,20 +15,22 @@ class EditProfilePage extends StatelessWidget {
           },
         ),
       ),
-      body: SingleChildScrollView( // 추가된 부분
+      body: SingleChildScrollView(
+        // 추가된 부분
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/images/dummy/katt.png'), // 프로필 이미지 경로
+              backgroundImage:
+                  AssetImage('assets/images/dummy/katt.png'), // 프로필 이미지 경로
             ),
             SizedBox(height: 20),
-            _buildEditableField('이름', '구슬이'),
-            _buildEditableField('아이디', 'cherror'),
-            _buildEditableField('휴대전화', '010 - 4727 - 4869'),
-            _buildEditableField('생년월일', '2002 - 09 - 10'),
+            _buildEditableField('이름', '00'),
+            _buildEditableField('아이디', '00'),
+            _buildEditableField('휴대전화', '010 - 0000 - 0000'),
+            _buildEditableField('생년월일', '0000 - 00 - 00'),
             _buildEditableField('성별', '성별 추가', isPlaceholder: true),
             _buildEditableField('연동 계정', '연동 추가', isPlaceholder: true),
             SizedBox(height: 20),
@@ -37,7 +39,9 @@ class EditProfilePage extends StatelessWidget {
                 // 정보 수정 완료 로직
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary, // 테마에서 primary 색상 가져오기
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .primary, // 테마에서 primary 색상 가져오기
                 foregroundColor: Colors.white, // 글씨 색상 설정
                 padding: EdgeInsets.symmetric(vertical: 12, horizontal: 32),
               ),
@@ -49,7 +53,8 @@ class EditProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildEditableField(String label, String value, {bool isPlaceholder = false}) {
+  Widget _buildEditableField(String label, String value,
+      {bool isPlaceholder = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(

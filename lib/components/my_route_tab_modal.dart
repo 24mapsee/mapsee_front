@@ -132,7 +132,7 @@ class _MyRouteTabModalState extends State<MyRouteTabModal> {
     if (routes.isEmpty) {
       return const Center(
         child: Text(
-          '아직 데이터가 없습니다!',
+          '아직 저장한 경로가 없어요',
           style: TextStyle(color: Colors.grey, fontSize: 16),
         ),
       );
