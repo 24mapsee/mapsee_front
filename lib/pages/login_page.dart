@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mapsee/auth/auth_service.dart';
 import 'package:mapsee/components/my_button.dart';
 import 'package:mapsee/components/my_textfield.dart';
@@ -6,7 +7,7 @@ import 'package:mapsee/components/my_textfield.dart';
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
 
-  LoginPage({super.key, required this.onTap});
+  const LoginPage({super.key, required this.onTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -19,20 +20,58 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _pwController = TextEditingController();
 
   // login method
-  void login(BuildContext context) async {
+  void login(BuildContext context, String type) async {
     // auth service
     final authService = AuthService();
 
     // try login
     try {
-      await authService.signInWithEmailAndPassword(
-          _emailController.text, _pwController.text);
+      switch (type) {
+        case 'email':
+          await authService.signInWithEmailAndPassword(
+              _emailController.text, _pwController.text);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('로그인 성공!')),
+            );
+          }
+          break;
+        case 'google':
+          await authService.signInWithGoogle();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('로그인 성공!')),
+            );
+          }
+          break;
+        case 'kakao':
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('서비스 점검중입니다.')),
+            );
+          }
+          // await _loginWithKakao(authService);
+          break;
+        case 'naver':
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('서비스 점검중입니다.')),
+            );
+          }
+          // await _loginWithNaver(authService);
+
+          break;
+        default:
+          break;
+      }
     } catch (e) {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text(e.toString()),
-              ));
+      if (context.mounted) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(e.toString()),
+                ));
+      }
     }
   }
 
@@ -70,69 +109,78 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _pwController,
               ),
               // 아이디 비번 잊으셨나요
-              const SizedBox(height: 7),
-              Center(
-                child: SizedBox(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'ID',
-                          style: TextStyle(
-                            color: Color(0xFFB3B3B3),
-                            fontSize: 13,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            decoration: TextDecoration.underline,
-                            height: 0,
-                            letterSpacing: 1.69,
-                          ),
+              const SizedBox(height: 16),
+              const SizedBox(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'ID',
+                        style: TextStyle(
+                          color: Color(0xFFB3B3B3),
+                          fontSize: 13,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          height: 0,
+                          letterSpacing: 1.69,
                         ),
-                        TextSpan(
-                          text: ' 또는 ',
-                          style: TextStyle(
-                            color: Color(0xFFB3B3B3),
-                            fontSize: 13,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w200,
-                            height: 0,
-                            letterSpacing: 1.69,
-                          ),
+                      ),
+                      TextSpan(
+                        text: ' 또는 ',
+                        style: TextStyle(
+                          color: Color(0xFFB3B3B3),
+                          fontSize: 13,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w200,
+                          height: 0,
+                          letterSpacing: 1.69,
                         ),
-                        TextSpan(
-                          text: '비밀번호',
-                          style: TextStyle(
-                            color: Color(0xFFB3B3B3),
-                            fontSize: 13,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w500,
-                            decoration: TextDecoration.underline,
-                            height: 0,
-                            letterSpacing: 1.69,
-                          ),
+                      ),
+                      TextSpan(
+                        text: '비밀번호',
+                        style: TextStyle(
+                          color: Color(0xFFB3B3B3),
+                          fontSize: 13,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                          height: 0,
+                          letterSpacing: 1.69,
                         ),
-                        TextSpan(
-                          text: '를 잊으셨나요?',
-                          style: TextStyle(
-                            color: Color(0xFFB3B3B3),
-                            fontSize: 13,
-                            fontFamily: 'Pretendard',
-                            fontWeight: FontWeight.w200,
-                            height: 0,
-                            letterSpacing: 1.69,
-                          ),
+                      ),
+                      TextSpan(
+                        text: '를 잊으셨나요?',
+                        style: TextStyle(
+                          color: Color(0xFFB3B3B3),
+                          fontSize: 13,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w200,
+                          height: 0,
+                          letterSpacing: 1.69,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: 7),
+              const SizedBox(height: 16),
               // 로그인 버튼
               MyButton(
                 text: "로그인",
-                onTap: () => login(context),
+                onTap: () {
+                  if (_emailController.text.isNotEmpty &&
+                      _pwController.text.isNotEmpty) {
+                    login(context, "email");
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('ID와 비밀번호를 모두 입력해주세요.')),
+                      );
+                    }
+                  }
+                },
               ),
               const SizedBox(height: 7),
               // 더욱 간편한 로그인
@@ -142,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 14.35,
                   child: Stack(
                     children: [
-                      Positioned(
+                      const Positioned(
                         left: 80.60,
                         top: 0,
                         child: SizedBox(
@@ -166,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                         top: 6.62,
                         child: Container(
                           width: 68.46,
-                          decoration: ShapeDecoration(
+                          decoration: const ShapeDecoration(
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
                                 width: 0.50,
@@ -182,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
                         top: 6.62,
                         child: Container(
                           width: 68.46,
-                          decoration: ShapeDecoration(
+                          decoration: const ShapeDecoration(
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
                                 width: 0.50,
@@ -201,17 +249,17 @@ class _LoginPageState extends State<LoginPage> {
               // 구글, 카카오, 네이버
               MyButton(
                 text: "구글",
-                onTap: () => {},
+                onTap: () => {login(context, "google")},
               ),
               const SizedBox(height: 7),
               MyButton(
                 text: "카카오",
-                onTap: () => {},
+                onTap: () => {login(context, "kakao")},
               ),
               const SizedBox(height: 7),
               MyButton(
                 text: "네이버",
-                onTap: () => {},
+                onTap: () => {login(context, "naver")},
               ),
               const SizedBox(height: 7),
               // 회원가입 이동
