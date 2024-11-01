@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'package:mapsee/auth/auth_service.dart';
@@ -65,11 +67,17 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       if (context.mounted) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text(e.toString()),
-                ));
+        String errorMessage;
+        log(e.toString());
+        if (e.toString().contains('invalid-credential')) {
+          errorMessage = '아이디 또는 비밀번호가 잘못되었습니다.';
+        } else {
+          errorMessage = '로그인 중 오류가 발생했습니다: ${e.toString()}';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
       }
     }
   }
