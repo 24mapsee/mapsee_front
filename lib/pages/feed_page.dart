@@ -21,7 +21,6 @@ class _FeedPageState extends State<FeedPage> {
   final List<String> filterOptions = ['팔로워만 보기', '전체 보기', '현재 지역 보기'];
   List<dynamic> feedData = [];
   bool isLoading = true;
-  
 
   @override
   void initState() {
@@ -29,6 +28,7 @@ class _FeedPageState extends State<FeedPage> {
     _initializeUserId();
     fetchFeedsData();
   }
+
   Future<void> _initializeUserId() async {
     final id = await getUserId();
     setState(() {
@@ -47,17 +47,13 @@ class _FeedPageState extends State<FeedPage> {
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
-
-        // 응답 내용을 출력하여 구조를 확인합니다.
         print('Response body: $responseBody');
 
         setState(() {
-          feedData =
-              responseBody['feedItems'] ?? []; // feedItems 키에 접근하여 데이터 추출
+          feedData = responseBody['feedItems'] ?? [];
           isLoading = false;
         });
       } else {
-        // 상태 코드 및 오류 메시지를 출력합니다.
         print('Failed with status code: ${response.statusCode}');
         print('Error response: ${response.body}');
         throw Exception('Failed to load feed data');
@@ -133,168 +129,208 @@ class _FeedPageState extends State<FeedPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.separated(
-              itemCount: feedData.length,
-              itemBuilder: (context, index) {
-                return FeedItem(
-                  feedData: feedData[index],
-                  loginUserId: loginUserId);
-              },
-              separatorBuilder: (context, index) {
-                return const Divider(
-                  color: Color(0xFFE5E5E5),
-                  thickness: 0.7,
-                  indent: 15,
-                  endIndent: 15,
-                );
-              },
-            ),
+        itemCount: feedData.length,
+        itemBuilder: (context, index) {
+          return FeedItem(
+            feedData: feedData[index],
+            loginUserId: loginUserId,
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            color: Color(0xFFE5E5E5),
+            thickness: 0.7,
+            indent: 15,
+            endIndent: 15,
+          );
+        },
+      ),
     );
   }
 }
 
-class FeedItem extends StatelessWidget {
+class FeedItem extends StatefulWidget {
   final Map<String, dynamic> feedData;
   final String? loginUserId;
 
   const FeedItem({super.key, required this.feedData, required this.loginUserId});
 
   @override
+  _FeedItemState createState() => _FeedItemState();
+}
+
+class _FeedItemState extends State<FeedItem> {
+  bool isLiked = false;
+  int likeCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    isLiked = widget.feedData['isLiked'] ?? false;
+    likeCount = widget.feedData['likeCount'] ?? 0;
+  }
+
+  void _toggleLike() {
+    setState(() {
+      isLiked = !isLiked;
+      likeCount += isLiked ? 1 : -1;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (loginUserId == feedData['user_id']) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ProfilePage(),
-            ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
-            ),
-          );
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ListTile(
-              leading: GestureDetector(
-                onTap: () {
-                    if (loginUserId == feedData['user_id']) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfilePage(),
-                        ),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
-                        ),
-                      );
-                    }
-                  },
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                      width: 1.2,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ListTile(
+            leading: GestureDetector(
+              onTap: () {
+                if (widget.loginUserId == widget.feedData['user_id']) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfilePage(),
                     ),
-                  ),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(feedData['profile_picture'] ??
-                        'assets/images/dummy/katt.png'),
-                    radius: 20,
-                  ),
-                ),
-              ),
-              title: GestureDetector(
-                onTap: () {
-                    if (loginUserId == feedData['user_id']) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfilePage(),
-                        ),
-                      );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ExternalProfilePage(userId: feedData['user_id']),
-                        ),
-                      );
-                    }
-                  },
-                child: Text(
-                  feedData['name']?.toString() ?? '사용자 이름 없음',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.2,
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExternalProfilePage(userId: widget.feedData['user_id']),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1.2,
                   ),
                 ),
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(widget.feedData['profile_picture'] ??
+                      'assets/images/dummy/katt.png'),
+                  radius: 20,
+                ),
               ),
-              subtitle: Text(
-                feedData['created_at'] ?? '시간 정보 없음',
+            ),
+            title: GestureDetector(
+              onTap: () {
+                if (widget.loginUserId == widget.feedData['user_id']) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfilePage(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ExternalProfilePage(userId: widget.feedData['user_id']),
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                widget.feedData['name']?.toString() ?? '사용자 이름 없음',
                 style: const TextStyle(
-                  color: Color(0xFF606060),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  feedData['image_url'] ??
-                      'https://via.placeholder.com/200', // 이미지가 없을 경우 기본 이미지 URL로 대체
-                  fit: BoxFit.cover,
-                  height: 200,
-                  width: double.infinity,
-                ),
+            subtitle: Text(
+              widget.feedData['created_at'] ?? '시간 정보 없음',
+              style: const TextStyle(
+                color: Color(0xFF606060),
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 1.2,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
-              child: Text(
-                feedData['title'] ?? '제목 없음',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.6,
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PostDetailPage(feedData: widget.feedData),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 25.0, right: 25.0, top: 4.0, bottom: 12.0),
-              child: Text(
-                jsonDecode(feedData['description']).join(" ") ?? '설명 없음',
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0.5,
-                  color: Color(0xff9d9d9d),
+              );
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      widget.feedData['image_url'] ?? 'https://via.placeholder.com/200',
+                      fit: BoxFit.cover,
+                      height: 200,
+                      width: double.infinity,
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+                  child: Text(
+                    widget.feedData['title'] ?? '제목 없음',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+                  child: Text(
+                    jsonDecode(widget.feedData['description']).join(" ") ?? '설명 없음',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 0.5,
+                      color: Color(0xff9d9d9d),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 8.0),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: _toggleLike,
+                        child: Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: isLiked ? Colors.red : Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '$likeCount',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff9d9d9d),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
