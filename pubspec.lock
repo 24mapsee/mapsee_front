@@ -8,7 +8,7 @@ packages:
       sha256: "5534e701a2c505fed1f0799e652dd6ae23bd4d2c4cf797220e5ced5764a7c1c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.43"
+    version: "1.3.44"
   args:
     dependency: transitive
     description:
@@ -892,8 +892,7 @@ packages:
       sha256: "7a3f37b05d989967cdddcbb571f1ea834867ae2faa29725fd085180e0883aa15"
       url: "https://pub.dev"
     source: hosted
-<<<<<<< HEAD
-    version: "1.0.4"
+    version: "1.1.0"
   xml:
     dependency: transitive
     description:
@@ -902,9 +901,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
-=======
-    version: "1.1.0"
->>>>>>> develop
 sdks:
   dart: ">=3.5.2 <4.0.0"
   flutter: ">=3.24.0"
