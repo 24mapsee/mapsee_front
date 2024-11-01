@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:mapsee/auth/login_or_register.dart';
 
 class AuthService {
-  // instance of auth
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // sign in with email and password
   Future<UserCredential> signInWithEmailAndPassword(
       String email, String password) async {
     try {
@@ -24,14 +24,52 @@ class AuthService {
   }
 
   // sign up with email and password
-  Future<UserCredential> signUpWithEmailPassword(
-      String email, String password) async {
+  Future<bool> signUpWithEmailPassword(
+      BuildContext context, String email, String password) async {
     try {
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      return userCredential;
-    } on FirebaseException catch (e) {
-      throw Exception(e.code);
+      final response = await http.post(
+        Uri.parse('${dotenv.env["API_BASE_URL"]}/user/register/native'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'userId': email,
+          'password': password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('회원가입 성공! 로그인 페이지로 이동합니다.')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginOrRegister()),
+          );
+        }
+        return true;
+      } else if (response.statusCode == 409) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('ID가 중복입니다. 다른 ID를 사용해주세요.')),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('회원가입 실패: ${response.body.toString()}')),
+          );
+        }
+      }
+      return false; // 모든 실패 상황에서 false 반환
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('에러: ${e.toString()}')),
+        );
+      }
+      return false; // 예외 상황에서도 false 반환
     }
   }
 

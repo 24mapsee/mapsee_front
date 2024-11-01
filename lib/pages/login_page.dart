@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:mapsee/auth/auth_service.dart';
 import 'package:mapsee/components/my_button.dart';
@@ -193,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                               letterSpacing: 1.43,
                             ),
                           ),
-                          const Divider(color: Color(0xFFD9D9D9)),
+                          Divider(color: Color(0xFFD9D9D9)),
                         ],
                       ),
                     ),
