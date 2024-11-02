@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   void _launchLicenseUrl(String urlString) async {
     final Uri url = Uri.parse(urlString);
+
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                         builder: (BuildContext context) {
                           return CircleAvatar(
                             backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
+                            Theme.of(context).colorScheme.secondary,
                             child: IconButton(
                               icon: const Icon(Icons.menu),
                               onPressed: () {
@@ -153,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                     'assets/images/png/mic.png',
                                     width: 20,
                                     color:
-                                        Theme.of(context).colorScheme.outline,
+                                    Theme.of(context).colorScheme.outline,
                                   ),
                                   const SizedBox(width: 5),
                                   const Icon(Icons.search),
