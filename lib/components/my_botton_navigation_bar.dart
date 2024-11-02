@@ -6,7 +6,8 @@ import 'package:mapsee/pages/search_page.dart';
 class MyBottomNavigationBar extends StatefulWidget {
   final ValueChanged<int> onTabSelected;
 
-  const MyBottomNavigationBar({Key? key, required this.onTabSelected}) : super(key: key);
+  const MyBottomNavigationBar({Key? key, required this.onTabSelected})
+      : super(key: key);
 
   @override
   _MyBottomNavigationBarState createState() => _MyBottomNavigationBarState();
@@ -23,33 +24,37 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
       unselectedItemColor: Theme.of(context).colorScheme.secondary,
       type: BottomNavigationBarType.fixed,
       onTap: (int idx) {
-        if (idx == 0 || idx == 1) {
-
-          setState(() {
-            _currentIndex = idx;
-          });
-          widget.onTabSelected(idx);
-        } else {
-          switch (idx) {
-            case 2:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchPage()),
-              );
-              break;
-            case 3:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>  FeedPage()),
-              );
-              break;
-            case 4:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>  ProfilePage()),
-              );
-              break;
-          }
+        switch (idx) {
+          case 0:
+            setState(() {
+              _currentIndex = idx;
+            });
+            widget.onTabSelected(idx);
+            break;
+          case 1:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SearchPage()),
+            );
+            break;
+          case 2:
+            setState(() {
+              _currentIndex = idx;
+            });
+            widget.onTabSelected(idx);
+            break;
+          case 3:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FeedPage()),
+            );
+            break;
+          case 4:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
+            break;
         }
       },
       items: [

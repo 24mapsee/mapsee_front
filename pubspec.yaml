@@ -45,7 +45,11 @@ dependencies:
   equatable: ^2.0.0
   flutter_hooks: ^0.18.0
   speech_to_text: ^7.0.0
-  image_picker:
+  image_picker: ^1.1.2
+  google_sign_in: ^6.2.1
+  flutter_svg: ^2.0.11
+  url_launcher: ^6.0.20
+  package_info_plus: ^8.1.0
 
 dev_dependencies:
   flutter_test:
@@ -115,6 +119,11 @@ flutter:
 
     #임시 사진
     - assets/images/place_example.jpeg
+
+    # 로그인 버튼 이미지
+    - assets/images/svg/ic_login_google.svg
+    - assets/images/svg/ic_login_naver.svg
+    - assets/images/svg/ic_login_kakao.svg
 
   fonts:
     - family: Pretendard

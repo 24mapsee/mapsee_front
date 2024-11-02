@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_naver_map/flutter_naver_map.dart';
-import 'package:mapsee/utils/common.dart';
 
 class NaverMapMarker extends StatefulWidget {
   final String title;
@@ -19,6 +18,7 @@ class NaverMapMarker extends StatefulWidget {
   @override
   State<NaverMapMarker> createState() => _NaverMapMarkerState();
 }
+
 class _NaverMapMarkerState extends State<NaverMapMarker> {
   late Map<String, dynamic> jsonData;
   late NaverMapController _mapController;
@@ -30,8 +30,8 @@ class _NaverMapMarkerState extends State<NaverMapMarker> {
   void initState() {
     super.initState();
 
-    latitude = convertToDecimalWGS84(widget.mapy);
-    longitude = convertToDecimalWGS84(widget.mapx);
+    latitude = double.parse(widget.mapy);
+    longitude = double.parse(widget.mapx);
 
     jsonData = {
       'X': latitude,
@@ -41,6 +41,7 @@ class _NaverMapMarkerState extends State<NaverMapMarker> {
       'format': 'json',
     };
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -64,21 +65,25 @@ class _NaverMapMarkerState extends State<NaverMapMarker> {
               mapControllerCompleter.complete(controller);
             }
 
-
             final marker = NMarker(
-                id: 'test',
-                position: NLatLng(latitude, longitude),
+              id: 'test',
+              position: NLatLng(latitude, longitude),
               // icon: await NOverlayImage.fromAssetImage('assets/images/png/marker.png'),
             );
             controller.addOverlayAll({
               marker,
             });
-            marker.setIcon(NOverlayImage.fromAssetImage('assets/images/png/marker.png'),);
+            marker.setIcon(
+              const NOverlayImage.fromAssetImage(
+                  'assets/images/png/marker.png'),
+            );
             marker.setIconTintColor(Theme.of(context).colorScheme.primary);
-            marker.setSize(Size(30,30));
+            marker.setSize(Size(30, 30));
 
-            final show_marker =
-                NInfoWindow.onMarker(id: marker.info.id, text: widget.title, );
+            final show_marker = NInfoWindow.onMarker(
+              id: marker.info.id,
+              text: widget.title,
+            );
             marker.openInfoWindow(show_marker);
           },
         ),

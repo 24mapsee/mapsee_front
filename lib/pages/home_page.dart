@@ -5,6 +5,7 @@ import 'package:mapsee/components/my_route_tab_modal.dart';
 import 'package:mapsee/components/my_bottom_modal_sheet.dart';
 import 'package:mapsee/pages/search_page.dart';
 import 'package:mapsee/services/naver_map_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +27,15 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedTabIndex = index;
     });
+  }
+
+  void _launchLicenseUrl(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -63,7 +73,6 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context);
               },
             ),
-            const Spacer(),
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Logout'),
@@ -72,6 +81,13 @@ class _HomePageState extends State<HomePage> {
                 logout();
               },
             ),
+            Divider(),
+            ListTile(
+                title: Text(
+                  '방법 아이콘 제작자: Freepik - Flaticon',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                onTap: () => _launchLicenseUrl('https://www.flaticon.com/kr/')),
           ],
         ),
       ),
@@ -155,7 +171,7 @@ class _HomePageState extends State<HomePage> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: _selectedTabIndex == 1
+              child: _selectedTabIndex == 2
                   ? const MyRouteTabModal()
                   : const MyBottomModalSheet(),
             ),

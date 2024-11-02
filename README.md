@@ -1,16 +1,13 @@
-# mapsee
+# 맵시 [MAPPSEE]
+<img src="https://github.com/user-attachments/assets/83020015-5f34-433c-ae15-28636943e84f" width="200" height="200"/>
+<br/>
+맵시 애플리케이션은 지속 가능한 국내 여행 활성화를 목표로 사용자 맞춤형 경로
+생성 및 공유 기능을 제공합니다. 사용자들은 커스텀 경로를 만들어 다른 사용자와
+피드를 통해 공유할 수 있습니다. 이러한 맵시 서비스는 개방형 클라우드 플랫폼
+표준모델을 기반으로 K-PaaS 적합성을 인증받은 Naver Cloud Platform
+NCP을 활용하여 안전하고 확장 가능한 방식으로 구현하였습니다
 
-A new Flutter project.
+## 환경 구축
+![2](https://github.com/user-attachments/assets/38b08d37-3ed2-4f2c-b4c4-4c4f04233dad)
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+맵시는 개방형 클라우드 플랫폼 표준모델을 기반으로 K-PaaS 적합성을 인증받은 Naver Cloud Platform NCP 을 활용하여 안전하고 확장 가능한 개발 환경 아키텍쳐를 통해 인프라를 구축하였습니다. 본 아키텍처는 마이크로서비스 기반 접근 방식을 따르며, 컨테이너 오케스트레이션을 위해 쿠버네티스를 사용하였습니다. 백엔드 서비스는 NCP 쿠버네티스 서비스에 호스팅되어 있으며, 여러 개의 파드가 애플리케이션 로직을 처리합니다. 인그레스 컨트롤러는 사용자로부터 들어오는 요청을 적절한 파드로 라우팅하며, 오토 스케일링을 통해 수요에 따라 자원을 동적으로 확장 가능하게 구현하였습니다. 로드 밸런서를 활용해 서버로 들어오는 트래픽을 분산하여 시스템의 가용성과 안정성을 높였습니다. 제공된 전체 환경에는 Anti-DDoS, IDS 침입 탐지 시스템, IPS 침입 방지 시스템, WAF 웹 애플리케이션 방화벽 등 보안 모니터링 기능이 통합되어 있어 악의적인 공격으로부터 보호할 수 있게 구현하였습니다. 이러한 보안 조치는 여러 계층의 보호를 제공하여 데이터의 무결성과 기밀성을 보장할 수 있습니다. 데이터베이스 서비스는 NCP 내에서 관리되며, 마스터 노드와 오브젝트 스토리지를 활용하였습니다. 이를 통해 신뢰할 수 있는 데이터 관리와 필요한 경우 확장 가능성을 보장하게 하였습니다. 데이터베이스 서비스는 백엔드 서비스와 통합되어 효율적인 데이터 처리를 지원합니다. CI/CD 측면에서는 GitHub 및 GitHub Actions 를 사용하여 자동화를 구현하였습니다. 개발자가 GitHub 에 코드를 커밋하면, 새로운 커밋 시 GitHub Actions 가 자동 CI/CD 파이프라인을 실행합니다. 이 파이프라인은 Docker 이미지를 빌드하고, Naver Cloud Container Registry 에 저장한 후 쿠버네티스 클러스터에 이미지를 배포하는 과정을 포함하였습니다. CI/CD 파이프라인은 일관된 배포 과정을 보장하여 맵시 애플리케이션의 안정성을 유지할 수 있도록 하였습니다.

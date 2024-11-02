@@ -229,8 +229,6 @@ class _SearchPageState extends State<SearchPage> {
                         return ListTile(
                           title: Text(title),
                           onTap: () {
-                            print("따엉ㄻ");
-                            print(data);
                             final link = data['link']?.toString() ?? '';
                             final category = data['category']?.toString() ?? '';
                             final roadAddress =
