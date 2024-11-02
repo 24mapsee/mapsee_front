@@ -106,8 +106,11 @@ class _FullScreenSearchState extends State<FullScreenSearch> {
       });
 
       try {
+        // final suggestions =
+        //     await SearchRepository.instance.getNaverPlaceSearch(query: query);
         final suggestions =
-            await SearchRepository.instance.getNaverPlaceSearch(query: query);
+            await SearchRepository.instance.getKakaoPlaceSearch(query: query);
+
         log('[성공] 검색 API 요청 결과: $suggestions');
         if (mounted) {
           setState(() {

@@ -9,6 +9,7 @@ class PlaceInfoPage extends StatefulWidget {
   final String roadAddress;
   final String link;
   final String telephone;
+  final List<Map<String, dynamic>> data;
 
   const PlaceInfoPage({
     super.key,
@@ -18,6 +19,7 @@ class PlaceInfoPage extends StatefulWidget {
     required this.roadAddress,
     required this.link,
     required this.telephone,
+    required this.data,
   });
 
   @override
@@ -38,8 +40,8 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
         children: [
           Image.asset('assets/images/place_example.jpeg'),
           Container(
-            margin: EdgeInsets.all(6),
-            padding: EdgeInsets.all(20),
+            margin: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
                 border: Border(
                     bottom: BorderSide(
@@ -55,7 +57,8 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                     Flexible(
                       child: Text(
                         widget.title,
-                        style: TextStyle(fontWeight: FontWeight.w200, fontSize: 30),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w200, fontSize: 30),
                         maxLines: null,
                         softWrap: true,
                         overflow: TextOverflow.visible,
@@ -63,17 +66,22 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                     ),
                   ],
                 ),
-                SizedBox(width: 8),
-                Text(widget.category.split('>').last, style: TextStyle(color: Colors.black45)),
-                SizedBox(height: 20),
-                MyDepartureAndArrivalButtons(),
-                SizedBox(height: 15),
+                const SizedBox(width: 8),
+                Text(widget.category.split('>').last,
+                    style: const TextStyle(color: Colors.black45)),
+                const SizedBox(height: 20),
+                MyDepartureAndArrivalButtons(onDepartureTap: () {
+                  print('출발 버튼 클릭됨');
+                }, onArrivalTap: () {
+                  print('도착 버튼 클릭됨');
+                }),
+                const SizedBox(height: 15),
                 Container(
                   decoration: BoxDecoration(
                       border: Border(
                           top: BorderSide(
                               color: Theme.of(context).colorScheme.outline))),
-                  padding: EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.only(top: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -93,10 +101,10 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                               width: 30,
                             ),
                           ),
-                          Text('저장하기')
+                          const Text('저장하기')
                         ],
                       ),
-                      MyVerticalDivider(height: 0.05),
+                      const MyVerticalDivider(height: 0.05),
                       Column(
                         children: [
                           Image.asset(
@@ -104,7 +112,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                             color: Theme.of(context).colorScheme.secondary,
                             width: 30,
                           ),
-                          Text('공유하기')
+                          const Text('공유하기')
                         ],
                       )
                     ],
@@ -114,8 +122,8 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(20),
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 Row(
@@ -126,11 +134,15 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       'assets/images/png/marker.png',
                       width: 15,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Column(
                       children: [
-                        Text(widget.address.isNotEmpty ? widget.address : '제공하지 않음'),
-                        Text(widget.roadAddress.isNotEmpty ? widget.roadAddress : '제공하지 않음'),
+                        Text(widget.address.isNotEmpty
+                            ? widget.address
+                            : '제공하지 않음'),
+                        Text(widget.roadAddress.isNotEmpty
+                            ? widget.roadAddress
+                            : '제공하지 않음'),
                       ],
                     ),
                   ],
@@ -143,8 +155,8 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       'assets/images/png/clock.png',
                       width: 15,
                     ),
-                    SizedBox(width: 5),
-                    Text('09:00 - 20:00 ▽'), // 수정해야 함
+                    const SizedBox(width: 5),
+                    const Text('09:00 - 20:00 ▽'), // 수정해야 함
                   ],
                 ),
                 Row(
@@ -155,8 +167,10 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       'assets/images/png/call.png',
                       width: 15,
                     ),
-                    SizedBox(width: 5),
-                    Text(widget.telephone.isNotEmpty ? widget.telephone : '제공하지 않음'),
+                    const SizedBox(width: 5),
+                    Text(widget.telephone.isNotEmpty
+                        ? widget.telephone
+                        : '제공하지 않음'),
                   ],
                 ),
                 Row(
@@ -167,7 +181,7 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       'assets/images/png/world.png',
                       width: 15,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(widget.link.isNotEmpty ? widget.link : '제공하지 않음'),
                   ],
                 ),
@@ -179,8 +193,8 @@ class _PlaceInfoPageState extends State<PlaceInfoPage> {
                       'assets/images/png/parking.png',
                       width: 15,
                     ),
-                    SizedBox(width: 5),
-                    Text('주차 가능'), // 수정해야 함
+                    const SizedBox(width: 5),
+                    const Text('주차 가능'), // 수정해야 함
                   ],
                 ),
               ],

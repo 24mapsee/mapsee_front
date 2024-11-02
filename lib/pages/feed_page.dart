@@ -59,6 +59,7 @@ class _FeedPageState extends State<FeedPage> {
       );
 
       if (response.statusCode == 200) {
+        print(response.request);
         final responseBody = jsonDecode(response.body);
         print('Response body: $responseBody');
 
@@ -76,6 +77,47 @@ class _FeedPageState extends State<FeedPage> {
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> saveFeed(String feedId) async {
+    final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/feed/save-feed');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': loginUserId, 'feed_id': feedId}),
+      );
+
+      if (response.statusCode == 201) {
+        print("Success to save post");
+      } else {
+        print('Failed to save post with status code: ${response.statusCode}');
+        print('Error response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error saving post: $error');
+    }
+  }
+
+  Future<void> deleteSavedFeed(String feedId) async {
+    final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/feed/save-feed-del');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': loginUserId, 'feed_id': feedId}),
+      );
+
+      if (response.statusCode == 201) {
+        print("Success to delete post");
+      } else {
+        print(
+            'Failed to delete saved post with status code: ${response.statusCode}');
+        print('Error response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error saving post: $error');
     }
   }
 
@@ -143,22 +185,24 @@ class _FeedPageState extends State<FeedPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.separated(
-        itemCount: feedData.length,
-        itemBuilder: (context, index) {
-          return FeedItem(
-            feedData: feedData[index],
-            loginUserId: loginUserId,
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            color: Color(0xFFE5E5E5),
-            thickness: 0.7,
-            indent: 15,
-            endIndent: 15,
-          );
-        },
-      ),
+              itemCount: feedData.length,
+              itemBuilder: (context, index) {
+                return FeedItem(
+                  feedData: feedData[index],
+                  loginUserId: loginUserId,
+                  onSave: saveFeed,
+                  onDelete: deleteSavedFeed,
+                );
+              },
+              separatorBuilder: (context, index) {
+                return const Divider(
+                  color: Color(0xFFE5E5E5),
+                  thickness: 0.7,
+                  indent: 15,
+                  endIndent: 15,
+                );
+              },
+            ),
     );
   }
 }
@@ -166,9 +210,16 @@ class _FeedPageState extends State<FeedPage> {
 class FeedItem extends StatefulWidget {
   final Map<String, dynamic> feedData;
   final String? loginUserId;
+  final Future<void> Function(String feedId) onSave;
+  final Future<void> Function(String feedId) onDelete;
 
-  const FeedItem({super.key, required this.feedData, required this.loginUserId});
-
+  const FeedItem({
+    super.key,
+    required this.feedData,
+    required this.loginUserId,
+    required this.onSave,
+    required this.onDelete,
+  });
   @override
   _FeedItemState createState() => _FeedItemState();
 }
@@ -180,8 +231,8 @@ class _FeedItemState extends State<FeedItem> {
   @override
   void initState() {
     super.initState();
-    isLiked = widget.feedData['isLiked'] ?? false;
-    likeCount = widget.feedData['likeCount'] ?? 0;
+    isLiked = widget.feedData['is_liked'] == 1;
+    likeCount = widget.feedData['like_count'] ?? 0;
   }
 
   void _toggleLike() {
@@ -189,6 +240,14 @@ class _FeedItemState extends State<FeedItem> {
       isLiked = !isLiked;
       likeCount += isLiked ? 1 : -1;
     });
+
+    String feedId = widget.feedData['feed_id'].toString();
+
+    if (isLiked) {
+      widget.onSave(feedId);
+    } else {
+      widget.onDelete(feedId);
+    }
   }
 
   void _navigateToPostDetail() {
@@ -221,8 +280,8 @@ class _FeedItemState extends State<FeedItem> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ExternalProfilePage(userId: widget.feedData['user_id']),
+                      builder: (context) => ExternalProfilePage(
+                          userId: widget.feedData['user_id']),
                     ),
                   );
                 }
@@ -238,8 +297,9 @@ class _FeedItemState extends State<FeedItem> {
                   ),
                 ),
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(widget.feedData['profile_picture'] ??
-                      'assets/images/dummy/katt.png'),
+                  backgroundImage: NetworkImage(
+                      widget.feedData['profile_picture'] ??
+                          'assets/images/dummy/katt.png'),
                   radius: 20,
                 ),
               ),
@@ -257,8 +317,8 @@ class _FeedItemState extends State<FeedItem> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ExternalProfilePage(userId: widget.feedData['user_id']),
+                      builder: (context) => ExternalProfilePage(
+                          userId: widget.feedData['user_id']),
                     ),
                   );
                 }
@@ -292,7 +352,8 @@ class _FeedItemState extends State<FeedItem> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      widget.feedData['image_url'] ?? 'https://via.placeholder.com/200',
+                      widget.feedData['image_url'] ??
+                          'https://via.placeholder.com/200',
                       fit: BoxFit.cover,
                       height: 200,
                       width: double.infinity,
@@ -300,7 +361,8 @@ class _FeedItemState extends State<FeedItem> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+                  padding:
+                      const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
                   child: Text(
                     widget.feedData['title'] ?? '제목 없음',
                     style: const TextStyle(
@@ -311,9 +373,11 @@ class _FeedItemState extends State<FeedItem> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+                  padding:
+                      const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
                   child: Text(
-                    jsonDecode(widget.feedData['description']).join(" ") ?? '설명 없음',
+                    jsonDecode(widget.feedData['description']).join(" ") ??
+                        '설명 없음',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -323,7 +387,8 @@ class _FeedItemState extends State<FeedItem> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 25.0, vertical: 8.0),
                   child: Row(
                     children: [
                       GestureDetector(
