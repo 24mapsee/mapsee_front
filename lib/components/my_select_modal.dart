@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // FirebaseAuth import
 
 class MySelectModal extends StatefulWidget {
   const MySelectModal({super.key});
@@ -10,11 +14,88 @@ class MySelectModal extends StatefulWidget {
 class _MySelectModalState extends State<MySelectModal> {
   int? selectedIndex;
   final TextEditingController _archiveNameController = TextEditingController();
+  List<Map<String, dynamic>> folderData = [];
+  String? userId; // 로그인된 유저의 UID 저장
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserIdAndFolders(); // 유저 ID를 불러온 후 폴더 데이터 가져오기
+  }
+
+  // 로그인된 유저의 UID 불러오기
+  Future<void> _loadUserIdAndFolders() async {
+    userId = await getUserId();
+
+    // userId를 터미널에 출력하여 확인
+    print("현재 로그인된 유저 UID: $userId");
+
+    if (userId != null) {
+      _getFolders();
+    }
+  }
+
+  // FirebaseAuth를 통해 유저의 UID 가져오는 함수
+  Future<String?> getUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    return user?.uid;
+  }
+
+  // 폴더 데이터 가져오기
+  Future<void> _getFolders() async {
+    final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/get-folders?uid=$userId');
+    print("Requesting folders with UID: $userId");
+
+    try {
+      final response = await http.get(url); // GET 요청 사용
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        setState(() {
+          folderData = List<Map<String, dynamic>>.from(responseData['folders']);
+        });
+      } else {
+        print("Error: ${response.reasonPhrase}");
+        throw Exception('Failed to load folders');
+      }
+    } catch (error) {
+      print('Error fetching folders: $error');
+    }
+  }
+
+  // 새로운 폴더 생성
+  Future<void> _createFolder(String folderName) async {
+    final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/create-folder');
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "user_id": userId, // 현재 로그인된 유저의 UID 전달
+          "folder_name": folderName,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print("Folder created successfully");
+        Navigator.pop(context);
+        _archiveNameController.clear();
+        _getFolders(); // 폴더 목록 새로고침
+      } else {
+        throw Exception('Failed to create folder');
+      }
+    } catch (error) {
+      print('Error creating folder: $error');
+    }
+  }
 
   void _confirmSelection() {
     if (selectedIndex != null) {
-      final selectedItem = dummyProfileData1[selectedIndex!];
-      print('선택된 아이템: ${selectedItem['archive_name']}');
+      final selectedItem = folderData[selectedIndex!];
+      print('선택된 아이템: ${selectedItem['folder_name']}');
       Navigator.pop(context, selectedItem);
     }
   }
@@ -28,8 +109,8 @@ class _MySelectModalState extends State<MySelectModal> {
             borderRadius: BorderRadius.circular(20.0),
           ),
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.4,
-            padding: const EdgeInsets.all(16),
+            height: MediaQuery.of(context).size.height * 0.25, // 높이 줄이기
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), // 여백 줄이기
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,10 +119,10 @@ class _MySelectModalState extends State<MySelectModal> {
                   alignment: Alignment.center,
                   child: Text(
                     "새 저장소",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 12), // 여백 줄이기
                 TextField(
                   controller: _archiveNameController,
                   decoration: InputDecoration(
@@ -51,14 +132,14 @@ class _MySelectModalState extends State<MySelectModal> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 12), // 여백 줄이기
                 Align(
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () {
-                      print("저장소 이름: ${_archiveNameController.text}");
-                      Navigator.pop(context);
-                      _archiveNameController.clear();
+                      if (_archiveNameController.text.isNotEmpty) {
+                        _createFolder(_archiveNameController.text);
+                      }
                     },
                     child: Text("저장"),
                   ),
@@ -82,8 +163,8 @@ class _MySelectModalState extends State<MySelectModal> {
       child: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.5,
-            padding: const EdgeInsets.all(16),
+            height: screenHeight * 0.4,
+            padding: const EdgeInsets.all(12),
             child: Column(
               children: [
                 Row(
@@ -93,8 +174,7 @@ class _MySelectModalState extends State<MySelectModal> {
                       child: Center(
                         child: Text(
                           "저장 목록",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -102,13 +182,13 @@ class _MySelectModalState extends State<MySelectModal> {
                       onTap: _buildNewArchive,
                       child: Image.asset(
                         'assets/images/png/add.png',
-                        width: 25,
+                        width: 24,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 8),
                 Expanded(
                   child: _buildListView(),
                 ),
@@ -116,10 +196,10 @@ class _MySelectModalState extends State<MySelectModal> {
             ),
           ),
           Positioned(
-            bottom: 16,
+            bottom: 12,
             right: 16,
             child: SizedBox(
-              height: screenHeight * 0.04,
+              height: screenHeight * 0.035,
               child: FloatingActionButton(
                 onPressed: _confirmSelection,
                 child: Text('선택'),
@@ -133,7 +213,7 @@ class _MySelectModalState extends State<MySelectModal> {
   }
 
   Widget _buildListView() {
-    if (dummyProfileData1.isEmpty) {
+    if (folderData.isEmpty) {
       return Center(
         child: Text(
           '아직 데이터가 없습니다!',
@@ -142,23 +222,23 @@ class _MySelectModalState extends State<MySelectModal> {
       );
     }
     return ListView.builder(
-      itemCount: dummyProfileData1.length,
+      itemCount: folderData.length,
       itemBuilder: (context, index) {
-        final archiveName =
-            dummyProfileData1[index]['archive_name'] ?? '아카이브 없음';
-        final collaboratorName = dummyProfileData1[index]['collaborator_name'];
+        final folderName =
+            folderData[index]['folder_name'] ?? '아카이브 없음';
+        final description = folderData[index]['description'];
 
         return ListTile(
           leading: Icon(Icons.favorite, color: Colors.pink),
-          title: Text(archiveName),
-          subtitle: collaboratorName != null
+          title: Text(folderName),
+          subtitle: description != null
               ? Text(
-                  '${collaboratorName} 님과 함께',
-                  style: TextStyle(color: Colors.grey[700]),
-                )
+            '$description',
+            style: TextStyle(color: Colors.grey[700]),
+          )
               : null,
           trailing:
-              dummyProfileData1[index]['locked'] ? Icon(Icons.lock) : null,
+          folderData[index]['locked'] ? Icon(Icons.lock) : null,
           selected: selectedIndex == index,
           selectedTileColor: Colors.blue[100],
           onTap: () {
@@ -171,14 +251,3 @@ class _MySelectModalState extends State<MySelectModal> {
     );
   }
 }
-
-List<Map<String, dynamic>> dummyProfileData1 = [
-  {"archive_name": "데이트 코스", "collaborator_name": "김현진", "locked": true},
-  {"archive_name": "고독한 미식가", "collaborator_name": null, "locked": false},
-  {"archive_name": "동아리 정기 모임 장소", "collaborator_name": "민수", "locked": false},
-  {"archive_name": "클라이밍", "collaborator_name": null, "locked": false},
-  {"archive_name": "동아리 정기 모임 장소", "collaborator_name": "민수", "locked": false},
-  {"archive_name": "클라이밍", "collaborator_name": null, "locked": false},
-  {"archive_name": "동아리 정기 모임 장소", "collaborator_name": "민수", "locked": false},
-  {"archive_name": "클라이밍", "collaborator_name": null, "locked": false},
-];
