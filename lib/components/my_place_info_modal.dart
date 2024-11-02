@@ -42,7 +42,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
     showDialog(
       context: context,
       builder: (context) {
-        return MySelectModal();
+        return const MySelectModal();
       },
     );
   }
@@ -73,9 +73,13 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
           padding: const EdgeInsets.all(5.0),
           child: Column(
             children: [
-              MyGribber(),
+              const MyGribber(),
+              const SizedBox(
+                height: 16,
+              ),
               Expanded(
                 child: ListView(
+                  padding: EdgeInsets.zero,
                   controller: widget.scrollController ?? scrollController,
                   children: <Widget>[
                     _buildTitleSection(),
@@ -93,7 +97,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
 
   Widget _buildTitleSection() {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -108,8 +112,8 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
           Text(
             widget.title.replaceFirst(' ', '\n'),
             style: TextStyle(
-              fontWeight: FontWeight.w200,
-              fontSize: 30,
+              fontWeight: FontWeight.w400,
+              fontSize: 32,
               color: Theme.of(context).colorScheme.onSurface,
               decoration: TextDecoration.none,
             ),
@@ -118,7 +122,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
           const SizedBox(height: 8),
           Text(
             widget.category.split('>').last,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               color: Colors.black45,
               decoration: TextDecoration.none,
@@ -133,7 +137,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
 
   Widget _buildCategoryButtons() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -159,7 +163,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
               ),
             ],
           ),
-          MyVerticalDivider(height: 0.05),
+          const MyVerticalDivider(height: 0.05),
           Column(
             children: [
               Image.asset(
@@ -187,8 +191,9 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildInfoRow('assets/images/png/marker.png', widget.address, widget.roadAddress),
-          _buildInfoRow('assets/images/png/clock.png', '09:00 - 20:00 ▽'),
+          _buildInfoRow('assets/images/png/marker.png', widget.address,
+              widget.roadAddress),
+          _buildInfoRow('assets/images/png/clock.png', '정보 없음'),
           _buildInfoRow('assets/images/png/call.png', widget.telephone),
           _buildInfoRow('assets/images/png/world.png', widget.link),
           _buildInfoRow('assets/images/png/parking.png', '주차 가능'),
@@ -197,18 +202,19 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
     );
   }
 
-  Widget _buildInfoRow(String iconPath, String primaryText, [String? secondaryText]) {
+  Widget _buildInfoRow(String iconPath, String primaryText,
+      [String? secondaryText]) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
             iconPath,
-            width: 15,
+            width: 20,
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,7 +222,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                 Text(
                   primaryText.isNotEmpty ? primaryText : '제공하지 않음',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Theme.of(context).colorScheme.onSurface,
                     decoration: TextDecoration.none,
                   ),
@@ -227,7 +233,7 @@ class _MyPlaceInfoModalState extends State<MyPlaceInfoModal> {
                   Text(
                     secondaryText.isNotEmpty ? secondaryText : '제공하지 않음',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Theme.of(context).colorScheme.onSurface,
                       decoration: TextDecoration.none,
                     ),

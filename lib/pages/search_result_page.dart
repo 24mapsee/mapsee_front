@@ -11,7 +11,14 @@ import 'package:mapsee/components/my_vertical_divider.dart';
 import 'package:mapsee/utils/common.dart';
 
 class SearchResultPage extends StatefulWidget {
-  const SearchResultPage({super.key});
+  final Map<String, dynamic> selectedDeparture;
+  final Map<String, dynamic> selectedDestination;
+
+  const SearchResultPage({
+    super.key,
+    this.selectedDeparture = const {},
+    this.selectedDestination = const {},
+  });
 
   @override
   State<SearchResultPage> createState() => _SearchResultPageState();
