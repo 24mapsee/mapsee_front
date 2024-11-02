@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyDepartureAndArrivalButtons extends StatefulWidget {
-  const MyDepartureAndArrivalButtons({super.key});
+  final Function onDepartureTap;
+  final Function onArrivalTap;
+
+  const MyDepartureAndArrivalButtons({
+    super.key,
+    required this.onDepartureTap,
+    required this.onArrivalTap,
+  });
 
   @override
   State<MyDepartureAndArrivalButtons> createState() =>
@@ -16,7 +23,7 @@ class _MyDepartureAndArrivalButtonsState
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         GestureDetector(
-          onTap: () => {},
+          onTap: () => widget.onDepartureTap(),
           child: Container(
               decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
@@ -33,7 +40,7 @@ class _MyDepartureAndArrivalButtonsState
                       width: 15,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text('출발',
@@ -45,11 +52,11 @@ class _MyDepartureAndArrivalButtonsState
                 ),
               )),
         ),
-        SizedBox(
+        const SizedBox(
           width: 10,
         ),
         GestureDetector(
-          onTap: () => {},
+          onTap: () => widget.onArrivalTap(),
           child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.secondary,
@@ -65,7 +72,7 @@ class _MyDepartureAndArrivalButtonsState
                       width: 15,
                       color: Theme.of(context).colorScheme.surface,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text(

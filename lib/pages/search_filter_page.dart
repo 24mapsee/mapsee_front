@@ -102,6 +102,7 @@ class SearchFilterPage extends StatelessWidget {
                                       address: address,
                                       link: link,
                                       telephone: telephone,
+                                      data: data,
                                     ),
                                   ),
                                 );

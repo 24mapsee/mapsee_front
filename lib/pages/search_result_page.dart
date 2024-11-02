@@ -11,7 +11,14 @@ import 'package:mapsee/components/my_vertical_divider.dart';
 import 'package:mapsee/utils/common.dart';
 
 class SearchResultPage extends StatefulWidget {
-  const SearchResultPage({super.key});
+  final Map<String, dynamic> selectedDeparture;
+  final Map<String, dynamic> selectedDestination;
+
+  const SearchResultPage({
+    super.key,
+    this.selectedDeparture = const {},
+    this.selectedDestination = const {},
+  });
 
   @override
   State<SearchResultPage> createState() => _SearchResultPageState();
@@ -58,10 +65,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
     });
 
     Map<String, dynamic> json_data = {
-      'startX': convertToDecimalWGS84(_selectedDeparture['mapx']),
-      'startY': convertToDecimalWGS84(_selectedDeparture['mapy']),
-      'endX': convertToDecimalWGS84(_selectedDestination['mapx']),
-      'endY': convertToDecimalWGS84(_selectedDestination['mapy']),
+      'startX': (_selectedDeparture['mapx']),
+      'startY': (_selectedDeparture['mapy']),
+      'endX': (_selectedDestination['mapx']),
+      'endY': (_selectedDestination['mapy']),
       'count': 10,
       'lang': 0,
       'format': 'json'
