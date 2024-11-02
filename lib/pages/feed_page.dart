@@ -59,6 +59,7 @@ class _FeedPageState extends State<FeedPage> {
       );
 
       if (response.statusCode == 200) {
+        print(response.request);
         final responseBody = jsonDecode(response.body);
         print('Response body: $responseBody');
 
@@ -230,8 +231,8 @@ class _FeedItemState extends State<FeedItem> {
   @override
   void initState() {
     super.initState();
-    isLiked = widget.feedData['isLiked'] ?? false;
-    likeCount = widget.feedData['likeCount'] ?? 0;
+    isLiked = widget.feedData['is_liked'] == 1;
+    likeCount = widget.feedData['like_count'] ?? 0;
   }
 
   void _toggleLike() {
@@ -239,6 +240,7 @@ class _FeedItemState extends State<FeedItem> {
       isLiked = !isLiked;
       likeCount += isLiked ? 1 : -1;
     });
+
     String feedId = widget.feedData['feed_id'].toString();
 
     if (isLiked) {
