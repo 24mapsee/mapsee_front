@@ -7,7 +7,9 @@ import 'package:mapsee/components/my_route_card.dart';
 import 'package:mapsee/pages/edit_profile_page.dart';
 import 'package:mapsee/pages/following_follower_page.dart';
 import 'package:mapsee/pages/place_folder_detail_page.dart';
+import 'package:mapsee/pages/place_info_background.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
+import 'package:mapsee/services/search/searchRepository.dart';
 import '../utils/common.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -224,6 +226,27 @@ class _ProfilePageState extends State<ProfilePage>
         isFoldersDetailsLoading = false;
       });
     }
+  }
+
+  Future<void> movePlaceInfo(String name, String kakaoPlaceId) async {
+    List<Map<String, dynamic>> newData = await getKakaoPlaceSearchWithPlaceID(
+        query: name, kakaoPlaceId: kakaoPlaceId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlaceInfoBackground(
+          title: newData[0]["title"],
+          category: newData[0]["category"] ?? "정보 없음",
+          roadAddress: newData[0]["roadAddress"] ?? "정보 없음",
+          address: newData[0]["address"] ?? "정보 없음",
+          link: newData[0]["link"] ?? "정보 없음",
+          telephone: newData[0]["telephone"] ?? "정보 없음",
+          mapx: newData[0]["mapx"],
+          mapy: newData[0]["mapy"],
+        ),
+      ),
+    );
   }
 
   @override
@@ -520,7 +543,10 @@ class _ProfilePageState extends State<ProfilePage>
                               title:
                                   Text(placeFolderDetails[placeIndex]['name']),
                               onTap: () {
-                                log(placeFolderDetails[placeIndex].toString());
+                                movePlaceInfo(
+                                    placeFolderDetails[placeIndex]['name'],
+                                    placeFolderDetails[placeIndex]
+                                        ['kakao_place_id']);
                               },
                             ),
                           )
