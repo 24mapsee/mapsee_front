@@ -5,7 +5,22 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MySelectModal extends StatefulWidget {
-  const MySelectModal({super.key});
+  final String title;
+  final String address;
+  final String roadAddress;
+  final double latitude;
+  final double longitude;
+  final String kakaoPlaceId;
+
+  const MySelectModal({
+    super.key,
+    required this.title,
+    required this.address,
+    required this.roadAddress,
+    required this.latitude,
+    required this.longitude,
+    required this.kakaoPlaceId,
+  });
 
   @override
   State<MySelectModal> createState() => _MySelectModalState();
@@ -43,8 +58,6 @@ class _MySelectModalState extends State<MySelectModal> {
   // Fetch folder data from API
   Future<void> _getFolders() async {
     final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/folder/getPlaceFolders');
-    print("Requesting folders with UID: $userId");
-
     try {
       final response = await http.post(
         url,
@@ -52,30 +65,60 @@ class _MySelectModalState extends State<MySelectModal> {
         body: jsonEncode({"uid": userId}),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         setState(() {
           folderData = List<Map<String, dynamic>>.from(responseData['folders']);
         });
-        // Log folder data to console for verification
-        print("Fetched folders: $folderData");
       } else {
         print("Error: ${response.reasonPhrase}");
-        throw Exception('Failed to load folders');
       }
     } catch (error) {
       print('Error fetching folders: $error');
     }
   }
 
+  // Function to save place information to the database
+  Future<void> savePlaceToDatabase(int folderId) async {
+    final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/folder/addPlaceToFolder');
+    final jsonData = {
+      "folder_id": folderId,
+      "user_id": userId,
+      "name": widget.title,
+      "mapX": widget.latitude,
+      "mapY": widget.longitude,
+      "kakao_place_id": widget.kakaoPlaceId,
+    };
+
+    // 전송할 JSON 데이터를 출력
+    print("Sending JSON data: $jsonData");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(jsonData),
+      );
+
+      if (response.statusCode == 201) {
+        print("Place added to database successfully");
+        Navigator.pop(context);
+      } else {
+        print("Failed to save place: ${response.statusCode}");
+      }
+    } catch (error) {
+      print('Error saving place to database: $error');
+    }
+  }
+
   void _confirmSelection() {
     if (selectedIndex != null) {
-      final selectedItem = folderData[selectedIndex!];
-      print('Selected item: ${selectedItem['folder_name']}');
-      Navigator.pop(context, selectedItem);
+      final selectedFolder = folderData[selectedIndex!];
+      final folderId = selectedFolder['folder_id'];
+      print('Selected folder: ${selectedFolder['folder_name']}');
+
+      // Call savePlaceToDatabase with the selected folder ID
+      savePlaceToDatabase(folderId);
     }
   }
 
@@ -100,17 +143,14 @@ class _MySelectModalState extends State<MySelectModal> {
                     Expanded(
                       child: Center(
                         child: Text(
-                          "보관함을 선택하세요    ",
+                          "보관함을 선택하세요 ",
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: _buildNewArchive,
-                      child: Icon(
-                        Icons.add,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _buildNewArchive, // 새 저장소 생성 함수 호출
                     ),
                   ],
                 ),
@@ -226,7 +266,6 @@ class _MySelectModalState extends State<MySelectModal> {
     );
   }
 
-  // Folder creation logic
   Future<void> _createFolder(String folderName) async {
     final url = Uri.parse('${dotenv.env["API_BASE_URL"]}/folder/createFolder');
     try {
@@ -243,9 +282,9 @@ class _MySelectModalState extends State<MySelectModal> {
         print("Folder created successfully");
         Navigator.pop(context);
         _archiveNameController.clear();
-        _getFolders(); // Refresh folder list
+        _getFolders();
       } else {
-        throw Exception('Failed to create folder');
+        print('Failed to create folder');
       }
     } catch (error) {
       print('Error creating folder: $error');
