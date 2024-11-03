@@ -231,13 +231,12 @@ class _SearchPageState extends State<SearchPage> {
                           onTap: () {
                             final link = data['link']?.toString() ?? '';
                             final category = data['category']?.toString() ?? '';
-                            final roadAddress =
-                                data['roadAddress']?.toString() ?? '';
+                            final roadAddress = data['roadAddress']?.toString() ?? '';
                             final address = data['address']?.toString() ?? '';
-                            final telephone =
-                                data['telephone']?.toString() ?? '';
+                            final telephone = data['telephone']?.toString() ?? '';
                             final mapx = data['mapx']?.toString() ?? '';
                             final mapy = data['mapy']?.toString() ?? '';
+                            final kakaoPlaceId = link.split('/').last;
 
                             Navigator.push(
                               context,
@@ -251,6 +250,7 @@ class _SearchPageState extends State<SearchPage> {
                                   telephone: telephone,
                                   mapx: mapx,
                                   mapy: mapy,
+                                  kakaoPlaceId: kakaoPlaceId, // kakaoPlaceId 전달
                                 ),
                               ),
                             );

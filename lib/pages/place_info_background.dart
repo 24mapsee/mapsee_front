@@ -11,6 +11,7 @@ class PlaceInfoBackground extends StatefulWidget {
   final String telephone;
   final String mapx;
   final String mapy;
+  final String kakaoPlaceId; // kakaoPlaceId 추가
 
   const PlaceInfoBackground({
     super.key,
@@ -22,6 +23,7 @@ class PlaceInfoBackground extends StatefulWidget {
     required this.telephone,
     required this.mapx,
     required this.mapy,
+    required this.kakaoPlaceId, // kakaoPlaceId 초기화
   });
 
   @override
@@ -85,6 +87,7 @@ class _PlaceInfoBackgroundState extends State<PlaceInfoBackground> {
                     telephone: widget.telephone,
                     mapx: widget.mapx,
                     mapy: widget.mapy,
+                    kakaoPlaceId: widget.kakaoPlaceId, // kakaoPlaceId 추가
                     scrollController: scrollController,
                   );
                 },
