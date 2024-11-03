@@ -7,7 +7,9 @@ import 'package:mapsee/components/my_route_card.dart';
 import 'package:mapsee/pages/edit_profile_page.dart';
 import 'package:mapsee/pages/following_follower_page.dart';
 import 'package:mapsee/pages/place_folder_detail_page.dart';
+import 'package:mapsee/pages/place_info_background.dart';
 import 'package:mapsee/pages/post_detail_page.dart';
+import 'package:mapsee/services/search/searchRepository.dart';
 import '../utils/common.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -23,10 +25,13 @@ class _ProfilePageState extends State<ProfilePage>
   Map<String, dynamic> userData = {};
   List<Map<String, dynamic>> Feeds = [];
   List<Map<String, dynamic>> Place_Folders = [];
+  List<Map<String, dynamic>> Place_Folders_Details = [];
+  List<Map<String, dynamic>> placeFolderDetails = [];
   List<Map<String, dynamic>> Custom_Routes = [];
   List<Map<String, dynamic>> Saved_Feeds = [];
   Map<int, List<dynamic>> routeDetails = {}; // 각 경로의 세부 정보를 저장
   bool isLoading = true;
+  bool isFoldersDetailsLoading = true;
   int? expandedIndex; // 현재 열려 있는 인덱스 추적
 
   @override
@@ -95,6 +100,7 @@ class _ProfilePageState extends State<ProfilePage>
   Future<void> fetchPlaceFolders(String userId) async {
     final placeFoldersUrl =
         '${dotenv.env["API_BASE_URL"]}/folder/getPlaceFolders';
+
     final placeFoldersResponse = await http.post(
       Uri.parse(placeFoldersUrl),
       headers: {"Content-Type": "application/json"},
@@ -180,6 +186,69 @@ class _ProfilePageState extends State<ProfilePage>
     }
   }
 
+  Future<void> _fetchPlaceFolderDetails(int index, int folderId) async {
+    final url =
+        '${dotenv.env["API_BASE_URL"]}/folder/getPlacesInFolder?folder_id=$folderId';
+
+    setState(() {
+      isFoldersDetailsLoading = true;
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({"folder_id": folderId}),
+      );
+      log('Place Folder Details Response for folder_id $folderId: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        setState(() {
+          placeFolderDetails =
+              List<Map<String, dynamic>>.from(data["places"] ?? []);
+          isFoldersDetailsLoading = false;
+        });
+
+        log('placeFolderDetails: $placeFolderDetails');
+      } else {
+        log('Failed to load place folder details for folder_id: $folderId');
+        setState(() {
+          isFoldersDetailsLoading = false;
+        });
+      }
+    } catch (e) {
+      log('Error fetching place folder details: $e');
+      setState(() {
+        isFoldersDetailsLoading = false;
+      });
+    }
+  }
+
+  Future<void> movePlaceInfo(String name, String kakaoPlaceId) async {
+    List<Map<String, dynamic>> newData = await getKakaoPlaceSearchWithPlaceID(
+        query: name, kakaoPlaceId: kakaoPlaceId);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlaceInfoBackground(
+          title: newData[0]["title"],
+          category: newData[0]["category"] ?? "정보 없음",
+          roadAddress: newData[0]["roadAddress"] ?? "정보 없음",
+          address: newData[0]["address"] ?? "정보 없음",
+          link: newData[0]["link"] ?? "정보 없음",
+          telephone: newData[0]["telephone"] ?? "정보 없음",
+          mapx: newData[0]["mapx"],
+          mapy: newData[0]["mapy"],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -254,29 +323,6 @@ class _ProfilePageState extends State<ProfilePage>
               ],
             )
           : const Center(child: CircularProgressIndicator()),
-    );
-  }
-
-  Widget _buildPlaceFoldersView(List<Map<String, dynamic>> placeFolders) {
-    return ListView.builder(
-      itemCount: placeFolders.length,
-      itemBuilder: (context, index) {
-        final folder = placeFolders[index];
-        return ListTile(
-          title: Text(folder['folder_name'] ?? '폴더 없음'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PlaceFolderDetailPage(
-                  title: folder['folder_name'],
-                  placeNames: [],
-                ),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 
@@ -439,6 +485,86 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
+  Widget _buildPlaceFoldersView(List<Map<String, dynamic>> placeFolders) {
+    if (placeFolders.isEmpty) {
+      return const Center(
+        child: Text(
+          '저장된 장소 폴더가 없습니다!',
+          style: TextStyle(color: Colors.grey, fontSize: 16),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: placeFolders.length,
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      itemBuilder: (context, index) {
+        final folder = placeFolders[index];
+        final folderName = folder['folder_name'] ?? '폴더 이름 없음';
+        final folderId = folder['folder_id'];
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: 18.0,
+            top: index == 0 ? 18.0 : 0.0,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(color: Colors.grey[300]!, width: 0.5),
+            ),
+            child: Card(
+              elevation: 1.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              margin: EdgeInsets.zero,
+              child: ExpansionTile(
+                key: UniqueKey(),
+                title: Text(
+                  folderName,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                initiallyExpanded: expandedIndex == index,
+                onExpansionChanged: (isExpanded) {
+                  setState(() {
+                    expandedIndex = isExpanded ? index : null;
+                    if (isExpanded && folderId != null) {
+                      _fetchPlaceFolderDetails(index, folderId);
+                    }
+                  });
+                },
+                children: !isFoldersDetailsLoading
+                    ? placeFolderDetails.isNotEmpty
+                        ? List.generate(
+                            placeFolderDetails.length,
+                            (placeIndex) => ListTile(
+                              title:
+                                  Text(placeFolderDetails[placeIndex]['name']),
+                              onTap: () {
+                                movePlaceInfo(
+                                    placeFolderDetails[placeIndex]['name'],
+                                    placeFolderDetails[placeIndex]
+                                        ['kakao_place_id']);
+                              },
+                            ),
+                          )
+                        : [
+                            const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text('이 폴더에 저장된 장소가 없습니다.'),
+                            )
+                          ]
+                    : [const Center(child: CircularProgressIndicator())],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildListView(List<Map<String, dynamic>> data) {
     return ListView.builder(
       itemCount: data.length,
@@ -494,8 +620,8 @@ class _ProfilePageState extends State<ProfilePage>
               margin: EdgeInsets.zero,
               child: ExpansionTile(
                 key: UniqueKey(),
-                title:
-                    Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
+                title: Text(title,
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 subtitle: Text(description,
                     style: TextStyle(color: Colors.grey[600])),
                 initiallyExpanded: expandedIndex == index,
