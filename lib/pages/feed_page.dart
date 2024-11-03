@@ -297,9 +297,10 @@ class _FeedItemState extends State<FeedItem> {
                   ),
                 ),
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                      widget.feedData['profile_picture'] ??
-                          'assets/images/dummy/katt.png'),
+                  backgroundImage: widget.feedData['profile_picture'] != null
+                      ? NetworkImage(widget.feedData['profile_picture'])
+                      : const AssetImage(
+                          'assets/images/dummy/default_user.png'),
                   radius: 20,
                 ),
               ),

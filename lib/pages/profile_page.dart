@@ -14,10 +14,11 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Map<String, dynamic> userData = {};
   List<Map<String, dynamic>> Feeds = [];
@@ -33,12 +34,17 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(() {
-      if (_tabController.index == 1) { // 플레이스 탭을 눌렀을 때 (index: 1)
+      if (_tabController.index == 1) {
+        // 플레이스 탭을 눌렀을 때 (index: 1)
         fetchPlaceFolders(userData['user_id']);
       }
     });
     fetchProfileData();
     _fetchRoutes();
+  }
+
+  void refreshData() {
+    fetchProfileData();
   }
 
   Future<void> fetchProfileData() async {
@@ -55,14 +61,17 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
         setState(() {
           userData = profileData['userInfo'] ?? {};
-          Place_Folders = List<Map<String, dynamic>>.from(profileData['places'] ?? []);
+          Place_Folders =
+              List<Map<String, dynamic>>.from(profileData['places'] ?? []);
           Feeds = List<Map<String, dynamic>>.from(profileData['feeds'] ?? []);
-          Saved_Feeds = List<Map<String, dynamic>>.from(profileData['savedFeeds'] ?? []);
+          Saved_Feeds =
+              List<Map<String, dynamic>>.from(profileData['savedFeeds'] ?? []);
         });
       }
 
       // Custom_Routes 데이터 가져오기
-      final routesUrl = '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
+      final routesUrl =
+          '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
       final routesResponse = await http.get(Uri.parse(routesUrl));
 
       if (routesResponse.statusCode == 200) {
@@ -84,7 +93,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   }
 
   Future<void> fetchPlaceFolders(String userId) async {
-    final placeFoldersUrl = '${dotenv.env["API_BASE_URL"]}/folder/getPlaceFolders';
+    final placeFoldersUrl =
+        '${dotenv.env["API_BASE_URL"]}/folder/getPlaceFolders';
     final placeFoldersResponse = await http.post(
       Uri.parse(placeFoldersUrl),
       headers: {"Content-Type": "application/json"},
@@ -98,10 +108,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         // description 필드 제거
         Place_Folders = List<Map<String, dynamic>>.from(
             placeFoldersData['folders'].map((folder) => {
-              'folder_id': folder['folder_id'],
-              'folder_name': folder['folder_name'],
-            }) ?? []
-        );
+                      'folder_id': folder['folder_id'],
+                      'folder_name': folder['folder_name'],
+                    }) ??
+                []);
       });
     } else {
       log('Failed to load place folders: ${placeFoldersResponse.body}');
@@ -112,7 +122,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   Future<void> _fetchRoutes() async {
     try {
       final userId = await getUserId();
-      final url = '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
+      final url =
+          '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
       log('Fetching Routes with URL: $url');
 
       final response = await http.get(Uri.parse(url));
@@ -123,7 +134,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         setState(() {
-          Custom_Routes = List<Map<String, dynamic>>.from(jsonResponse['routes']);
+          Custom_Routes =
+              List<Map<String, dynamic>>.from(jsonResponse['routes']);
           log('Custom_Routes after _fetchRoutes: $Custom_Routes');
           isLoading = false;
         });
@@ -144,11 +156,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   Future<void> _fetchRouteDetails(int index, int customRouteId) async {
     if (routeDetails.containsKey(index)) return;
 
-    final url = '${dotenv.env["API_BASE_URL"]}/route/get/routesByCustomRouteID?custom_route_id=$customRouteId';
+    final url =
+        '${dotenv.env["API_BASE_URL"]}/route/get/routesByCustomRouteID?custom_route_id=$customRouteId';
     log('Fetching Route Details with URL: $url');
 
     try {
-      final response = await http.get(Uri.parse(url), headers: {"Content-Type": "application/json"});
+      final response = await http
+          .get(Uri.parse(url), headers: {"Content-Type": "application/json"});
       log('Route Details Response for ID $customRouteId: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -184,49 +198,61 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       ),
       body: userData.isNotEmpty
           ? Column(
-        children: [
-          const SizedBox(height: 20),
-          _buildProfileInfo(screenWidth),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
-                },
-                child: const Text('내 정보 수정'),
-              ),
-              const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('내 프로필 공유'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(icon: Image.asset('assets/images/png/feeds.png', height: 23)),
-              Tab(icon: Image.asset('assets/images/png/marker.png', height: 24)),
-              Tab(icon: Image.asset('assets/images/png/route.png', height: 25)),
-              Tab(icon: Image.asset('assets/images/png/filled_heart.png', height: 22)),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
               children: [
-                _buildPostCardView(Feeds),
-                _buildPlaceFoldersView(Place_Folders),
-                _buildToggleListView(Custom_Routes),
-                _buildPostCardView(Saved_Feeds),
+                const SizedBox(height: 20),
+                _buildProfileInfo(screenWidth),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProfilePage(onRefresh: refreshData)));
+                      },
+                      child: const Text('내 정보 수정'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('내 프로필 공유'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TabBar(
+                  controller: _tabController,
+                  tabs: [
+                    Tab(
+                        icon: Image.asset('assets/images/png/feeds.png',
+                            height: 23)),
+                    Tab(
+                        icon: Image.asset('assets/images/png/marker.png',
+                            height: 24)),
+                    Tab(
+                        icon: Image.asset('assets/images/png/route.png',
+                            height: 25)),
+                    Tab(
+                        icon: Image.asset('assets/images/png/filled_heart.png',
+                            height: 22)),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildPostCardView(Feeds),
+                      _buildPlaceFoldersView(Place_Folders),
+                      _buildToggleListView(Custom_Routes),
+                      _buildPostCardView(Saved_Feeds),
+                    ],
+                  ),
+                ),
               ],
-            ),
-          ),
-        ],
-      )
+            )
           : const Center(child: CircularProgressIndicator()),
     );
   }
@@ -265,7 +291,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               backgroundColor: Colors.grey[300],
               child: CircleAvatar(
                 radius: 38,
-                backgroundImage: NetworkImage(userData['profile_picture'] ?? 'assets/images/dummy/default_user.png'),
+                backgroundImage: userData['profile_picture'] != null
+                    ? NetworkImage(userData['profile_picture'])
+                    : const AssetImage('assets/images/dummy/default_user.png'),
               ),
             ),
             const SizedBox(width: 20),
@@ -274,7 +302,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               children: [
                 Text(
                   userData['name'] ?? '',
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -290,7 +319,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 children: [
                   Text(
                     userData['repository'].toString(),
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Text('저장소'),
                 ],
@@ -299,20 +329,27 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                 children: [
                   Text(
                     userData['saved_feeds'].toString(),
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const Text('찜'),
                 ],
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingFollowerPage(accessUserId: userData['user_id'], initialTabIndex: 0)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FollowingFollowerPage(
+                              accessUserId: userData['user_id'],
+                              initialTabIndex: 0)));
                 },
                 child: Column(
                   children: [
                     Text(
                       userData['follower'].toString(),
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const Text('팔로워'),
                   ],
@@ -320,13 +357,19 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => FollowingFollowerPage(accessUserId: userData['user_id'], initialTabIndex: 1)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FollowingFollowerPage(
+                              accessUserId: userData['user_id'],
+                              initialTabIndex: 1)));
                 },
                 child: Column(
                   children: [
                     Text(
                       userData['following'].toString(),
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const Text('팔로잉'),
                   ],
@@ -346,7 +389,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         final item = data[index];
         return GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PostDetailPage(feedData: item)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PostDetailPage(feedData: item)));
           },
           child: Card(
             margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -355,24 +401,31 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(userData['profile_picture'] ?? 'assets/images/dummy/default_user.png'),
+                    backgroundImage: userData['profile_picture'] != null
+                        ? NetworkImage(userData['profile_picture'])
+                        : const AssetImage(
+                            'assets/images/dummy/default_user.png'),
                   ),
                   title: Text(userData['name'] ?? '사용자 이름'),
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.network(item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
+                  child: Image.network(
+                      item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     item['title'] ?? '제목 없음',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   child: Text(
                     item['description'] ?? '설명 없음',
                     style: TextStyle(color: Colors.grey[700]),
@@ -396,7 +449,12 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           title: Text(item['name'] ?? '장소 없음'),
           subtitle: Text(item['description'] ?? '공동 작업자 없음'),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceFolderDetailPage(title: item['name'], placeNames: const ['장소1', '장소2', '장소3'])));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PlaceFolderDetailPage(
+                        title: item['name'],
+                        placeNames: const ['장소1', '장소2', '장소3'])));
           },
         );
       },
@@ -405,7 +463,9 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
 
   Widget _buildToggleListView(List<Map<String, dynamic>> data) {
     if (data.isEmpty) {
-      return const Center(child: Text('저장된 경로 데이터가 없습니다!', style: TextStyle(color: Colors.grey, fontSize: 16)));
+      return const Center(
+          child: Text('저장된 경로 데이터가 없습니다!',
+              style: TextStyle(color: Colors.grey, fontSize: 16)));
     }
 
     return ListView.builder(
@@ -429,12 +489,15 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
             ),
             child: Card(
               elevation: 1.5,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
               margin: EdgeInsets.zero,
               child: ExpansionTile(
                 key: UniqueKey(),
-                title: Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: Text(description, style: TextStyle(color: Colors.grey[600])),
+                title:
+                    Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: Text(description,
+                    style: TextStyle(color: Colors.grey[600])),
                 initiallyExpanded: expandedIndex == index,
                 onExpansionChanged: (isExpanded) {
                   setState(() {
@@ -448,15 +511,22 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                   });
                 },
                 children: [
-                  if (routeDetails.containsKey(index) && routeDetails[index]!.isNotEmpty)
+                  if (routeDetails.containsKey(index) &&
+                      routeDetails[index]!.isNotEmpty)
                     ...routeDetails[index]!.map((itinerary) {
                       final data = jsonDecode(itinerary['data'] ?? '{}');
                       return MyRouteCard(index: index, itinerary: data);
                     }).toList()
-                  else if (routeDetails.containsKey(index) && routeDetails[index]!.isEmpty)
-                    const Padding(padding: EdgeInsets.all(16.0), child: Text('세부 경로 정보가 없습니다.', style: TextStyle(color: Colors.grey)))
+                  else if (routeDetails.containsKey(index) &&
+                      routeDetails[index]!.isEmpty)
+                    const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text('세부 경로 정보가 없습니다.',
+                            style: TextStyle(color: Colors.grey)))
                   else
-                    const Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator()),
+                    const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator()),
                 ],
               ),
             ),
