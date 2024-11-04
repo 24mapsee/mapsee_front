@@ -275,20 +275,50 @@ class _ProfilePageState extends State<ProfilePage>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    EditProfilePage(onRefresh: refreshData)));
-                      },
-                      child: const Text('내 정보 수정'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45, // 화면 너비의 40%로 설정
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfilePage(onRefresh: refreshData),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // 검은색 글씨
+                            shadowColor: Colors.black.withOpacity(0.5), // 옅은 그림자
+                            elevation: 2, // 그림자 크기
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12), // 모서리 각도 조절
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10), // 세로 여백 줄이기
+                          ),
+                          child: const Text('내 정보 수정'),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('내 프로필 공유'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45, // 화면 너비의 40%로 설정
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // 검은색 글씨
+                            shadowColor: Colors.black.withOpacity(0.5), // 옅은 그림자
+                            elevation: 2, // 그림자 크기
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12), // 모서리 각도 조절
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10), // 세로 여백 줄이기
+                          ),
+                          child: const Text('내 프로필 공유'),
+                        ),
+                      ),
                     ),
                   ],
                 ),
