@@ -109,7 +109,7 @@ class _FeedPageState extends State<FeedPage> {
         body: jsonEncode({'user_id': loginUserId, 'feed_id': feedId}),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print("Success to delete post");
       } else {
         print(
@@ -231,8 +231,10 @@ class _FeedItemState extends State<FeedItem> {
   @override
   void initState() {
     super.initState();
+
     isLiked = widget.feedData['is_liked'] == 1;
     likeCount = widget.feedData['like_count'] ?? 0;
+
   }
 
   void _toggleLike() {
