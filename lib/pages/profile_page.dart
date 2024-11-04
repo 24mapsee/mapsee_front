@@ -236,6 +236,7 @@ class _ProfilePageState extends State<ProfilePage>
       context,
       MaterialPageRoute(
         builder: (context) => PlaceInfoBackground(
+          kakaoPlaceId: kakaoPlaceId,
           title: newData[0]["title"],
           category: newData[0]["category"] ?? "정보 없음",
           roadAddress: newData[0]["roadAddress"] ?? "정보 없음",
