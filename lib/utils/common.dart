@@ -90,7 +90,21 @@ Future<String?> getUserInfo() async {
   }
 }
 
-//
+// 스트링 형태 -> WGS84 좌표계로 변환
 double convertToDecimalWGS84(String value) {
   return int.parse(value) / 10000000;
+}
+
+// Firebase ID Token 가져오기
+Future<String?> getFirebaseIDToken() async {
+  // FirebaseAuth에서 현재 로그인된 사용자 가져오기
+  User? user = FirebaseAuth.instance.currentUser;
+
+  // Firebase ID Token을 가져오는 로직
+  if (user != null) {
+    IdTokenResult idTokenResult = await user.getIdTokenResult();
+    return idTokenResult.token; // token 문자열 반환
+  } else {
+    return null; // 로그인된 사용자가 없으면 null 반환
+  }
 }
