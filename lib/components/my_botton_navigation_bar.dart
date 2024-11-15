@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapsee/pages/feed_page.dart';
 import 'package:mapsee/pages/profile_page.dart';
-import 'package:mapsee/pages/search_page.dart';
+import 'package:mapsee/pages/search_result_page.dart';
 
 class MyBottomNavigationBar extends StatefulWidget {
   final ValueChanged<int> onTabSelected;
@@ -34,7 +34,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
           case 1:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SearchPage()),
+              MaterialPageRoute(builder: (context) => const SearchResultPage()),
             );
             break;
           case 2:
@@ -66,11 +66,11 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
                 : Theme.of(context).colorScheme.secondary,
             width: 20,
           ),
-          label: 'Home',
+          label: '홈',
         ),
         const BottomNavigationBarItem(
           icon: Icon(Icons.route),
-          label: 'Route',
+          label: '경로',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
@@ -80,7 +80,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
                 : Theme.of(context).colorScheme.secondary,
             width: 20,
           ),
-          label: 'Favorites',
+          label: '저장한 경로',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
@@ -90,7 +90,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
                 : Theme.of(context).colorScheme.secondary,
             width: 20,
           ),
-          label: 'Feed',
+          label: '피드',
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
@@ -100,7 +100,7 @@ class _MyBottomNavigationBarState extends State<MyBottomNavigationBar> {
                 : Theme.of(context).colorScheme.secondary,
             width: 20,
           ),
-          label: 'Profile',
+          label: '프로필',
         ),
       ],
     );
