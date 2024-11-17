@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mapsee/components/my_gribber.dart';
 import 'package:mapsee/pages/search_result_page.dart';
 import 'package:mapsee/services/getCurrentAddr.dart';
+import 'package:mapsee/services/pedometer/getPedometer.dart';
 
 class MyBottomModalSheet extends StatelessWidget {
   const MyBottomModalSheet({super.key});
@@ -117,6 +118,7 @@ class MyBottomModalSheet extends StatelessWidget {
                       ),
                     ),
                   ),
+                  GetPedometer()
                 ],
               ),
             ),
