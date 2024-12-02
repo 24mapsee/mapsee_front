@@ -29,7 +29,8 @@ class _FeedPostStep1PageState extends State<FeedPostStep1Page> {
   Future<void> _fetchRoutes() async {
     try {
       String? userId = await getUserId();
-      final url = '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
+      final url =
+          '${dotenv.env["API_BASE_URL"]}/route/get/customRoutesByUserID?user_id=$userId';
       log('Fetching Routes with URL: $url');
 
       final response = await http.get(Uri.parse(url));
@@ -57,7 +58,8 @@ class _FeedPostStep1PageState extends State<FeedPostStep1Page> {
   Future<void> _fetchRouteDetails(int index, int customRouteId) async {
     if (routeDetails.containsKey(index)) return;
 
-    final url = '${dotenv.env["API_BASE_URL"]}/route/get/routesByCustomRouteID?custom_route_id=$customRouteId';
+    final url =
+        '${dotenv.env["API_BASE_URL"]}/route/get/routesByCustomRouteID?custom_route_id=$customRouteId';
     log('Fetching Route Details with URL: $url');
 
     try {
@@ -125,7 +127,8 @@ class _FeedPostStep1PageState extends State<FeedPostStep1Page> {
         final customRouteId = routes[index]['custom_route_id'];
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: 18.0), // 토글 사이 간격을 늘리려면 이 값을 조정하세요
+          padding:
+              const EdgeInsets.only(bottom: 18.0), // 토글 사이 간격을 늘리려면 이 값을 조정하세요
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -158,18 +161,21 @@ class _FeedPostStep1PageState extends State<FeedPostStep1Page> {
                   });
                 },
                 children: [
-                  if (routeDetails.containsKey(index) && routeDetails[index]!.isNotEmpty)
+                  if (routeDetails.containsKey(index) &&
+                      routeDetails[index]!.isNotEmpty)
                     ...routeDetails[index]!.map((itinerary) {
-                      final data = jsonDecode(itinerary['data'] ?? '{}');
+                      final data = itinerary['data'];
                       return MyRouteCard(
                         index: index,
                         itinerary: data,
                       );
                     }).toList()
-                  else if (routeDetails.containsKey(index) && routeDetails[index]!.isEmpty)
+                  else if (routeDetails.containsKey(index) &&
+                      routeDetails[index]!.isEmpty)
                     const Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Text('세부 경로 정보가 없습니다.', style: TextStyle(color: Colors.grey)),
+                      child: Text('세부 경로 정보가 없습니다.',
+                          style: TextStyle(color: Colors.grey)),
                     )
                   else
                     const Padding(
@@ -185,12 +191,14 @@ class _FeedPostStep1PageState extends State<FeedPostStep1Page> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FeedPostStep2Page(customRoute: routes[index]),
+                              builder: (context) =>
+                                  FeedPostStep2Page(customRoute: routes[index]),
                             ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),

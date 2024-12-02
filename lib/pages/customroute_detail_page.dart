@@ -163,8 +163,7 @@ class _CustomRouteDetailPageState extends State<CustomRouteDetailPage> {
                       ? ListView.separated(
                           itemCount: _itineraries!.length,
                           itemBuilder: (context, index) {
-                            final itinerary =
-                                jsonDecode(_itineraries![index]['data']);
+                            final itinerary = _itineraries![index]['data'];
                             return MyRouteCard(
                               index: index,
                               itinerary: itinerary,
