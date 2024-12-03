@@ -107,7 +107,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           itemCount: _itineraries!.length,
                           itemBuilder: (context, index) {
                             final itinerary =
-                                jsonDecode(_itineraries![index]['data']);
+                              _itineraries![index]['data'];
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

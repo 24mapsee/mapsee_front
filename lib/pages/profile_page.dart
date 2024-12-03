@@ -671,7 +671,7 @@ class _ProfilePageState extends State<ProfilePage>
                   if (routeDetails.containsKey(index) &&
                       routeDetails[index]!.isNotEmpty)
                     ...routeDetails[index]!.map((itinerary) {
-                      final data = jsonDecode(itinerary['data'] ?? '{}');
+                      final data = itinerary['data'] ?? '{}';
                       return MyRouteCard(index: index, itinerary: data);
                     }).toList()
                   else if (routeDetails.containsKey(index) &&
