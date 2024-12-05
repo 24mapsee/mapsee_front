@@ -67,10 +67,10 @@ class _ProfilePageState extends State<ProfilePage>
         setState(() {
           userData = profileData['userInfo'] ?? {};
           Place_Folders =
-              List<Map<String, dynamic>>.from(profileData['places'] ?? []);
+          List<Map<String, dynamic>>.from(profileData['places'] ?? []);
           Feeds = List<Map<String, dynamic>>.from(profileData['feeds'] ?? []);
           Saved_Feeds =
-              List<Map<String, dynamic>>.from(profileData['savedFeeds'] ?? []);
+          List<Map<String, dynamic>>.from(profileData['savedFeeds'] ?? []);
         });
       }
 
@@ -114,9 +114,9 @@ class _ProfilePageState extends State<ProfilePage>
         // description 필드 제거
         Place_Folders = List<Map<String, dynamic>>.from(
             placeFoldersData['folders'].map((folder) => {
-                      'folder_id': folder['folder_id'],
-                      'folder_name': folder['folder_name'],
-                    }) ??
+              'folder_id': folder['folder_id'],
+              'folder_name': folder['folder_name'],
+            }) ??
                 []);
       });
     } else {
@@ -141,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage>
         final jsonResponse = json.decode(response.body);
         setState(() {
           Custom_Routes =
-              List<Map<String, dynamic>>.from(jsonResponse['routes']);
+          List<Map<String, dynamic>>.from(jsonResponse['routes']);
           log('Custom_Routes after _fetchRoutes: $Custom_Routes');
           isLoading = false;
         });
@@ -209,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage>
 
         setState(() {
           placeFolderDetails =
-              List<Map<String, dynamic>>.from(data["places"] ?? []);
+          List<Map<String, dynamic>>.from(data["places"] ?? []);
           isFoldersDetailsLoading = false;
         });
 
@@ -268,91 +268,91 @@ class _ProfilePageState extends State<ProfilePage>
       ),
       body: userData.isNotEmpty
           ? Column(
-              children: [
-                const SizedBox(height: 20),
-                _buildProfileInfo(screenWidth),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45, // 화면 너비의 40%로 설정
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditProfilePage(onRefresh: refreshData),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // 검은색 글씨
-                            shadowColor: Colors.black.withOpacity(0.5), // 옅은 그림자
-                            elevation: 2, // 그림자 크기
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12), // 모서리 각도 조절
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 10), // 세로 여백 줄이기
-                          ),
-                          child: const Text('내 정보 수정'),
+        children: [
+          const SizedBox(height: 20),
+          _buildProfileInfo(screenWidth),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.45, // 화면 너비의 40%로 설정
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfilePage(onRefresh: refreshData),
                         ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // 검은색 글씨
+                      shadowColor: Colors.black.withOpacity(0.5), // 옅은 그림자
+                      elevation: 2, // 그림자 크기
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12), // 모서리 각도 조절
                       ),
+                      padding: const EdgeInsets.symmetric(vertical: 10), // 세로 여백 줄이기
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45, // 화면 너비의 40%로 설정
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // 검은색 글씨
-                            shadowColor: Colors.black.withOpacity(0.5), // 옅은 그림자
-                            elevation: 2, // 그림자 크기
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12), // 모서리 각도 조절
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 10), // 세로 여백 줄이기
-                          ),
-                          child: const Text('내 프로필 공유'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TabBar(
-                  controller: _tabController,
-                  tabs: [
-                    Tab(
-                        icon: Image.asset('assets/images/png/feeds.png',
-                            height: 23)),
-                    Tab(
-                        icon: Image.asset('assets/images/png/marker.png',
-                            height: 24)),
-                    Tab(
-                        icon: Image.asset('assets/images/png/route.png',
-                            height: 25)),
-                    Tab(
-                        icon: Image.asset('assets/images/png/filled_heart.png',
-                            height: 22)),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildPostCardView(Feeds),
-                      _buildPlaceFoldersView(Place_Folders),
-                      _buildToggleListView(Custom_Routes),
-                      _buildPostCardView(Saved_Feeds),
-                    ],
+                    child: const Text('내 정보 수정'),
                   ),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.45, // 화면 너비의 40%로 설정
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black, backgroundColor: Colors.grey[200], // 검은색 글씨
+                      shadowColor: Colors.black.withOpacity(0.5), // 옅은 그림자
+                      elevation: 2, // 그림자 크기
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12), // 모서리 각도 조절
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10), // 세로 여백 줄이기
+                    ),
+                    child: const Text('내 프로필 공유'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(
+                  icon: Image.asset('assets/images/png/feeds.png',
+                      height: 23)),
+              Tab(
+                  icon: Image.asset('assets/images/png/marker.png',
+                      height: 24)),
+              Tab(
+                  icon: Image.asset('assets/images/png/route.png',
+                      height: 25)),
+              Tab(
+                  icon: Image.asset('assets/images/png/filled_heart.png',
+                      height: 22)),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildPostCardView(Feeds),
+                _buildPlaceFoldersView(Place_Folders),
+                _buildToggleListView(Custom_Routes),
+                _buildPostCardView(Saved_Feeds),
               ],
-            )
+            ),
+          ),
+        ],
+      )
           : const Center(child: CircularProgressIndicator()),
     );
   }
@@ -478,14 +478,14 @@ class _ProfilePageState extends State<ProfilePage>
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: userData['profile_picture'] != null
-                        ? NetworkImage(userData['profile_picture'])
-                        : const AssetImage(
-                            'assets/images/dummy/default_user.png'),
+                    backgroundImage: item['author_profile_picture'] != null
+                        ? NetworkImage(item['author_profile_picture'])
+                        : const AssetImage('assets/images/dummy/default_user.png'),
                   ),
-                  title: Text(userData['name'] ?? '사용자 이름'),
+                  title: Text(item['author_name'] ?? '작성자 이름 없음'), // 작성자의 이름 참조
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Image.network(
@@ -568,25 +568,25 @@ class _ProfilePageState extends State<ProfilePage>
                 },
                 children: !isFoldersDetailsLoading
                     ? placeFolderDetails.isNotEmpty
-                        ? List.generate(
-                            placeFolderDetails.length,
-                            (placeIndex) => ListTile(
-                              title:
-                                  Text(placeFolderDetails[placeIndex]['name']),
-                              onTap: () {
-                                movePlaceInfo(
-                                    placeFolderDetails[placeIndex]['name'],
-                                    placeFolderDetails[placeIndex]
-                                        ['kakao_place_id']);
-                              },
-                            ),
-                          )
-                        : [
-                            const Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: Text('이 폴더에 저장된 장소가 없습니다.'),
-                            )
-                          ]
+                    ? List.generate(
+                  placeFolderDetails.length,
+                      (placeIndex) => ListTile(
+                    title:
+                    Text(placeFolderDetails[placeIndex]['name']),
+                    onTap: () {
+                      movePlaceInfo(
+                          placeFolderDetails[placeIndex]['name'],
+                          placeFolderDetails[placeIndex]
+                          ['kakao_place_id']);
+                    },
+                  ),
+                )
+                    : [
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('이 폴더에 저장된 장소가 없습니다.'),
+                  )
+                ]
                     : [const Center(child: CircularProgressIndicator())],
               ),
             ),
