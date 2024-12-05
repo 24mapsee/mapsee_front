@@ -639,11 +639,11 @@ class _ProfilePageState extends State<ProfilePage>
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: authorProfilePicture != null
-                        ? NetworkImage(authorProfilePicture)
+                    backgroundImage: item['author_profile_picture'] != null
+                        ? NetworkImage(item['author_profile_picture'])
                         : const AssetImage('assets/images/dummy/default_user.png'),
                   ),
-                  title: Text(authorName),
+                  title: Text(item['author_name'] ?? '작성자 이름 없음'), // 작성자의 이름 참조
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
                 Padding(
