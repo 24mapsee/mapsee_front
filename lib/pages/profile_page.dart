@@ -347,7 +347,7 @@ class _ProfilePageState extends State<ProfilePage>
                 _buildPostCardView(Feeds),
                 _buildPlaceFoldersView(Place_Folders),
                 _buildToggleListView(Custom_Routes),
-                _buildPostCardView(Saved_Feeds),
+                _buildSavedFeedView(Saved_Feeds),
               ],
             ),
           ),
@@ -478,22 +478,29 @@ class _ProfilePageState extends State<ProfilePage>
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: item['author_profile_picture'] != null
-                        ? NetworkImage(item['author_profile_picture'])
-                        : const AssetImage('assets/images/dummy/default_user.png'),
+                    backgroundImage: userData['profile_picture'] != null
+                        ? NetworkImage(userData['profile_picture'])
+                        : const AssetImage(
+                        'assets/images/dummy/default_user.png'),
                   ),
-                  title: Text(item['author_name'] ?? '작성자 이름 없음'), // 작성자의 이름 참조
+                  title: Text(userData['name'] ?? '사용자 이름'),
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
-
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(
-                      item['image_url'] ?? 'assets/images/dummy/dummy1.jpg'),
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 5.0), // 양쪽에 16dp, 위아래에 8dp 여백 추가
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 처리
+                    child: Image.network(
+                      item['image_url'] ?? 'assets/images/dummy/dummy1.jpg',
+                      fit: BoxFit.cover, // 이미지를 자르거나 확대하여 컨테이너를 채움
+                      height: 200,       // 이미지 높이를 200으로 제한
+                      width: double.infinity, // 화면 너비에 맞춤
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
+                      horizontal: 20.0, vertical: 8.0),
                   child: Text(
                     item['title'] ?? '제목 없음',
                     style: const TextStyle(
@@ -501,10 +508,13 @@ class _ProfilePageState extends State<ProfilePage>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0), // 좌우 16, 위 4, 아래 16
                   child: Text(
-                    item['description'] ?? '설명 없음',
+                    (item['description'] != null)
+                        ? (jsonDecode(item['description']).join(" ").length > 65
+                        ? '${jsonDecode(item['description']).join(" ").substring(0, 65)}...' // 65자까지만 표시
+                        : jsonDecode(item['description']).join(" ")) // 그대로 표시
+                        : '설명 없음', // 설명이 없는 경우 기본값
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                 ),
@@ -596,23 +606,80 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  Widget _buildListView(List<Map<String, dynamic>> data) {
+  Widget _buildSavedFeedView(List<Map<String, dynamic>> data) {
+    if (data.isEmpty) {
+      return const Center(
+        child: Text(
+          '저장된 피드가 없습니다!',
+          style: TextStyle(color: Colors.grey, fontSize: 16),
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
         final item = data[index];
-        return ListTile(
-          leading: const Icon(Icons.place, color: Colors.blue),
-          title: Text(item['name'] ?? '장소 없음'),
-          subtitle: Text(item['description'] ?? '공동 작업자 없음'),
+        final authorProfilePicture = item['author_profile_picture'];
+        final authorName = item['author_user_name'] ?? '사용자 이름 없음';
+
+        return GestureDetector(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PlaceFolderDetailPage(
-                        title: item['name'],
-                        placeNames: const ['장소1', '장소2', '장소3'])));
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailPage(feedData: item),
+              ),
+            );
           },
+          child: Card(
+            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: item['author_profile_picture'] != null
+                        ? NetworkImage(item['author_profile_picture'])
+                        : const AssetImage('assets/images/dummy/default_user.png'),
+                  ),
+                  title: Text(item['author_name'] ?? '작성자 이름 없음'), // 작성자의 이름 참조
+                  subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 5.0), // 양쪽에 16dp, 위아래에 8dp 여백 추가
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 처리
+                    child: Image.network(
+                      item['image_url'] ?? 'assets/images/dummy/dummy1.jpg',
+                      fit: BoxFit.cover, // 이미지를 자르거나 확대하여 컨테이너를 채움
+                      height: 200,       // 이미지 높이를 200으로 제한
+                      width: double.infinity, // 화면 너비에 맞춤
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                  child: Text(
+                    item['title'] ?? '제목 없음',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0), // 좌우 16, 위 4, 아래 16
+                  child: Text(
+                    (item['description'] != null)
+                        ? (jsonDecode(item['description']).join(" ").length > 65
+                        ? '${jsonDecode(item['description']).join(" ").substring(0, 65)}...' // 65자까지만 표시
+                        : jsonDecode(item['description']).join(" ")) // 그대로 표시
+                        : '설명 없음', // 설명이 없는 경우 기본값
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

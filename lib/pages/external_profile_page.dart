@@ -123,19 +123,14 @@ class _ExternalProfilePageState extends State<ExternalProfilePage>
 
     if (isFollowing) {
       print("DELETE 요청: /follow/delete-follow"); // 언팔로우 엔드포인트 출력
-      print("Calling deleteFollower...");
       await deleteFollower(userId, widget.userId);
-      setState(() {
-        isFollowing = false;
-      });
     } else {
-      print("Calling doFollowing...");
       print("POST 요청: /follow/add-follow"); // 팔로우 엔드포인트 출력
       await doFollowing(userId, widget.userId);
-      setState(() {
-        isFollowing = true;
-      });
     }
+
+    // 팔로우 상태와 프로필 데이터 다시 가져오기
+    await fetchExternalUserProfile();
   }
 
   // 외부 사용자 프로필 정보 및 활동 데이터 불러오기
@@ -185,7 +180,7 @@ class _ExternalProfilePageState extends State<ExternalProfilePage>
               children: [
                 const SizedBox(height: 20),
                 _buildProfileHeader(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 _buildProfileStats(),
                 const SizedBox(height: 10),
                 _buildFollowButton(),
@@ -259,14 +254,21 @@ class _ExternalProfilePageState extends State<ExternalProfilePage>
         toggleFollow();
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: isFollowing ? Colors.grey : Colors.blue,
+        backgroundColor: isFollowing ? Colors.grey : Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
-        minimumSize: Size(buttonWidth, 48),
+        minimumSize: Size(buttonWidth, 43),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
-      child: Text(isFollowing ? "팔로우 취소" : "팔로우"),
+      child: Text(
+        isFollowing ? "팔로우 취소" : "팔로우",
+        style: const TextStyle(
+          fontSize: 16, // 글자 크기
+          fontWeight: FontWeight.w600, // 두껍게
+          letterSpacing: 1.2, // 자간 늘리기
+        ),
+      ),
     );
   }
 
@@ -372,8 +374,16 @@ class _ExternalProfilePageState extends State<ExternalProfilePage>
                 ),
                 if (item['image_url'] != null)
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.network(item['image_url']),
+                    padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 5.0), // 양쪽에 16dp, 위아래에 8dp 여백 추가
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 처리
+                      child: Image.network(
+                        item['image_url'] ?? 'assets/images/dummy/dummy1.jpg',
+                        fit: BoxFit.cover, // 이미지를 자르거나 확대하여 컨테이너를 채움
+                        height: 200,       // 이미지 높이를 200으로 제한
+                        width: double.infinity, // 화면 너비에 맞춤
+                      ),
+                    ),
                   ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -385,10 +395,13 @@ class _ExternalProfilePageState extends State<ExternalProfilePage>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 20.0), // 좌우 16, 위 4, 아래 16
                   child: Text(
-                    item['description'] ?? '설명 없음',
+                    (item['description'] != null)
+                        ? (jsonDecode(item['description']).join(" ").length > 65
+                        ? '${jsonDecode(item['description']).join(" ").substring(0, 65)}...' // 65자까지만 표시
+                        : jsonDecode(item['description']).join(" ")) // 그대로 표시
+                        : '설명 없음', // 설명이 없는 경우 기본값
                     style: TextStyle(color: Colors.grey[700]),
                   ),
                 ),
