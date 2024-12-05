@@ -2,42 +2,43 @@ import 'package:flutter/material.dart';
 
 class PlaceFolderDetailPage extends StatelessWidget {
   final String? title;
-  final List<String> placeNames;
+  final List<String>? placeNames;
+  final int? folderId; // folderId 추가
 
-  const PlaceFolderDetailPage({Key? key, this.title, required this.placeNames}) : super(key: key);
+  const PlaceFolderDetailPage({
+    Key? key,
+    this.title,
+    this.placeNames,
+    this.folderId, // folderId를 받도록 생성자 수정
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title ?? '장소 상세 보기'),
-        backgroundColor: Colors.white,
-        elevation: 0,
+        title: Text(title ?? '폴더 상세 보기'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title ?? '제목 없음',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              title ?? '폴더 이름 없음',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: placeNames.length, // placeNames 리스트 길이만큼 항목 생성
+                itemCount: placeNames?.length ?? 0,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(placeNames[index]),
-                    leading: Icon(Icons.location_on),
+                    title: Text(placeNames![index]),
+                    leading: const Icon(Icons.location_on),
                   );
                 },
               ),
             ),
+            if (folderId != null)
+              Text('폴더 ID: $folderId'), // folderId 디버깅 출력
           ],
         ),
       ),

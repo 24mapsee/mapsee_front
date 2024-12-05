@@ -234,7 +234,13 @@ class _FeedItemState extends State<FeedItem> {
 
     isLiked = widget.feedData['is_liked'] == 1;
     likeCount = widget.feedData['like_count'] ?? 0;
+  }
 
+  String _truncateDescription(String description, int maxLength) {
+    if (description.length > maxLength) {
+      return description.substring(0, maxLength) + '...';
+    }
+    return description;
   }
 
   void _toggleLike() {
@@ -263,6 +269,9 @@ class _FeedItemState extends State<FeedItem> {
 
   @override
   Widget build(BuildContext context) {
+    final description = jsonDecode(widget.feedData['description']).join(" ") ??
+        '설명 없음';
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -302,7 +311,7 @@ class _FeedItemState extends State<FeedItem> {
                   backgroundImage: widget.feedData['profile_picture'] != null
                       ? NetworkImage(widget.feedData['profile_picture'])
                       : const AssetImage(
-                          'assets/images/dummy/default_user.png'),
+                      'assets/images/dummy/default_user.png'),
                   radius: 20,
                 ),
               ),
@@ -365,7 +374,7 @@ class _FeedItemState extends State<FeedItem> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
                   child: Text(
                     widget.feedData['title'] ?? '제목 없음',
                     style: const TextStyle(
@@ -377,10 +386,9 @@ class _FeedItemState extends State<FeedItem> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
+                  const EdgeInsets.only(left: 25.0, right: 25.0, top: 4.0),
                   child: Text(
-                    jsonDecode(widget.feedData['description']).join(" ") ??
-                        '설명 없음',
+                    _truncateDescription(description, 65),
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -421,3 +429,4 @@ class _FeedItemState extends State<FeedItem> {
     );
   }
 }
+
