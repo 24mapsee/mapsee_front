@@ -478,14 +478,14 @@ class _ProfilePageState extends State<ProfilePage>
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: userData['profile_picture'] != null
-                        ? NetworkImage(userData['profile_picture'])
-                        : const AssetImage(
-                        'assets/images/dummy/default_user.png'),
+                    backgroundImage: item['author_profile_picture'] != null
+                        ? NetworkImage(item['author_profile_picture'])
+                        : const AssetImage('assets/images/dummy/default_user.png'),
                   ),
-                  title: Text(userData['name'] ?? '사용자 이름'),
+                  title: Text(item['author_name'] ?? '작성자 이름 없음'), // 작성자의 이름 참조
                   subtitle: Text(item['created_at'] ?? '시간 정보 없음'),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 5.0), // 양쪽에 16dp, 위아래에 8dp 여백 추가
                   child: ClipRRect(
